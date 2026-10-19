@@ -44,4 +44,12 @@ A música e os sons Ogg ficam no pacote. `compose-audio.py` permite reconstruir 
 
 `scenes.js` calcula a posição visual durante chegada, travessia e epílogo usando timestamps compartilhados. Essas posições são somente apresentação; o servidor só habilita movimento e combate ao entrar em `battle`. `story.js` contém três capítulos, duas pontes e os desfechos de vitória completa, parcial e derrota. O servidor publica o resultado e grava o recorde já em `ending`, sem esperar o fim do epílogo.
 
-`ARENA_OBSTACLES` contém centros físicos e recortes de oclusão alinhados à ilustração de cada arena. O renderizador redesenha os objetos na ordem de profundidade para cobrir personagens que passam atrás deles. Metadados por quadro também posicionam chapéus na cabeça; a vista do acessório varia com a orientação.
+`ARENA_OBSTACLES` contém centros físicos e recortes de oclusão alinhados à ilustração de cada arena. O renderizador redesenha os objetos na ordem de profundidade para cobrir personagens que passam atrás deles.
+
+## Revisão 1.3
+
+`animation-state.js` mantém a pose direcional do arqueiro durante mira, disparo e dano. O servidor aceita a direção na própria entrada e normaliza componentes zero sem substituir um eixo válido pela mira anterior. `aimDirection` também orienta habilidades e dash. O cliente recalcula a mira a partir da posição atual da câmera.
+
+`ui-iron-frame.png` é uma moldura original usada por nove recortes CSS nos menus, retratos e HUD; o centro é transparente. Falas usam retratos e revelação por tempo compartilhado, sem mudar a duração da cena. Os chapéus foram removidos do cliente e do estado da sala.
+
+Telegraphs mantêm a geometria do dano, com contornos separados para anéis. Rastros de armas são polígonos afilados; partículas e projéteis permanecem limitados por orçamento local e não decidem colisões ou dano.

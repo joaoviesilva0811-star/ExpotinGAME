@@ -31,7 +31,6 @@ try{
   await solo.locator('[data-class="archer"]').click();await solo.waitForFunction(()=>document.querySelector('.member-text')?.textContent.includes('Arqueiro'));
   let members=await solo.locator('.member-text').allTextContents();assert.ok(members.some(t=>t.includes('Aldric')&&t.includes('COMPANHEIRO'))&&members.some(t=>t.includes('Nyx')));assert.ok(!members.some(t=>t.includes('Lyra')));
   await solo.locator('[data-class="knight"]').click();await solo.waitForFunction(()=>document.querySelector('.member-text')?.textContent.includes('Cavaleiro'));
-  await solo.locator('[data-hat="cowboy"]').click();await solo.waitForFunction(()=>window.__room.players.some(p=>p.name==='Aldric PC'&&p.hat==='cowboy'));
   await solo.screenshot({path:'artifacts/pc-02-solo.png'});
   await solo.getByRole('button',{name:'Estou pronto'}).click();await solo.getByRole('button',{name:'Iniciar expedição'}).click();
   let sawDialogue=false,sawAwakening=false,sawArrival=false;const deadline=performance.now()+25000;
@@ -62,7 +61,6 @@ try{
   const b=await gameWindow(peer,()=>peer.page.locator('#join-form button').click());
   await a.waitForFunction(()=>document.querySelectorAll('.member').length===2);await b.waitForFunction(()=>document.querySelectorAll('.member').length===2);
   assert.ok((await b.locator('.member-text').allTextContents()).some(text=>text.includes('Lyra PC')&&text.includes('Arqueiro')));
-  await a.locator('[data-hat="cake"]').click();await b.waitForFunction(()=>window.__room.players.some(p=>p.name==='Aldric PC'&&p.hat==='cake'));
   await a.screenshot({path:'artifacts/pc-04-lan.png'});
   await a.getByRole('button',{name:'Estou pronto'}).click();await b.getByRole('button',{name:'Estou pronto'}).click();await a.getByRole('button',{name:'Iniciar expedição'}).click();
   await a.waitForTimeout(18500);await b.mouse.move(960,480);await b.mouse.down();await b.keyboard.press('Digit1');await b.waitForTimeout(1000);await b.mouse.up();await b.waitForTimeout(900);
@@ -70,5 +68,5 @@ try{
   const [hp,max]= (await b.locator('#boss-hp').textContent()).split('/').map(Number);assert.ok(hp<max);
   await b.reload();await b.locator('#hud').waitFor({state:'visible'});assert.equal(await b.locator('#my-name').textContent(),'Lyra PC');
   await a.screenshot({path:'artifacts/pc-05-lan-combate.png'});
-  assert.deepEqual(errors,[]);console.log('PASS: packaged native app, embedded Node runtime, audible menu track, hats, dialogues, emotes, energy-limited dash, solo bots/class replacement, combat, two native instances over TCP '+lan+', same boss, and client reconnection.');
+  assert.deepEqual(errors,[]);console.log('PASS: packaged native app, embedded Node runtime, audible menu track, dialogues, emotes, energy-limited dash, solo bots/class replacement, combat, two native instances over TCP '+lan+', same boss, and client reconnection.');
 }finally{for(const app of apps.reverse())await app.close().catch(()=>{});}

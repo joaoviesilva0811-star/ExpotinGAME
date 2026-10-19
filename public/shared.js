@@ -27,7 +27,6 @@ export function hazardContains(pos,h,padding=17){
   if(h.shape==='cone')return Math.abs(Math.atan2(Math.sin(Math.atan2(dy,dx)-h.angle),Math.cos(Math.atan2(dy,dx)-h.angle)))<=h.spread;
   return true;
 }
-export const HATS={none:'Original',cowboy:'Cowboy',santa:'Natal',prisoner:'Prisioneiro',cake:'Bolo'};
 export const EMOTES={step:'Passinho',cross:'Braços cruzados',spin:'Giro',victory:'Celebração'};
 // Collider centers and occlusion crops follow the painted source art (1536×1024).
 export const ARENA_OBSTACLES=[

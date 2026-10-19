@@ -1,10 +1,10 @@
 # Shadows of the Iron Crown
 
-Jogo 2D cooperativo de boss fight para navegador, para 1 a 4 jogadores. Código de sala real, servidor autoritativo, três classes e três arenas. A edição PC inclui seu servidor local. A edição web opcional permite cliente na InfinityFree e servidor Node separado.
+Jogo 2D cooperativo para PC Windows, para 1 a 4 jogadores, com servidor local incluído, três classes e três arenas. Jogue solo com companheiros ou com amigos na mesma rede, sem hospedagem paga. Há também um cliente web opcional para desenvolvimento.
 
 ## Baixar o jogo pelo GitHub
 
-**[Baixar a versão Windows portátil](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/download/v1.2.0/IronCrown-Windows-x64.zip)** · **[Página da release](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/tag/v1.2.0)**
+**[Baixar a versão Windows portátil](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/download/v1.3.0/IronCrown-Windows-x64.zip)** · **[Página da release](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/tag/v1.3.0)**
 
 Extraia o ZIP completo e abra **Shadows of the Iron Crown.exe**. Não precisa instalar Node.js. A release é publicada pela automação do GitHub após a tag; o andamento aparece na aba **Actions**.
 
@@ -68,17 +68,28 @@ Para jogar pela rede local, acesse `http://IP-DO-SERVIDOR:3000` em cada disposit
 
 No celular: joystick, ataque, escudo, reviver e habilidades na tela; mira automática no chefe e câmera que acompanha o jogador no modo retrato. Celular é um suporte inicial; PC oferece mais área visível.
 
+## Atualização 1.3 — Ferro e Cinzas
+
+- Menus, seleção de classe, HUD e diálogos com molduras ilustradas de ferro, madeira e bronze; botões com relevo e retratos de quem fala.
+- Falas aparecem gradualmente, com identificação do personagem e da arena. Legendas do despertar ficam separadas da caixa de diálogo.
+- Marcações rúnicas com borda fixa, preparação progressiva e interior discreto. O centro seguro dos anéis permanece limpo, sem traço ligando os dois contornos.
+- Cortes com lâminas afiladas, rastros duplos do ladino, faíscas direcionais, fragmentos e poeira; flechas com haste, ponta e penas, e trilhas distintas de gelo.
+- Arqueiro mantém a orientação entre disparos, ao mirar em movimento e ao receber dano. Oito direções reais; a liberação da corda acompanha o disparo. Corrigida a mira vertical e de habilidades enviadas antes do próximo passo do servidor.
+- A mira é recalculada sob o mouse enquanto a câmera se move. Chapéus retirados da seleção, da renderização e do estado multiplayer. Emotes continuam disponíveis no Tab.
+
+[Ver diálogos](preview/13-dialogue-boss.png) · [Ver oito direções e efeitos](preview/13-directions-effects.png)
+
 ## Atualização 1.2 — Combate e direção artística
 
 - Caminhada 35–37% mais lenta, ataques básicos com antecipação e câmera próxima (155%), suave e ajustável até 200%.
 - Mais de 700 quadros nos atlas de sprites: caminhada, reação a dano, golpes, invocação e quatro emotes. Ataques de heróis, chefes e lacaios escolhem oito direções; onde necessário, uma direção usa espelhamento de uma pose compatível.
 - Seis padrões por chefe, três fases, projéteis hostis, investidas, ondas com centro seguro, cruzes e ataques em sequência. Vida base para quatro jogadores: 5.600 / 7.200 / 9.200, ajustada ao grupo.
 - Lacaios mortais com preparação visível, colisões, invocação limitada e drops. Primeiro abate sempre derruba poção; depois há chance de 46%. Três espaços de inventário; coleta por proximidade. Cura +45 ou gelo em raio de 230 com lentidão de 4s; tecla 4 usa a primeira guardada.
-- Dash no E: custa 20, recarga de 2,4s e proteção de 0,24s. Reviver passa para R. Chapéus original/cowboy/Natal/prisioneiro/bolo no lobby, visíveis para todos. Tab abre quatro danças próprias; interrompidas ao mover, atacar ou sofrer dano.
+- Dash no E: custa 20, recarga de 2,4s e proteção de 0,24s. Reviver passa para R. Tab abre quatro danças próprias; interrompidas ao mover, atacar ou sofrer dano.
 - Castelos, floresta e catedral com coberturas distintas que bloqueiam flechas e projéteis. Chefes contornam obstáculos e miram o grupo; a área anunciada fica fixa para permitir a esquiva.
 - HUD com ícones desenhados, molduras de metal, zonas de perigo com contorno/progresso, poeira, faíscas, fragmentos, rachaduras, rastros de flecha e efeitos de gelo.
 - História em três capítulos, cutscenes de entrada com portão, despertar próprio de cada chefe, corredor animado entre arenas e epílogo de 14s com três desfechos. Cenas ficam fora dos 300s de combate.
-- Cenários pintados detalhados com mosaicos, velas, reflexos e coberturas; colisões e recortes de oclusão seguem os objetos desenhados. Botões com bordas e fonte em pixel. Chapéus se orientam com a cabeça e acompanham os frames de ataque e dança.
+- Cenários pintados detalhados com mosaicos, velas, reflexos e coberturas; colisões e recortes de oclusão seguem os objetos desenhados. Botões com bordas e fonte em pixel.
 - Menu com ilustração original; tema próprio, três trilhas de combate e sons de armas e chefes, disponíveis offline. Som inicia após a primeira interação; botão musical permite silenciar. Os emotes não incluem músicas licenciadas do TikTok.
 
 O tempo observado em uma simulação de quatro participantes usando comandos normais foi aproximadamente 65s / 100s / 130s. Não é duração garantida: habilidade, classe, tamanho da equipe e mortes alteram cada luta; o limite continua 5 minutos por chefe.

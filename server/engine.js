@@ -1,5 +1,5 @@
 import { randomBytes, randomInt } from 'node:crypto';
-import { WORLD, CLASSES, BOSSES, COSTS, COOLDOWNS, DODGE, clamp, distance, hazardContains, ARENA_OBSTACLES, HATS, EMOTES } from '../public/shared.js';
+import { WORLD, CLASSES, BOSSES, COSTS, COOLDOWNS, DODGE, clamp, distance, hazardContains, ARENA_OBSTACLES, EMOTES } from '../public/shared.js';
 import { thinkBots, BOT_NAMES } from './bots.js';
 import { planBossAttack } from './bosses.js';
 import { tickMinions } from './minions.js';
@@ -8,13 +8,17 @@ import { dropPotion, tickLoot, usePotion, roundDialogue } from './loot.js';
 const uid = () => randomBytes(6).toString('hex');
 const stats = () => ({ damage: 0, taken: 0, avoided: 0, revives: 0, skills: 0 });
 export const normalize = (x, y) => { const d = Math.hypot(x, y); return d > 0 ? { x: x / d, y: y / d } : { x: 1, y: 0 }; };
+export function aimDirection(p) {
+  const {ax,ay}=p.input;
+  return Number.isFinite(ax)&&Number.isFinite(ay)&&Math.hypot(ax,ay)>.001 ? normalize(ax,ay) : {x:Math.cos(p.facing),y:Math.sin(p.facing)};
+}
 export function segmentDistance(a, b, o) {
   const dx = b.x - a.x, dy = b.y - a.y, length2 = dx * dx + dy * dy;
   const t = length2 ? clamp(((o.x - a.x) * dx + (o.y - a.y) * dy) / length2, 0, 1) : 0;
   return Math.hypot(o.x - a.x - t * dx, o.y - a.y - t * dy);
 }
 export const makePlayer = (session, name) => ({
-  id: session, name, hat:'none',emote:null,emoteAt:-10,emoteUntil:0,emoteReady:0,classId: 'knight', ready: false, connected: true, disconnectedAt: null,
+  id: session, name, emote:null,emoteAt:-10,emoteUntil:0,emoteReady:0,classId: 'knight', ready: false, connected: true, disconnectedAt: null,
   x: 270, y: 380, vx: 0, vy: 0, hp: 160, maxHp: 160, energy: 100, facing: 0,
   cds: [0, 0, 0], basicAt: 0, block: false, blockAt: 0, shieldUntil: 0, rootUntil: 0,
   attackAt: -10, attackFor: .45, attackSlot: -1, dodgeAt: -10, dodgeUntil: 0, dodgeReady: 0, hitSafeUntil: 0,
@@ -117,8 +121,8 @@ export class Room {
       if (![msg.x, msg.y, msg.ax, msg.ay].every(Number.isFinite)) return;
       p.input = { x: clamp(msg.x, -1, 1), y: clamp(msg.y, -1, 1), ax: clamp(msg.ax, -1, 1), ay: clamp(msg.ay, -1, 1), block: msg.block === true, attack: msg.attack === true, revive: msg.revive === true };
       p.lastInput = this.now;
-    } else if (msg.type === 'cosmetic' && this.state==='lobby' && Object.hasOwn(HATS,msg.hat))p.hat=msg.hat;
-    else if(msg.type==='emote'&&Object.hasOwn(EMOTES,msg.emote)&&this.active(p)&&this.now>=p.emoteReady&&['countdown','battle'].includes(this.state)){
+      if (msg.ax || msg.ay) p.facing = Math.atan2(msg.ay, msg.ax);
+    } else if(msg.type==='emote'&&Object.hasOwn(EMOTES,msg.emote)&&this.active(p)&&this.now>=p.emoteReady&&['countdown','battle'].includes(this.state)){
       p.emote=msg.emote;p.emoteAt=this.now;p.emoteUntil=this.now+3.6;p.emoteReady=this.now+5;p.vx=p.vy=0;p.input={x:0,y:0,ax:Math.cos(p.facing),ay:Math.sin(p.facing)};this.emit('emote',{owner:p.id,kind:msg.emote,x:p.x,y:p.y});
     } else if (msg.type === 'skill' && Number.isInteger(msg.slot) && msg.slot >= 0 && msg.slot < 3) this.skill(p, msg.slot);
     else if (msg.type === 'dodge') this.dodge(p);
@@ -144,7 +148,7 @@ export class Room {
     return actual;
   }
   melee(p, amount, reach) {
-    const dir = normalize(p.input.ax || Math.cos(p.facing), p.input.ay || Math.sin(p.facing));
+    const dir = aimDirection(p);
     const canHit = (target,radius) => {
       if (distance(p,target)>reach+radius) return false;
       if (obstacles(this.round).some(o=>segmentDistance(p,target,o)<o.r)) return false;
@@ -156,7 +160,7 @@ export class Room {
     return hit;
   }
   projectile(p, damage, color = 'arrow', opts = {}) {
-    const dir = normalize(p.input.ax || Math.cos(p.facing), p.input.ay || Math.sin(p.facing));
+    const dir = aimDirection(p);
     const angle = Math.atan2(dir.y, dir.x) + (opts.angle || 0);
     this.projectiles.push({ id: uid(), owner: p.id, x: p.x, y: p.y, vx: Math.cos(angle) * 640, vy: Math.sin(angle) * 640, damage, color, left: opts.range || 570, slow: opts.slow || 0 });
   }
@@ -189,7 +193,7 @@ export class Room {
       if (slot === 0) { this.melee(p, 18, 94); this.effects.push({ at: this.now + .15, owner: p.id, kind: 'double' }); }
       if (slot === 1) { this.dash(p, 155); p.shadowBonus = 25; }
       if (slot === 2) {
-        const dir=normalize(p.input.ax||Math.cos(p.facing),p.input.ay||Math.sin(p.facing));
+        const dir=aimDirection(p);
         for(const target of [this.boss,...this.minions]){
           const n=normalize(target.x-p.x,target.y-p.y);
           if(target.hp<=0||distance(p,target)>96+(target.isBoss?BOSSES[this.round].radius:18)||dir.x*n.x+dir.y*n.y<.05||obstacles(this.round).some(o=>segmentDistance(p,target,o)<o.r))continue;
@@ -203,14 +207,14 @@ export class Room {
   }
   dodge(p) {
     if (!this.canAct(p) || p.energy<DODGE.cost || this.now<p.dodgeReady || this.now<p.rootUntil) return false;
-    const moving=p.input.x||p.input.y; const n=normalize(moving?p.input.x:p.input.ax||Math.cos(p.facing),moving?p.input.y:p.input.ay||Math.sin(p.facing));
+    const moving=p.input.x||p.input.y; const n=moving?normalize(p.input.x||0,p.input.y||0):aimDirection(p);
     p.emoteUntil=0;p.energy-=DODGE.cost; p.dodgeAt=this.now; p.dodgeUntil=this.now+DODGE.duration; p.dodgeReady=this.now+DODGE.cooldown;
     p.dodgeVX=n.x*DODGE.distance/DODGE.duration; p.dodgeVY=n.y*DODGE.distance/DODGE.duration;
     p.block=false; p.revive=0; p.reviveTarget=null;
     this.emit('dodge',{owner:p.id,x:p.x,y:p.y,angle:Math.atan2(n.y,n.x)}); return true;
   }
   dash(p, length) {
-    const dir = normalize(p.input.ax || Math.cos(p.facing), p.input.ay || Math.sin(p.facing));
+    const dir = aimDirection(p);
     const old = { x: p.x, y: p.y };
     for (let i = 0; i < length; i += 5) this.move(p, dir.x * Math.min(5, length - i), dir.y * Math.min(5, length - i));
     this.emit('dash', { x: old.x, y: old.y, tx: p.x, ty: p.y, kind: p.classId });
@@ -394,8 +398,8 @@ export class Room {
     this.hazards = this.hazards.filter(h => h.end > this.now);
   }
   snapshot() {
-    const playerView = p => ({ hat:p.hat,emote:p.emote,emoteAt:p.emoteAt,emoteUntil:p.emoteUntil,emoteReady:p.emoteReady,id: p.id, name: p.name, classId: p.classId, isBot: !!p.isBot, ready: p.ready, connected: p.connected,
-      x: p.x, y: p.y, vx: p.vx, vy: p.vy, hp: p.hp, maxHp: p.maxHp, energy: p.energy, facing: p.facing,
+    const playerView = p => ({ emote:p.emote,emoteAt:p.emoteAt,emoteUntil:p.emoteUntil,emoteReady:p.emoteReady,id: p.id, name: p.name, classId: p.classId, isBot: !!p.isBot, ready: p.ready, connected: p.connected,
+      x: p.x, y: p.y, vx: p.vx, vy: p.vy, hp: p.hp, maxHp: p.maxHp, energy: p.energy, facing: p.facing, aiming: !!p.input.attack,
       attackAt:p.attackAt,attackFor:p.attackFor,attackSlot:p.attackSlot,lastHurt:p.lastHurt,dodgeAt:p.dodgeAt,dodgeUntil:p.dodgeUntil,dodgeReady:p.dodgeReady,
       potions:p.potions,potionReady:p.potionReady,
       cds: p.cds, basicAt: p.basicAt, block: p.block, shieldUntil: p.shieldUntil, rootUntil: p.rootUntil,

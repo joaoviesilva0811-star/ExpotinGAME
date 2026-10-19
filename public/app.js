@@ -1,12 +1,11 @@
-import { CLASSES, BOSSES, COSTS, COOLDOWNS, WORLD, DODGE, clamp, ARENA_OBSTACLES, HATS, EMOTES } from './shared.js';
+import { CLASSES, BOSSES, COSTS, COOLDOWNS, WORLD, DODGE, clamp, ARENA_OBSTACLES, EMOTES } from './shared.js';
 import { drawPlayer, drawBoss, terrain, pillar, torch, light, playerSprite, exportAtlas, bossSprite } from './art.js';
 import { STORY,BRIDGES,endingStory } from './story.js';
 import { cinematicPlayer,drawGate,drawAwakening,drawCorridor,drawEnding } from './scenes.js';
 import { hudIcon } from './hud-art.js';
-import { drawHat } from './cosmetics.js';
 import { drawTelegraph } from './telegraphs.js';
 import { drawMinion } from './animation.js';
-import { impactFX,hazardImpact,magicFX,footFX,slashFX,stepFX,drawGroundFX,drawFX } from './vfx.js';
+import { impactFX,hazardImpact,magicFX,footFX,slashFX,bowFX,drawProjectile,stepFX,drawGroundFX,drawFX,resetFX } from './vfx.js';
 import { AudioEngine } from './audio.js';
 
 const $ = id => document.getElementById(id);
@@ -21,8 +20,8 @@ document.addEventListener('pointerdown',e=>{if(e.target.closest('#audio-toggle')
 document.addEventListener('keydown',enableAudio,{once:true});
 let room=null,session=null,token=null,ws=null,connected=false,connecting=null,reconnectTimer=null,retry=0;
 let screen='home',lobbySignature='',resultsSignature='',lastEvent=0,snapshotAt=0,seq=Date.now()*1000,latency=0;
-let warningUntil=0,shake=0,flash=0,frameTime=0,previousFrame=performance.now(),pointer=null,attacking=false;
-let lastStep=0;
+let warningUntil=0,shake=0,flash=0,frameTime=0,previousFrame=performance.now(),pointer=null,pointerClient=null,attacking=false;
+let lastStep=0,dialogueKey='';
 const keys=new Set(),positions=new Map(),attackUntil=new Map(),particles=[],floats=[],rings=[];
 const input={x:0,y:0,block:false,attack:false,revive:false};
 let joystick={x:0,y:0},touchBlock=false,touchAttack=false,touchRevive=false;
@@ -105,25 +104,23 @@ function acceptSnapshot(value,initial=false){
 const me=()=>room?.players.find(p=>p.id===session?.id);
 function renderLobby(){
   const p=me();if(!p)return;
-  const signature=JSON.stringify([room.owner,room.code,room.botsEnabled,room.players.map(p=>[p.id,p.name,p.classId,p.ready,p.connected,p.hat])]);
+  const signature=JSON.stringify([room.owner,room.code,room.botsEnabled,room.players.map(p=>[p.id,p.name,p.classId,p.ready,p.connected])]);
   if(lobbySignature===signature)return;lobbySignature=signature;
   const leader=room.owner===session.id,allReady=room.players.every(p=>p.ready&&p.connected);
   $('lobby').innerHTML=`<div class="lobby-heading"><div><span class="eyebrow">PREPARAÇÃO · ${room.public?'SALA PÚBLICA':room.solo?'SOLO + COMPANHEIROS':'SALA PRIVADA'}</span><h2>Escolha sua lenda.</h2><p class="muted">Três destinos. Uma equipe. A coroa espera.</p></div><div class="room-code-box"><div><small>CÓDIGO DA EXPEDIÇÃO</small><strong>${esc(room.code)}</strong></div><button class="icon-btn" data-action="copy" title="Copiar código" aria-label="Copiar código">⧉</button></div></div>
     <div class="lobby-grid"><div><div class="class-grid">${Object.entries(CLASSES).map(([id,c])=>`<button class="class-card ${p.classId===id?'selected':''}" data-class="${id}"><span class="selected-mark">${p.classId===id?'◈ SELECIONADO':''}</span><canvas width="190" height="150" data-portrait="${id}"></canvas><div class="class-text"><h3>${c.name}</h3><p>${c.role}</p><p>${id==='knight'?'Resista à escuridão. Proteja seus aliados.':id==='archer'?'Encontre a distância. Acerte o ponto fraco.':'Ataque nas sombras. Desapareça antes do golpe.'}</p><div class="class-meta"><span>♥ ${c.hp} VIDA</span><span>⚡ 100 ENERGIA</span></div></div></button>`).join('')}</div>
-    <div class="wardrobe"><span>SEU ESTILO</span>${Object.entries(HATS).map(([id,name])=>`<button data-hat="${id}" class="${p.hat===id?'selected':''}" title="${name}" aria-label="Chapéu ${name}"><canvas width="52" height="40" data-hat-preview="${id}"></canvas><small>${name}</small></button>`).join('')}<small>Apenas visual · visível para todos</small></div><div class="skill-preview">${CLASSES[p.classId].skills.map((name,i)=>`<div><strong><kbd>${i+1}</kbd> ${name}</strong>${CLASSES[p.classId].descriptions[i]}<br><span>${COSTS[i]} energia · ${COOLDOWNS[i]}s</span></div>`).join('')}</div></div>
+    <div class="skill-preview">${CLASSES[p.classId].skills.map((name,i)=>`<div><strong><kbd>${i+1}</kbd> ${name}</strong>${CLASSES[p.classId].descriptions[i]}<br><span>${COSTS[i]} energia · ${COOLDOWNS[i]}s</span></div>`).join('')}</div></div>
     <aside class="panel team-lobby"><h3>SEU GRUPO <span class="muted">${room.players.length}/4</span></h3>${room.players.map(a=>`<div class="member"><span class="member-avatar" style="color:${CLASSES[a.classId].color}">${a.classId==='knight'?'♜':a.classId==='archer'?'➶':'◈'}</span><div class="member-text"><strong>${esc(a.name)} ${a.id===room.owner?'♛':''}</strong><small>${CLASSES[a.classId].name} · ${a.isBot?'COMPANHEIRO IA':a.connected?'conectado':'desconectado'}</small></div><span class="badge" style="color:${a.ready?'#8ccfa2':'#7d8880'}">${a.ready?'PRONTO':'…'}</span></div>`).join('')}${Array.from({length:4-room.players.length},()=>'<div class="empty-slot">+ Aguardando um aliado</div>').join('')}<p class="fine">${room.solo?'Companheiros das outras duas classes lutam e podem reviver você. Troque sua classe para atualizar a equipe.':'Compartilhe o código. Seus amigos entram pelo mesmo servidor. Você pode completar as classes ausentes com bots.'}</p></aside></div>
     ${nativeDesktop&&desktopParams.get('mode')==='host'?`<div class="lan-info">REDE LOCAL · IP DO ANFITRIÃO: <strong>${esc(desktopParams.get('lan')||'127.0.0.1')}</strong> · porta 48230 · compartilhe também o código da sala.</div>`:''}${leader&&!room.solo?`<label class="check bot-option"><input type="checkbox" id="bot-toggle" ${room.botsEnabled?'checked':''}> Completar as classes ausentes com companheiros IA</label>`:''}<div class="lobby-actions"><button class="text-link" data-action="leave">← Sair da sala</button><p>${leader?'Marque pronto e inicie quando todos estiverem preparados.':'Aguardando o líder iniciar a expedição.'}</p><div><button class="${p.ready?'secondary':'primary'}" data-action="ready">${p.ready?'✓ Pronto · cancelar':'Estou pronto'}</button>${leader?`<button class="primary" data-action="start" ${!allReady?'disabled':''}>Iniciar expedição →</button>`:''}</div></div><p class="lobby-controls"><kbd>WASD</kbd> mover &nbsp; <kbd>Mouse</kbd> mirar e atacar &nbsp; <kbd>1 2 3</kbd> habilidades &nbsp; <kbd>Espaço</kbd> defender &nbsp; <kbd>E</kbd> dash &nbsp; <kbd>4</kbd> poção &nbsp; <kbd>R</kbd> reviver &nbsp; <kbd>Tab</kbd> emotes</p>`;
   for(const el of $('lobby').querySelectorAll('[data-portrait]')){
     const c=el.getContext('2d');c.imageSmoothingEnabled=false;const cls=el.dataset.portrait;
     c.fillStyle=CLASSES[cls].color+'0c';c.beginPath();c.ellipse(95,117,52,17,0,0,Math.PI*2);c.fill();
-    drawPlayer(c,{x:95,y:126,id:'portrait-'+cls,facing:1.4,classId:cls,hp:100,hat:cls===p.classId?p.hat:'none'},0,{scale:1.7});
+    drawPlayer(c,{x:95,y:126,id:'portrait-'+cls,facing:1.4,classId:cls,hp:100},0,{scale:1.7});
   }
-  for(const el of $('lobby').querySelectorAll('[data-hat-preview]')){const c=el.getContext('2d');if(el.dataset.hatPreview==='none'){c.fillStyle='#9b9d91';c.font='20px Georgia';c.fillText('—',16,25);}else drawHat(c,{hat:el.dataset.hatPreview,x:26,y:79,hp:100,facing:1.4},room.now);}
 }
 $('lobby').addEventListener('change',event=>{if(event.target.id==='bot-toggle')send('bots',{enabled:event.target.checked});});
 $('lobby').addEventListener('click',event=>{
   const btn=event.target.closest('button');if(!btn)return;audio.fx('ui');
-  if(btn.dataset.hat)send('cosmetic',{hat:btn.dataset.hat,seq:++seq});
   if(btn.dataset.class)send('class',{classId:btn.dataset.class});
   const action=btn.dataset.action;
   if(action==='copy')copyCode();if(action==='ready')send('ready',{ready:!me().ready});if(action==='start')send('start');if(action==='leave')send('leave');
@@ -133,7 +130,7 @@ function buildAbilities(){
   const p=me();if(!p)return;const c=CLASSES[p.classId];
   $('abilities').innerHTML=c.skills.map((name,i)=>`<button class="ability" data-slot="${i}" aria-label="${name}" title="${name}: ${c.descriptions[i]} · ${COSTS[i]} energia · ${COOLDOWNS[i]}s"><canvas class="skill-art" width="64" height="64" data-icon-slot="${i}"></canvas><span class="skill-symbol">${symbols[p.classId][i]}</span><kbd>${i+1}</kbd><span class="cost">${COSTS[i]} ⚡</span><span class="cooldown-cover"></span><span class="cd-number"></span></button>`).join('');
   const offset=p.classId==='knight'?0:p.classId==='archer'?3:6;for(const el of $('abilities').querySelectorAll('[data-icon-slot]'))hudIcon(el,offset+Number(el.dataset.iconSlot));hudIcon($('dash-icon'),11);
-  const cctx=$('portrait').getContext('2d');cctx.clearRect(0,0,64,64);cctx.imageSmoothingEnabled=false;drawPlayer(cctx,{id:'hudportrait',x:32,y:61,facing:1.57,classId:p.classId,hp:100,hat:p.hat},0,{scale:.9});
+  const cctx=$('portrait').getContext('2d');cctx.clearRect(0,0,64,64);cctx.imageSmoothingEnabled=false;drawPlayer(cctx,{id:'hudportrait',x:32,y:61,facing:1.57,classId:p.classId,hp:100},0,{scale:.9});
 }
 $('abilities').addEventListener('pointerdown',e=>{const btn=e.target.closest('[data-slot]');if(btn){e.preventDefault();useSkill(Number(btn.dataset.slot));}});
 function useSkill(slot){
@@ -207,8 +204,8 @@ addEventListener('keydown',e=>{
 });
 addEventListener('keyup',e=>keys.delete(e.code));addEventListener('blur',resetInput);document.addEventListener('visibilitychange',()=>{if(document.hidden)resetInput();});
 function worldPointer(e){const rect=canvas.getBoundingClientRect(),cover=portraitCamera(),s=(cover?Math.max:Math.min)(rect.width/WORLD.w,rect.height/WORLD.h),ox=(rect.width-WORLD.w*s)*(cover?cameraFraction:.5),oy=(rect.height-WORLD.h*s)/2;return{x:((e.clientX-rect.left-ox)/s-600)/viewZoom+viewX,y:((e.clientY-rect.top-oy)/s-380)/viewZoom+viewY};}
-canvas.addEventListener('pointermove',e=>{if(e.pointerType==='mouse')pointer=worldPointer(e);});
-canvas.addEventListener('pointerdown',e=>{if(e.button===0&&e.pointerType==='mouse'&&screen==='battle'&&!$('modal').open){attacking=true;pointer=worldPointer(e);e.preventDefault();canvas.setPointerCapture(e.pointerId);}});
+canvas.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'){pointerClient={clientX:e.clientX,clientY:e.clientY};pointer=worldPointer(pointerClient);}});
+canvas.addEventListener('pointerdown',e=>{if(e.button===0&&e.pointerType==='mouse'&&screen==='battle'&&!$('modal').open){attacking=true;pointerClient={clientX:e.clientX,clientY:e.clientY};pointer=worldPointer(pointerClient);e.preventDefault();canvas.setPointerCapture(e.pointerId);}});
 addEventListener('pointerup',()=>{attacking=false;});canvas.addEventListener('contextmenu',e=>e.preventDefault());
 for(const [id,set] of [['touch-block',v=>touchBlock=v],['touch-attack',v=>touchAttack=v],['touch-revive',v=>touchRevive=v]]){
   const el=$(id);el.addEventListener('pointerdown',e=>{e.preventDefault();el.setPointerCapture(e.pointerId);set(true);});for(const event of ['pointerup','pointercancel','lostpointercapture'])el.addEventListener(event,()=>set(false));
@@ -224,6 +221,7 @@ function sendInput(){
   input.x=modal?0:(keys.has('KeyD')||keys.has('ArrowRight')?1:0)-(keys.has('KeyA')||keys.has('ArrowLeft')?1:0)+joystick.x;
   input.y=modal?0:(keys.has('KeyS')||keys.has('ArrowDown')?1:0)-(keys.has('KeyW')||keys.has('ArrowUp')?1:0)+joystick.y;
   input.block=!modal&&(keys.has('Space')||touchBlock);input.attack=!modal&&(attacking||touchAttack||keys.has('KeyJ'));input.revive=!modal&&(keys.has('KeyR')||touchRevive);
+  if(pointerClient)pointer=worldPointer(pointerClient);
   const target=pointer||room.boss||{x:p.x+1,y:p.y},dx=target.x-p.x,dy=target.y-p.y,len=Math.hypot(dx,dy)||1;
   send('input',{...input,ax:dx/len,ay:dy/len,seq:++seq});
 }
@@ -243,7 +241,7 @@ function burst(x,y,color,count=15,speed=90){
 function ring(x,y,r,color,duration=.55){rings.push({x,y,r,color,life:duration,total:duration});}
 function eventEffect(e){
   const info=BOSSES[room.round];
-  if(e.type==='round')positions.clear();
+  if(e.type==='round'){positions.clear();resetFX();rings.length=particles.length=floats.length=0;}
   if(e.type==='gate'){impactFX(e.x,e.y,'gold',true);audio.fx('gate');shake=3;}
   if(e.type==='awaken'){magicFX(e.x,e.y,e.round===1?'green':e.round===2?'violet':'red',60);audio.fx('roar',e.round);ring(e.x,e.y,270,info.color,1.5);shake=4;}
   if(e.type==='hit'){impactFX(e.x,e.y+25,room.round===1?'green':room.round===2?'violet':'gold');
@@ -251,10 +249,10 @@ function eventEffect(e){
   }
   if(e.type==='attack'){
     attackUntil.set(e.owner,frameTime+.5);
-    if(e.kind!=='archer')slashFX(e.x,e.y,e.angle,e.kind==='rogue'?'violet':'gold',e.slot===1);
+    if(e.kind!=='archer')slashFX(e.x,e.y,e.angle,e.kind==='rogue'?'violet':'gold',e.slot===1,e.slot>=0?0:.12);
+    else bowFX(e.x,e.y,e.angle,e.slot===2?'ice':e.slot===0?'gold':'green',e.slot>=0?0:.17);
     if(e.slot>=0)magicFX(e.x,e.y,e.kind==='archer'?'green':e.kind==='rogue'?'violet':'gold',12);audio.fx(e.kind==='archer'?'arrow':e.slot===2?'magic':'attack');
     if(e.slot===2&&e.kind==='knight'){burst(e.x,e.y,'#e7cb85',28);ring(e.x,e.y,170,'#e4c583',.8);}
-    else if(e.kind!=='archer')rings.push({x:e.x,y:e.y,r:65,color:e.kind==='rogue'?'#bca4ee':'#e0d3b2',life:.2,total:.2,angle:e.angle,slash:true});
   }
   if(e.type==='hurt'){
     impactFX(e.x,e.y-12,e.blocked?'gold':'red');
@@ -291,14 +289,7 @@ function drawDrop(d,time){
   light(ctx,d.x,d.y,36,color,.12);ctx.save();ctx.translate(d.x,y);ctx.strokeStyle=color;ctx.fillStyle=ice?'#76b6d0':'#b94c60';ctx.lineWidth=1.5;
   ctx.beginPath();ctx.moveTo(-4,-12);ctx.lineTo(4,-12);ctx.lineTo(4,-7);ctx.lineTo(9,2);ctx.lineTo(7,10);ctx.lineTo(-7,10);ctx.lineTo(-9,2);ctx.lineTo(-4,-7);ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle='#e9cd98';ctx.fillRect(-5,-15,10,4);ctx.fillStyle='#fff9';ctx.fillRect(-4,0,2,6);ctx.restore();
 }
-function drawProjectiles(projectiles){for(const p of projectiles){
-  ctx.save();ctx.translate(p.x,p.y-18);ctx.rotate(Math.atan2(p.vy,p.vx));
-  const color=p.enemy?(p.color==='seed'?'#a7e77d':p.color==='blade'?'#fb9a78':'#c994ff'):p.color==='ice'?'#a1def0':p.color==='pierce'?'#e9d393':'#d1b889';
-  const gradient=ctx.createLinearGradient(-48,0,5,0);gradient.addColorStop(0,'transparent');gradient.addColorStop(1,color);ctx.fillStyle=gradient;ctx.globalAlpha=.5;ctx.fillRect(-48,-3,48,6);ctx.globalAlpha=1;
-  ctx.fillStyle=color;ctx.shadowColor=color;ctx.shadowBlur=p.enemy?10:3;
-  if(p.enemy&&p.color!=='blade'){ctx.beginPath();ctx.ellipse(0,0,8,4,0,0,7);ctx.fill();ctx.fillStyle='#fff';ctx.fillRect(-2,-1,4,2);}
-  else{ctx.fillRect(-22,-1,26,2);ctx.beginPath();ctx.moveTo(7,0);ctx.lineTo(0,-4);ctx.lineTo(0,4);ctx.fill();ctx.fillRect(-22,-3,5,2);ctx.fillRect(-22,2,5,2);}ctx.restore();
-}}
+function drawProjectiles(projectiles){for(const p of projectiles)drawProjectile(ctx,p,frameTime);}
 
 function render(time){
   const dt=Math.min(.05,(time-previousFrame)/1000);previousFrame=time;frameTime=time/1000;
@@ -370,7 +361,11 @@ function render(time){
   if(screen==='battle'&&room){
     if(room.state==='countdown'&&room.transitionAt-now<=3)$('countdown').innerHTML=`<small>${BOSSES[room.round].arena.toUpperCase()}</small><span>${BOSSES[room.round].title}</span><strong>${Math.max(1,Math.ceil(room.transitionAt-now))}</strong>`;else $('countdown').textContent='';
     const line=room.state==='countdown'?room.dialogue?.find(d=>now>=d.at&&now<d.until):null;
-    $('dialogue').hidden=!line;if(line){$('dialogue-name').textContent=line.name+' · '+(line.boss?BOSSES[round].title:CLASSES[line.classId].name);$('dialogue-text').textContent=line.text;$('dialogue').style.borderColor=line.boss?BOSSES[round].color:CLASSES[line.classId].color;}
+    $('dialogue').hidden=!line;if(line){
+      const key=round+':'+line.at+':'+line.name;
+      if(dialogueKey!==key){dialogueKey=key;const box=$('dialogue');box.dataset.boss=String(!!line.boss);box.style.setProperty('--voice',line.boss?BOSSES[round].color:CLASSES[line.classId].color);$('dialogue-name').textContent=line.name;$('dialogue-role').textContent=line.boss?BOSSES[round].title.toUpperCase():CLASSES[line.classId].name.toUpperCase()+' · A ÚLTIMA EXPEDIÇÃO';$('dialogue-scene').textContent=BOSSES[round].arena.toUpperCase();const c=$('dialogue-portrait').getContext('2d');c.clearRect(0,0,128,128);c.imageSmoothingEnabled=false;if(line.boss){const image=bossSprite(round,0);c.drawImage(image,image.width*.25,image.height*.08,image.width*.5,image.height*.48,0,0,128,128);}else drawPlayer(c,{id:'voice-'+line.classId,x:64,y:174,facing:Math.PI/2,classId:line.classId,hp:100},0,{scale:2.1,now});}
+      const letters=Array.from(line.text),revealed=reducedMotion?letters.length:Math.min(letters.length,Math.floor(Math.max(0,now-line.at)*65));$('dialogue-text').textContent=letters.slice(0,revealed).join('');const beat=Math.min(2,Math.floor((now-line.at)/Math.max(.1,line.until-line.at)*3));$('dialogue-beats').textContent=[0,1,2].map(i=>i===beat?'◆':'◇').join(' ');
+    }
     if(frameTime>warningUntil)$('danger').classList.remove('visible');
   }
   if(screen==='results'&&room?.state==='round_end'&&$('next-round'))$('next-round').textContent=`Próxima arena em ${Math.max(0,Math.ceil(room.transitionAt-now))} segundos · ${BOSSES[Math.min(2,room.round+1)].arena}`;

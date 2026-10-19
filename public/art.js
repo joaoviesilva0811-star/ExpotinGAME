@@ -1,5 +1,4 @@
 import { sceneImage } from './scenes.js';
-import { drawHat } from './cosmetics.js';
 import { characterFrame, bossFrame } from './animation.js';
 import { WORLD, CLASSES, BOSSES } from './shared.js';
 
@@ -194,8 +193,9 @@ export function drawPlayer(c,p,time,{scale=1,alpha=1,attacking=false,now=time}={
   if(p.hp<=0){c.rotate(-Math.PI/2);c.globalAlpha*=.5;}
   else if(p.dodgeUntil>now){c.rotate(Math.sin((now-p.dodgeAt)/.24*Math.PI)*.35);c.globalAlpha*=.75;}
   if(animated?.flip)c.scale(-1,1);
+  if(animated?.bowPhase==='aim'&&Math.hypot(p.vx||0,p.vy||0)>12)c.translate(0,Math.sin(time*8)*.8);
   const hurt=now-(p.lastHurt??-10);if(hurt>=0&&hurt<.16){c.translate(Math.cos(a)*-3,0);c.filter='brightness(1.7)';}
-  c.drawImage(img,-img.width/2*scale,(-img.height+15)*scale,img.width*scale,img.height*scale);c.restore();const head=img.ironHead;if(head){const hx=animated?.flip?img.width-head.x:head.x;drawHat(c,{...p,facing:animated?.angle??p.facing,x:p.x+(hx-img.width/2)*scale,y:p.y+(head.y-img.height+15+61)*scale},now,scale);}else drawHat(c,p,now,scale);
+  c.drawImage(img,-img.width/2*scale,(-img.height+15)*scale,img.width*scale,img.height*scale);c.restore();
 }
 export function drawBoss(c,b,round,time,now=time){
   const animation=bossFrame(b,round,time,now),img=animation||bossSprite(round,['windup','execute'].includes(b.state)?1:0),sc=round===1?1.1:1;

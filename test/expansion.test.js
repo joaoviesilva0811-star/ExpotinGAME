@@ -51,10 +51,10 @@ test('cooperating team wins through real combat with longer rounds and actual ca
  for(let i=0;i<19000&&r.state!=='finished';i++)r.tick(.05);
  assert.equal(r.state,'finished');assert.equal(r.wins,3);assert.ok(r.results.every(x=>300-x.remaining>45));assert.ok(r.results.every(x=>x.remaining>0));assert.ok([...r.players.values()].every(p=>p.stats.taken>0&&p.stats.damage>0));
 });
-test('cosmetics are validated in lobby, emotes synchronize and combat cancels them',()=>{
+test('removed cosmetic commands cannot equip hats; emotes still synchronize and cancel on combat',()=>{
  const r=new Room('IRON-TEST22','a','Style');const p=r.add('a','Ana');
- r.command(p.id,{type:'cosmetic',seq:1,hat:'cowboy'});assert.equal(p.hat,'cowboy');r.command(p.id,{type:'cosmetic',seq:2,hat:'../../hack'});assert.equal(p.hat,'cowboy');
- p.ready=true;r.start('a');r.tick(r.transitionAt-r.now+.01);r.command(p.id,{type:'cosmetic',seq:3,hat:'cake'});assert.equal(p.hat,'cowboy');
+ r.command(p.id,{type:'cosmetic',seq:1,hat:'cowboy'});assert.equal(p.hat,undefined);r.command(p.id,{type:'cosmetic',seq:2,hat:'../../hack'});assert.equal(p.hat,undefined);
+ p.ready=true;r.start('a');r.tick(r.transitionAt-r.now+.01);r.command(p.id,{type:'cosmetic',seq:3,hat:'cake'});assert.equal(p.hat,undefined);
  r.command(p.id,{type:'emote',seq:4,emote:'spin'});assert.equal(p.emote,'spin');assert.ok(p.emoteUntil>r.now);assert.equal(r.snapshot().players[0].emote,'spin');
  r.hurt(p,10);assert.equal(p.emoteUntil,0);r.command(p.id,{type:'emote',seq:5,emote:'step'});assert.equal(p.emote,'spin');
  r.now=p.emoteReady;r.command(p.id,{type:'emote',seq:6,emote:'cross'});r.command(p.id,{type:'input',seq:7,x:1,y:0,ax:1,ay:0});r.tick(.05);assert.equal(p.emoteUntil,0);
