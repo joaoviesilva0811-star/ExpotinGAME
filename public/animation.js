@@ -31,7 +31,7 @@ export function characterFrame(p,time,now){
   if(moving)col=Math.floor(gait.step/14)%6;
   if(p.emoteUntil>now){const row=['step','cross','spin','victory'].indexOf(p.emote),col=Math.floor((now-p.emoteAt)*7)%6;const image=frame('emote-'+p.classId,Math.max(0,row),col);if(image)return {image,flip:false,angle:p.emote==='spin'?[1.57,.5,-.6,-1.57,3.14,2.4][col]:1.57};}
   const bow=p.classId==='archer'&&p.hp>0?archerPose(p,now):null;
-  if(bow){const image=frame('direction-archer',bow.row,bow.col);if(image)return{image,flip:false,angle:p.facing,bowPhase:bow.phase};}
+  if(bow){const image=frame('direction-archer',bow.row,bow.col);if(image)return{image,flip:bow.flip,angle:p.facing,bowPhase:bow.phase};}
   if(p.lastHurt!==undefined&&now-p.lastHurt<.38){row=5;col=Math.min(5,Math.floor((now-p.lastHurt)/.38*6));}
   else if(now-p.attackAt>=0&&now-p.attackAt<(p.attackFor||.5)){row=4;col=Math.min(5,Math.floor((now-p.attackAt)/(p.attackFor||.5)*6));flip=Math.cos(p.facing)<0;const image=frame('direction-'+p.classId,facingRow(p.facing),col);if(image)return{image,flip:false,angle:p.facing};}
   const image=frame(p.classId,row,col);return image?{image,flip,angle:row===5?Math.PI/2:a}:null;

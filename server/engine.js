@@ -96,7 +96,7 @@ export class Room {
   }
   prepareRound() {
     this.state = 'countdown'; this.transitionAt = this.now + 17.7; this.remaining = 300;
-    this.projectiles = []; this.hazards = []; this.effects = []; this.minions = []; this.drops=[];this.lootKills=0;this.intro={started:this.now,gateAt:this.now+3.55,dialogueAt:this.now+4,awakeningAt:this.now+10.3};this.gateClosed=false;this.awakened=false;this.dialogue=roundDialogue(this,4); this.nextWave = this.transitionAt+14; this.waveIndex = 0;
+    this.projectiles = []; this.hazards = []; this.effects = []; this.minions = []; this.drops=[];this.lootKills=0;this.intro={started:this.now,gateAt:this.now+3.55,dialogueAt:this.now+4,awakeningAt:this.now+10.3};this.gateClosed=false;this.awakened=false;this.dialogue=roundDialogue(this,4); this.nextWave = this.transitionAt+8; this.waveIndex = 0;
     const info = BOSSES[this.round];
     const hp = Math.round(info.hp * (.25 + .1875 * this.players.size));
     this.boss = { x: 820, y: 380, hp, maxHp: hp, phase: 1, state: 'dormant', until: this.transitionAt,
@@ -162,7 +162,9 @@ export class Room {
   projectile(p, damage, color = 'arrow', opts = {}) {
     const dir = aimDirection(p);
     const angle = Math.atan2(dir.y, dir.x) + (opts.angle || 0);
-    this.projectiles.push({ id: uid(), owner: p.id, x: p.x, y: p.y, vx: Math.cos(angle) * 640, vy: Math.sin(angle) * 640, damage, color, left: opts.range || 570, slow: opts.slow || 0 });
+    const q={ id: uid(), owner: p.id, x: p.x, y: p.y, vx: Math.cos(angle) * 640, vy: Math.sin(angle) * 640, damage, color, left: opts.range || 570, slow: opts.slow || 0 };
+    this.projectiles.push(q);
+    this.emit('shot',{owner:p.id,projectile:q.id,x:q.x,y:q.y,vx:q.vx,vy:q.vy,color:q.color});
   }
   basic(p) {
     if (!this.canAct(p) || this.now < p.basicAt) return;
@@ -388,7 +390,7 @@ export class Room {
     for (const h of this.hazards) {
       if (this.now < h.at || this.now > h.end || this.now < h.next || h.solid || h.warningOnly) continue;
       h.next = h.tick ? this.now + h.tick : Infinity;
-      this.emit('impact', { x:h.x,y:h.y,r:h.r,inner:h.inner,shape:h.shape,angle:h.angle,length:h.length,width:h.width,spread:h.spread,round:this.round,minor:!!h.minion });
+      this.emit('impact', { x:h.x,y:h.y,r:h.r,inner:h.inner,shape:h.shape,angle:h.angle,length:h.length,width:h.width,spread:h.spread,round:this.round,visual:h.visual,cloud:!!h.cloud,breaks:!!h.breaks,mark:h.mark,minor:!!h.minion });
       for (const p of this.players.values()) {
         if (!this.active(p)||this.now<p.dodgeUntil||this.now<p.hitSafeUntil||!hazardContains(p,h,13))continue;
         this.hurt(p, h.damage, h.breaks); p.hitSafeUntil=this.now+.2;

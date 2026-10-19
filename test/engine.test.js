@@ -62,7 +62,9 @@ test('rogue double hit and poison apply only to a nearby boss',()=>{
   assert.equal(p.stats.damage,60);p.x=100;r.now+=20;p.energy=100;r.skill(p,2);assert.equal(r.boss.poison.length,0);
 });
 test('revive takes 4 uninterrupted seconds, damage resets progress, bleedout lasts 20 seconds',()=>{
-  const r=battle(['knight','rogue']),a=r.players.get('a'),b=r.players.get('b');a.x=100;b.x=140;a.y=b.y=380;r.hurt(b,999);assert.equal(b.hp,0);
+  const r=battle(['knight','rogue']),a=r.players.get('a'),b=r.players.get('b');
+  // Isolate this timer test from long-range boss marks; damage interruption is asserted below.
+  r.boss.nextAt=r.now+60;r.nextWave=r.now+60;a.x=100;b.x=140;a.y=b.y=380;r.hurt(b,999);assert.equal(b.hp,0);
   const input=seq=>r.command('a',{type:'input',seq,x:0,y:0,ax:1,ay:0,revive:true});
   for(let i=0;i<30;i++){input(i+1);r.tick(.05);}assert.ok(a.revive>1&&b.hp===0);
   r.hurt(a,1);assert.equal(a.revive,0);

@@ -1,4 +1,4 @@
-SHADOWS OF THE IRON CROWN — EDIÇÃO PC 1.3
+SHADOWS OF THE IRON CROWN — EDIÇÃO PC 1.4
 
 WINDOWS 10/11 DE 64 BITS
 
@@ -104,3 +104,21 @@ limpas; anéis preservam o centro seguro. Golpes têm rastros afilados,
 faíscas, fragmentos e poeira. Flechas têm haste, penas e ponta visíveis.
 O arqueiro mantém oito direções durante a mira e o tiro, inclusive ao
 receber dano. Mira vertical e acompanhamento da câmera corrigidos.
+
+NOVIDADES 1.4
+Poses para a direita do arqueiro corrigidas usando as vistas opostas
+espelhadas: corpo, capuz e arco seguem a flecha. Mais lacaios: ondas de
+quatro para grupos de três/quatro, cinco na fase final, limite de até dez.
+A primeira onda começa aos 8s, com aviso de invocação antes de atacar.
+Impactos dos chefes cobrem toda a área atingida, com fissuras, raízes ou
+estilhaços do vazio. O centro seguro dos ataques em anel continua limpo.
+
+EFEITOS INTENSOS E NOVOS ATAQUES
+Cada chefe tem oito padrões, alternando golpes próximos e ataques de longe
+conforme as posições do grupo. Varkhul lança estilhaços; Tharazul semeia
+veneno e raízes; Azrakiel dispara lanças e fecha rotas com golpes do vazio.
+Os impactos têm explosões animadas, fumaça em volume, rochas, raízes e
+cristais; os contornos dos próximos ataques ficam visíveis por cima.
+
+Nove modelos de impacto em 54 quadros: brasas, aço, pedras, raízes, veneno,
+correntes, cristais, foice e fenda do vazio, escolhidos pelo tipo do golpe.

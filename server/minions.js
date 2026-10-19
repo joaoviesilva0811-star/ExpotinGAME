@@ -6,11 +6,14 @@ export const MINIONS = [
   {kind:'thornling',name:'Filhote de Espinhos',hp:62,speed:79,range:60,damage:9,interval:3.1},
   {kind:'acolyte',name:'Acólito do Vazio',hp:68,speed:58,range:300,damage:12,interval:4.2}
 ];
+export function minionWaveBudget(players,phase){
+  return{cap:Math.min(10,2+players*2+phase-1),number:players>=3?(phase===3?5:4):2,interval:[20,17,14][phase-1]};
+}
 export function tickMinions(room,dt){
   const b=room.boss,info=MINIONS[room.round];
   room.minions=room.minions.filter(m=>m.hp>0);
   if(room.now>=room.nextWave){
-    const cap=b.phase===3?5:4,number=Math.min(cap-room.minions.length,room.players.size>=3?2:1);
+    const budget=minionWaveBudget(room.players.size,b.phase),number=Math.max(0,Math.min(budget.cap-room.minions.length,budget.number));
     for(let i=0;i<number;i++){
       const a=(room.waveIndex++*2.399)+i*.7;
       let x=clamp(b.x+Math.cos(a)*270,100,WORLD.w-100),y=clamp(b.y+Math.sin(a)*225,95,WORLD.h-95);
@@ -20,8 +23,8 @@ export function tickMinions(room,dt){
       const m={id:`minion-${++room.eventId}`,x,y,vx:0,vy:0,hp:info.hp,maxHp:info.hp,kind:info.kind,round:room.round,activeAt:room.now+2,attackAt:room.now+3.5,state:'spawn',facing:0,hurtAt:-10,animAt:room.now};
       room.minions.push(m);room.emit('summon',{x,y,kind:m.kind,color:BOSSES[room.round].color});
     }
-    room.nextWave=room.now+(b.phase===3?23:29);
-    if(number>0)room.emit('notice',{text:`${info.name}: lacaios invocados! Elimine-os para recuperar energia.`});
+    room.nextWave=room.now+minionWaveBudget(room.players.size,b.phase).interval;
+    if(number>0)room.emit('notice',{text:`${info.name}: lacaios invocados! Elimine-os para obter poções.`});
   }
   for(const m of room.minions){
     if(room.now<m.activeAt)continue;

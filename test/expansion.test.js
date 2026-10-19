@@ -12,8 +12,8 @@ test('dash spends energy once, obeys cooldown, protects during movement and stay
  for(let i=0;i<6;i++)r.tick(.04);assert.ok(p.x>=55&&p.x<80);r.now+=.01;r.hurt(p,30,true);assert.equal(p.hp,hp-30);
  r.now=p.dodgeReady;p.energy=19;assert.equal(r.dodge(p),false);p.energy=20;assert.equal(r.dodge(p),true);assert.equal(p.energy,0);assert.ok(Math.abs(p.dodgeReady-r.now-DODGE.cooldown)<1e-9);
 });
-test('all eighteen boss patterns are announced and phases cancel unexecuted attacks',()=>{
- for(let round=0;round<3;round++)for(let kind=0;kind<6;kind++){
+test('all twenty-four boss patterns are announced and phases cancel unexecuted attacks',()=>{
+ for(let round=0;round<3;round++)for(let kind=0;kind<8;kind++){
   const [r,p]=battle();r.round=round;r.prepareRound();r.tick(r.transitionAt-r.now+.01);p.x=700;p.y=380;r.planAttack(kind);
   assert.equal(r.boss.attack,kind);assert.ok(r.events.some(e=>e.type==='warning'&&e.text));assert.ok(r.hazards.length);
   assert.ok(r.hazards.every(h=>h.at-r.now>=1.4));
@@ -27,7 +27,7 @@ test('line and annular hitboxes preserve their visible safe zones',()=>{
  const line={x:400,y:400,shape:'line',angle:Math.PI/2,length:300,width:50};assert.equal(hazardContains({x:400,y:520},line),true);assert.equal(hazardContains({x:500,y:400},line),false);
 });
 test('minions spawn with warning, really damage and die, and drop a server-owned potion',()=>{
- const [r,p]=battle();r.nextWave=r.now;tickMinions(r,.05);assert.equal(r.minions.length,1);const m=r.minions[0];
+ const [r,p]=battle();r.nextWave=r.now;tickMinions(r,.05);assert.equal(r.minions.length,2);const m=r.minions[0];
  assert.ok(m.activeAt>r.now);assert.equal(r.hitMinion(p,m,999),0);r.now=m.activeAt+.01;p.x=m.x-45;p.y=m.y;
  m.attackAt=r.now;tickMinions(r,.01);const h=r.hazards.find(h=>h.minion);assert.ok(h);p.x=m.x+Math.cos(m.facing)*45;p.y=m.y+Math.sin(m.facing)*45;
  r.now=h.at+.01;r.tickHazards();assert.ok(p.hp<p.maxHp);

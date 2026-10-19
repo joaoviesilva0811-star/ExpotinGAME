@@ -1,15 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {Room} from '../server/engine.js';
-import {archerPose,facingRow} from '../public/animation-state.js';
+import {archerPose,facingRow,archerDirection} from '../public/animation-state.js';
 
 test('archer keeps eight aiming poses while waiting, strafing, taking damage and releasing the bow',()=>{
  const rows=new Set();
  for(let i=0;i<8;i++){
   const facing=Math.PI/2-i*Math.PI/4,p={facing,vx:90,vy:0,aiming:true,attackAt:10,attackFor:.52,attackSlot:-1,lastHurt:10.15};
-  const draw=archerPose(p,10.1),release=archerPose(p,10.175),hold=archerPose(p,10.9);rows.add(draw.row);
-  assert.equal(draw.row,i);assert.ok(draw.col<3);assert.equal(release.col,3);assert.equal(hold.row,i);assert.equal(hold.phase,'aim');assert.equal(hold.col,1);
-  p.aiming=false;p.vx=0;assert.equal(archerPose(p,11).row,i);
+  const draw=archerPose(p,10.1),release=archerPose(p,10.175),hold=archerPose(p,10.9);rows.add(draw.direction);
+  assert.equal(draw.direction,i);assert.ok(draw.col<3);assert.equal(release.col,3);assert.equal(hold.direction,i);assert.equal(hold.phase,'aim');assert.equal(hold.col,1);
+  p.aiming=false;p.vx=0;assert.equal(archerPose(p,11).direction,i);
  }
  assert.equal(rows.size,8);assert.equal(facingRow(Math.PI*2),facingRow(0));
 });
@@ -24,4 +24,12 @@ test('input followed immediately by a skill fires exactly along cardinal and dia
   assert.equal(p.facing,Math.atan2(ay,ax));assert.equal(r.events.at(-1).angle,p.facing);
   assert.equal(r.dodge(p),true);const speed=86/.24;assert.ok(Math.abs(p.dodgeVX-speed*ax/n)<1e-8);assert.ok(Math.abs(p.dodgeVY-speed*ay/n)<1e-8);
  }
+});
+
+test('east-facing bow uses the verified west body mirrored, including draw and recovery',()=>{
+ for(const [direction,source]of [[1,7],[2,6],[3,5]]){
+  const facing=Math.PI/2-direction*Math.PI/4;assert.deepEqual(archerDirection(facing),{direction,row:source,flip:true});
+  for(const time of [10.05,10.175,10.45,10.9]){const pose=archerPose({facing,aiming:true,attackAt:10,attackFor:.52,attackSlot:-1},time);assert.equal(pose.row,source);assert.equal(pose.flip,true);}
+ }
+ for(const direction of [0,4,5,6,7]){const pose=archerDirection(Math.PI/2-direction*Math.PI/4);assert.equal(pose.row,direction);assert.equal(pose.flip,false);}
 });

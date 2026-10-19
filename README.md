@@ -4,7 +4,7 @@ Jogo 2D cooperativo para PC Windows, para 1 a 4 jogadores, com servidor local in
 
 ## Baixar o jogo pelo GitHub
 
-**[Baixar a versão Windows portátil](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/download/v1.3.0/IronCrown-Windows-x64.zip)** · **[Página da release](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/tag/v1.3.0)**
+**[Baixar a versão Windows portátil](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/download/v1.4.0/IronCrown-Windows-x64.zip)** · **[Página da release](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/tag/v1.4.0)**
 
 Extraia o ZIP completo e abra **Shadows of the Iron Crown.exe**. Não precisa instalar Node.js. A release é publicada pela automação do GitHub após a tag; o andamento aparece na aba **Actions**.
 
@@ -67,6 +67,17 @@ Para jogar pela rede local, acesse `http://IP-DO-SERVIDOR:3000` em cada disposit
 | Esc | Menu local; **não pausa a partida online** |
 
 No celular: joystick, ataque, escudo, reviver e habilidades na tela; mira automática no chefe e câmera que acompanha o jogador no modo retrato. Celular é um suporte inicial; PC oferece mais área visível.
+
+## Atualização 1.4 — Cerco das Feras
+
+- Corrigidas as poses desenhadas do arqueiro: as vistas leste, nordeste e sudeste usam as vistas opostas verificadas, espelhadas. Capuz, corpo e arco acompanham a direção do disparo.
+- Ondas de quatro lacaios para equipes de três/quatro integrantes, chegando a cinco na fase final. Equipes menores recebem dois. Limite simultâneo ajustado pelo grupo, até dez; primeira onda aos oito segundos, seguintes a cada 20/17/14s conforme a fase.
+- Cada chefe tem oito padrões (24 no total), com seleção por distância: pressão de perto, projéteis, faixas e marcas para alcançar jogadores afastados. Varkhul usa estilhaços e execução circular; Tharazul lança sementes e prende com raízes; Azrakiel combina lanças do vazio e golpes da foice.
+- Efeitos intensos com 54 quadros originais de erupção, rochas, fumaça, raízes e cristais, sobrepostos em volume. Até 1.800 partículas, 96 nuvens e 160 erupções desenhadas por quadro, com cache de texturas e aviso de perigo por cima dos efeitos.
+- Impactos dos chefes cobrem o interior e a largura da área atingida: fissuras e fragmentos no castelo, raízes na floresta e estilhaços do vazio na catedral. Frentes de choque respeitam cones, faixas e o centro seguro dos anéis.
+- Partículas, superfícies e dano usam a mesma geometria. Os efeitos de impacto são desenhados no chão, abaixo dos personagens, com limites de quantidade.
+
+[Ver o arqueiro em disparos reais](preview/14-archer-real-directions.png) · [Ver os impactos por arena](preview/14-area-impacts.png)
 
 ## Atualização 1.3 — Ferro e Cinzas
 
@@ -168,3 +179,7 @@ dist/          Pacotes gerados por npm run build
 Esta versão tem balanceamento inicial reforçado por simulações de equipe, mas ainda não houve teste de carga em larga escala nem avaliação com jogadores externos. Os atlas novos têm 732 quadros desenhados: 216 de movimentos/reações, 288 de ataques direcionais dos heróis/chefes, 72 de emotes e 156 de lacaios. O acólito reutiliza uma direção espelhada para completar os oito sentidos. Não há interpolação por esqueleto: são sequências de quadros e pequenas transformações de impacto no Canvas. Trilha e efeitos são composição e síntese próprias renderizadas em Ogg, sem gravações orquestrais ou músicas do TikTok.
 
 O servidor opera como uma instância única. Não há coordenação multi-instância, chat, matchmaking automático, cadastro por e-mail ou restauração de partidas após reinício. O ranking agrupa a formação por seus nomes de exibição ordenados; não é um sistema competitivo com identidade verificada. HTTPS, domínio, disco persistente e publicação dependem da hospedagem escolhida e não são fornecidos pelo código. Para a edição PC/LAN, a hospedagem não é necessária. O Dockerfile é uma opção de empacotamento e exige validação na hospedagem de destino.
+
+Nove modelos de impacto distinguem brasas, corte de aço, onda de pedras, raízes, nuvem venenosa, correntes, cristais, corte de foice e fenda do vazio. A seleção usa o tipo de área publicado pelo servidor; cortes acompanham o ângulo do golpe e nuvens de veneno não usam raízes.
+
+[Prévia dos nove modelos de impacto](preview/14-effect-models.png) · [Arqueiro em oito direções](preview/14-archer-real-directions.png)

@@ -30,7 +30,7 @@ export class AudioEngine {
     if(kind==='arrow'){this.noise(.08,.18,5000);this.tone(700,.08,'sine',.1,-450);}
     if(kind==='hit'){this.noise(.08,.25,1900);this.tone(100,.12,'triangle',.4,-55);}
     if(kind==='block'){this.tone(710,.15,'triangle',.4,-180);this.tone(1100,.1,'sine',.15);}
-    if(kind==='boss'){this.noise(.25,.4,500);this.tone(68,.3,'triangle',.4,-35);}
+    if(kind==='boss'){const now=this.ctx?.currentTime||0;if(now-(this.lastBossImpact??-10)<.25)return;this.lastBossImpact=now;this.noise(.65,.55,620);this.tone(52,.65,'sine',.5,-29);this.tone(98,.35,'triangle',.22,-55);if(round===1)this.noise(.5,.2,1400);if(round===2)this.tone(190,.5,'sawtooth',.09,-110);}
     if(kind==='magic'){this.tone(330,.3,'sine',.3,440);this.tone(440,.5,'triangle',.14,440);}
     if(kind==='warning'){this.tone(146,.4,'triangle',.3);this.tone(155,.5,'sine',.2);}
     if(kind==='heal'){[330,440,660].forEach((f,i)=>setTimeout(()=>this.tone(f,.4,'sine',.25),i*100));}

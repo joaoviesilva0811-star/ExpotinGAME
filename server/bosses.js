@@ -1,18 +1,24 @@
 import { BOSSES, WORLD, clamp, distance } from '../public/shared.js';
 
 export const ATTACK_NAMES=[
-  ['Corte do Tirano','Tríade de Ferro','Ondas do Trono','Prisão dos Condenados','Investida Real — esquive da faixa!','Lâminas da Coroa'],
-  ['Jardim de Espinhos','Sopro da Putrefação','Pisada e Onda Sísmica','Raízes em Cruz','Esporos Errantes','Círculo da Colheita — encontre a zona segura!'],
-  ['Foice Dupla do Eclipse','Fissuras em Sequência','Sentença da Morte','Cruz da Catedral — saia das faixas!','Estrelas das Seis Asas','Pulso do Vazio — procure o centro!']
+  ['Corte do Tirano','Tríade de Ferro','Ondas do Trono','Prisão dos Condenados','Investida Real — esquive da faixa!','Lâminas da Coroa','Estilhaços do Trono','Círculo do Carrasco'],
+  ['Jardim de Espinhos','Sopro da Putrefação','Pisada e Onda Sísmica','Raízes em Cruz','Esporos Errantes','Círculo da Colheita — encontre a zona segura!','Sementes de Caça','Abraço da Mata'],
+  ['Foice Dupla do Eclipse','Fissuras em Sequência','Sentença da Morte','Cruz da Catedral — saia das faixas!','Estrelas das Seis Asas','Pulso do Vazio — procure o centro!','Lanças do Horizonte','Trono do Eclipse']
 ];
-const cycle=[0,3,1,4,2,5];
+const cycle=[0,3,1,6,2,5,7,4];
+const ranges=[{near:[0,1,2,7],far:[3,4,5,6]},{near:[2,3,5,7],far:[0,1,4,6]},{near:[0,3,5,7],far:[1,2,4,6]}];
+export function chooseBossAttack(round,index,dist,previous){
+ const pool=dist<205?ranges[round].near:dist>315?ranges[round].far:cycle;
+ let offset=index%pool.length;if(pool[offset]===previous)offset=(offset+1)%pool.length;
+ return pool[offset];
+}
 export function planBossAttack(room,forcedKind){
   const b=room.boss,living=[...room.players.values()].filter(p=>room.active(p));if(!living.length)return;
-  const target=living[b.attackIndex%living.length];
-  let kind=forcedKind??cycle[b.attackIndex%cycle.length];
-  if(forcedKind===undefined&&distance(b,target)>355&&kind===0)kind=4;
+  const farthest=living.reduce((a,p)=>distance(b,p)>distance(b,a)?p:a,living[0]);
+  const target=b.attackIndex%3===1&&distance(b,farthest)>315?farthest:living[b.attackIndex%living.length];
+  const kind=forcedKind??chooseBossAttack(room.round,b.attackIndex,distance(b,target),b.attack);
   b.attackIndex++;b.target=target.id;b.facing=Math.atan2(target.y-b.y,target.x-b.x);b.state='windup';b.attack=kind;
-  const heavy=[1,2,4].includes(kind),windup=(heavy?1.95:1.65)-(b.phase-1)*.12;
+  const heavy=[1,2,4,6,7].includes(kind),windup=(heavy?1.95:1.65)-(b.phase-1)*.12;
   b.startedAt=room.now;b.until=room.now+windup;b.attackName=ATTACK_NAMES[room.round][kind];
   b.recoveryFor=heavy?2:1.5;b.executeFor=.45;b.guarding=b.phase>1;
   const add=(x,y,r,damage,options={})=>{
@@ -38,6 +44,8 @@ export function planBossAttack(room,forcedKind){
       b.charge={x:b.x,y:b.y,tx,ty,start:b.until,end:b.until+.65};b.recoveryFor=2.35;
     }
     if(kind===5)volley(b.phase===3?9:7,1.85,180,15,'blade');
+    if(kind===6){for(let i=0;i<3;i++)volley(5,.9,225,14,'blade',i*.65);for(const p of living.slice(0,b.phase>1?2:1))circle(p.x,p.y,72,19,1.4,{visual:'shrapnel'});b.recoveryFor=2.3;}
+    if(kind===7){circle(b.x,b.y,185,29,0,{breaks:true});for(let i=0;i<4;i++)cone(b.facing+i*Math.PI/2,245,22,.8+i*.1).spread=.45;b.recoveryFor=2.25;}
   }else if(room.round===1){
     if(kind===0){living.forEach((p,i)=>circle(p.x,p.y,60,18,i*.18,{root:.9,visual:'roots'}));}
     if(kind===1){for(let i=1;i<=3;i++){
@@ -48,6 +56,8 @@ export function planBossAttack(room,forcedKind){
     if(kind===3){for(let i=0;i<4;i++){const a=b.facing+i*Math.PI/2;line(b.x,b.y,b.x+Math.cos(a)*350,b.y+Math.sin(a)*350,58,22,i*.18,{root:.65,visual:'roots'});}}
     if(kind===4){volley(b.phase===3?12:9,Math.PI*2,145,13,'seed',0,true);circle(target.x,target.y,76,5,.9,{cloud:true,tick:1,end:b.until+4.2});}
     if(kind===5){circle(b.x,b.y,300,30,0,{inner:128,breaks:true,visual:'roots'});for(let i=0;i<4;i++){const a=i*Math.PI/2+.4;circle(b.x+Math.cos(a)*210,b.y+Math.sin(a)*210,48,0,1.2,{solid:true,end:b.until+8,visual:'roots'});}}
+    if(kind===6){volley(7,1.05,210,12,'seed');for(let i=0;i<3;i++){const a=b.facing+(i-1)*.3,x=clamp(target.x+Math.cos(a)*i*70,75,1125),y=clamp(target.y+Math.sin(a)*i*70,75,685);circle(x,y,70,5,i*.4,{cloud:true,tick:1,end:b.until+5.5});}b.recoveryFor=2.2;}
+    if(kind===7){circle(b.x,b.y,150,26,0,{root:.9,breaks:true});circle(b.x,b.y,275,22,.9,{inner:165,breaks:true,visual:'roots'});b.recoveryFor=2.2;}
     if(b.phase>1&&kind!==5&&room.hazards.filter(h=>h.solid).length<4){const a=b.attackIndex*1.9;circle(clamp(b.x+Math.cos(a)*205,220,980),clamp(b.y+Math.sin(a)*175,170,590),28,0,.65,{solid:true,end:b.until+7,visual:'roots'});}
   }else{
     if(kind===0){cone(b.facing,215,30);cone(b.facing+Math.PI,220,28,.85);b.recoveryFor=1.8;}
@@ -56,6 +66,8 @@ export function planBossAttack(room,forcedKind){
     if(kind===3){line(80,b.y,1120,b.y,70,31,0,{breaks:true,visual:'void'});line(b.x,65,b.x,695,70,31,.65,{breaks:true,visual:'void'});}
     if(kind===4){volley(b.phase===3?12:8,Math.PI*2,175,17,'void',0,true);volley(5,1.3,190,16,'void',.85);b.executeFor=1.15;}
     if(kind===5){circle(b.x,b.y,350,32,0,{inner:145,breaks:true});for(let i=0;i<5;i++){const a=i*Math.PI*2/5;circle(clamp(b.x+Math.cos(a)*255,90,1110),clamp(b.y+Math.sin(a)*255,90,670),52,23,.9);}}
+    if(kind===6){for(let i=0;i<3;i++){const a=b.facing+(i===0?0:i===1?.27:-.27);line(b.x,b.y,clamp(b.x+Math.cos(a)*650,60,1140),clamp(b.y+Math.sin(a)*650,60,700),52,23,i*.65,{visual:'void'});}volley(7,1.2,235,13,'void',1.6);b.recoveryFor=2.3;}
+    if(kind===7){for(let i=0;i<4;i++)cone(b.facing+i*Math.PI/2,235,24,i*.3).spread=.55;circle(b.x,b.y,350,24,1.45,{inner:245,breaks:true});b.recoveryFor=2.25;}
     if(b.phase===3&&kind!==5)circle(target.x,target.y,62,20,1.6,{visual:'void'});
   }
   room.emit('warning',{text:b.attackName,kind,phase:b.phase,duration:windup,heavy});

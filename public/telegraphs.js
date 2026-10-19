@@ -62,3 +62,10 @@ export function drawTelegraph(c,h,now,time,round){
  }
  c.restore();
 }
+// Repaint the warning edge above dense blast clouds, keeping escape routes legible.
+export function drawTelegraphEdge(c,h,now){
+ if(now>=h.at||h.solid)return;
+ c.save();c.translate(h.x,h.y);outline(c,h);c.strokeStyle='#090d18d9';c.lineWidth=4;c.stroke();c.strokeStyle=h.warningOnly?'#dfc9ff':h.breaks?'#ffe0a0':'#ffc2aa';c.lineWidth=1.6;c.stroke();
+ if(h.inner){c.strokeStyle='#d5f2cf';c.lineWidth=1;c.beginPath();c.arc(0,0,h.inner,0,TAU);c.stroke();}
+ c.restore();
+}

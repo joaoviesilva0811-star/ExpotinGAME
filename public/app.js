@@ -3,7 +3,7 @@ import { drawPlayer, drawBoss, terrain, pillar, torch, light, playerSprite, expo
 import { STORY,BRIDGES,endingStory } from './story.js';
 import { cinematicPlayer,drawGate,drawAwakening,drawCorridor,drawEnding } from './scenes.js';
 import { hudIcon } from './hud-art.js';
-import { drawTelegraph } from './telegraphs.js';
+import { drawTelegraph,drawTelegraphEdge } from './telegraphs.js';
 import { drawMinion } from './animation.js';
 import { impactFX,hazardImpact,magicFX,footFX,slashFX,bowFX,drawProjectile,stepFX,drawGroundFX,drawFX,resetFX } from './vfx.js';
 import { AudioEngine } from './audio.js';
@@ -250,10 +250,10 @@ function eventEffect(e){
   if(e.type==='attack'){
     attackUntil.set(e.owner,frameTime+.5);
     if(e.kind!=='archer')slashFX(e.x,e.y,e.angle,e.kind==='rogue'?'violet':'gold',e.slot===1,e.slot>=0?0:.12);
-    else bowFX(e.x,e.y,e.angle,e.slot===2?'ice':e.slot===0?'gold':'green',e.slot>=0?0:.17);
     if(e.slot>=0)magicFX(e.x,e.y,e.kind==='archer'?'green':e.kind==='rogue'?'violet':'gold',12);audio.fx(e.kind==='archer'?'arrow':e.slot===2?'magic':'attack');
     if(e.slot===2&&e.kind==='knight'){burst(e.x,e.y,'#e7cb85',28);ring(e.x,e.y,170,'#e4c583',.8);}
   }
+  if(e.type==='shot')bowFX(e.x,e.y,Math.atan2(e.vy,e.vx),e.color==='ice'?'ice':e.color==='pierce'?'gold':'green',0);
   if(e.type==='hurt'){
     impactFX(e.x,e.y-12,e.blocked?'gold':'red');
     burst(e.x,e.y-20,e.blocked?'#a8cee4':'#d96973',e.blocked?12:19);floats.push({x:e.x,y:e.y-65,text:'−'+Math.round(e.amount),color:e.blocked?'#a4d6e3':'#f2a19e',life:1});audio.fx(e.blocked?'block':'hit');if(e.owner===session.id){shake=e.blocked?2:5;flash=e.blocked?0:.18;}
@@ -267,7 +267,7 @@ function eventEffect(e){
   if(e.type==='venom')magicFX(e.x,e.y,'green',18);
   if(e.type==='frost'){ring(e.x,e.y,e.r,'#b8eeff',1);magicFX(e.x,e.y,'ice',60);audio.fx('frost');}
   if(e.type==='dash'){for(let i=0;i<8;i++)burst(e.x+(e.tx-e.x)*i/8,e.y+(e.ty-e.y)*i/8,e.kind==='rogue'?'#a995d5':'#d9be85',3,30);}
-  if(e.type==='impact'){hazardImpact(e,room.round===1?'green':room.round===2?'violet':'red');burst(e.x,e.y,info.color,26,180);ring(e.x,e.y,e.r,info.color);shake=e.minor?1:4;audio.fx(e.minor?'attack':'boss',room.round);}
+  if(e.type==='impact'){hazardImpact(e,room.round===1?'green':room.round===2?'violet':'red');shake=Math.max(shake,e.minor?2:9);audio.fx(e.minor?'attack':'boss',room.round);}
   if(e.type==='heal'){burst(e.x,e.y-20,'#9ce6b6',28);ring(e.x,e.y,70,'#a0e5b3');audio.fx('heal');}
   if(e.type==='warning'||e.type==='phase'){if(e.type==='phase')warning(e.text,3);audio.fx('warning');if(e.type==='phase'){ring(e.x,e.y,310,info.color,1.4);burst(e.x,e.y,info.color,50,200);shake=7;}}
   if(e.type==='notice')toast(e.text);
@@ -345,6 +345,10 @@ function render(time){
   for(let i=rings.length-1;i>=0;i--){const p=rings[i];p.life-=dt;if(p.life<=0){rings.splice(i,1);continue;}const progress=1-p.life/p.total;ctx.globalAlpha=p.life/p.total;ctx.strokeStyle=p.color;ctx.lineWidth=p.slash?5:2;ctx.beginPath();if(p.slash)ctx.arc(p.x,p.y-17,p.r*(.5+progress*.5),p.angle-1.2+progress,p.angle+1.2+progress);else ctx.ellipse(p.x,p.y,p.r*(.3+progress*.7),p.r*(.3+progress*.7)*.6,0,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;}
   for(let i=particles.length-1;i>=0;i--){const p=particles[i];p.life-=dt;if(p.life<=0){particles.splice(i,1);continue;}p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=45*dt;ctx.globalAlpha=clamp(p.life/.3,0,1);ctx.fillStyle=p.color;ctx.fillRect(Math.round(p.x),Math.round(p.y),p.size,p.size);}ctx.globalAlpha=1;
   drawFX(ctx);
+  if(gameplay&&!corridor&&!ending){
+    for(const h of room.hazards)drawTelegraphEdge(ctx,h,now);
+    const p=me();if(p&&p.hp>0){const pos=positions.get(p.id)||p;ctx.strokeStyle='#fce6b9bb';ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(pos.x-7,pos.y+15);ctx.lineTo(pos.x,pos.y+19);ctx.lineTo(pos.x+7,pos.y+15);ctx.stroke();}
+  }
   for(let i=floats.length-1;i>=0;i--){const f=floats[i];f.life-=dt;f.y-=30*dt;if(f.life<=0){floats.splice(i,1);continue;}ctx.globalAlpha=Math.min(1,f.life*3);ctx.font='bold 16px Georgia';ctx.textAlign='center';ctx.strokeStyle='#17202b';ctx.lineWidth=3;ctx.strokeText(f.text,f.x,f.y);ctx.fillStyle=f.color;ctx.fillText(f.text,f.x,f.y);}ctx.globalAlpha=1;
   // Mist and drifting embers are deterministic, independent of network simulation.
   for(let i=0;i<25;i++){const x=(i*197+frameTime*(i%3+1)*4)%1200,y=(i*97+Math.sin(frameTime*.5+i)*17)%760;ctx.globalAlpha=.2+Math.sin(frameTime+i)*.12;ctx.fillStyle=round===1?'#afc29a':round===2?'#bba9dc':'#c5a77f';ctx.fillRect(x,y,2,2);}ctx.globalAlpha=1;

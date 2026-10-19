@@ -53,3 +53,13 @@ A música e os sons Ogg ficam no pacote. `compose-audio.py` permite reconstruir 
 `ui-iron-frame.png` é uma moldura original usada por nove recortes CSS nos menus, retratos e HUD; o centro é transparente. Falas usam retratos e revelação por tempo compartilhado, sem mudar a duração da cena. Os chapéus foram removidos do cliente e do estado da sala.
 
 Telegraphs mantêm a geometria do dano, com contornos separados para anéis. Rastros de armas são polígonos afilados; partículas e projéteis permanecem limitados por orçamento local e não decidem colisões ou dano.
+
+## Revisão 1.4
+
+`archerDirection` seleciona as poses oeste/noroeste/sudoeste verificadas e espelha para leste/nordeste/sudeste, corrigindo a orientação do capuz nos próprios desenhos. O teste de revisão captura flechas reais e usa a pose do mesmo snapshot, em vez de verificar apenas índices distintos.
+
+`impact-geometry.js` distribui pontos pelo interior e pela largura das hitboxes. `vfx.js` usa o mesmo contorno como recorte para superfícies de impacto e frentes de choque; furos seguros ficam sem preenchimento. Até 16 superfícies transitórias e 1.800 partículas permanecem ativas. Os atlas `fx-eruptions.png`, `fx-physical.png` e `fx-occult.png` contêm 54 quadros; `volumes.js` mantém as imagens em cache, registra o contato com o chão e suaviza bordas dos recortes apenas na renderização. Até 96 partículas de fumaça e 160 erupções são desenhadas simultaneamente. As marcações futuras são redesenhadas por cima do volume. Lacaios têm orçamento por tamanho de equipe e fase, máximo de dez, com invocação anunciada e dano controlado pelo servidor.
+
+`chooseBossAttack` separa padrões próximos e distantes para cada chefe, evita repetição imediata e alterna alvos. Os novos padrões 6 e 7 trazem controle a distância e pressão próxima. Todas as áreas ficam fixas após o aviso, e transições de fase cancelam preparações/rajadas pendentes. O evento `shot` publica a direção real do projétil no instante do disparo, inclusive quando uma cobertura o absorve antes do próximo snapshot.
+
+Nove modelos de impacto distinguem brasas, corte de aço, onda de pedras, raízes, nuvem venenosa, correntes, cristais, corte de foice e fenda do vazio. A seleção usa o tipo de área publicado pelo servidor; cortes acompanham o ângulo do golpe e nuvens de veneno não usam raízes.
