@@ -1,0 +1,73 @@
+SHADOWS OF THE IRON CROWN — EDIÇÃO PC 1.1
+
+WINDOWS 10/11 DE 64 BITS
+
+1. Extraia TODO o ZIP para uma pasta, por exemplo Jogos\IronCrown.
+2. Abra "Shadows of the Iron Crown.exe".
+3. Mantenha as pastas resources, locales e as DLLs ao lado do executável.
+   Não execute de dentro do ZIP e não mova somente o .exe.
+
+Não precisa instalar Node.js, pagar hospedagem ou usar a Internet para jogar.
+O aplicativo inclui o servidor local e o runtime de renderização.
+
+SOLO COM COMPANHEIROS
+
+Escolha nome e classe e clique "Jogar solo com companheiros".
+Na preparação, confirme sua classe, marque "Estou pronto" e inicie.
+Os dois bots usam as outras classes:
+  Cavaleiro -> Lyra (arqueiro) e Nyx (ladino).
+  Arqueiro  -> Aldric (cavaleiro) e Nyx (ladino).
+  Ladino    -> Aldric (cavaleiro) e Lyra (arqueiro).
+Eles lutam, gastam energia, esquivam e tentam reviver aliados. Não são invencíveis.
+O modo solo usa apenas o próprio computador; não abre porta para a rede.
+
+MULTIPLAYER NA MESMA REDE (SEM SERVIDOR PAGO)
+
+No computador anfitrião:
+1. Abra o jogo e clique "Hospedar na rede local".
+2. No lobby, anote o IPv4 mostrado e o código IRON-XXXXXX da sala.
+3. Compartilhe IP e código com seus amigos.
+4. Se o Windows solicitar, permita o jogo/servidor na REDE PRIVADA.
+
+Nos outros computadores:
+1. Extraia o mesmo pacote e abra o executável.
+2. Clique "Entrar no PC de um amigo".
+3. Digite o IPv4 do anfitrião, como 192.168.1.10, e o código da sala.
+4. Sem código, a lista mostra as salas públicas desse anfitrião.
+5. Todos escolhem classe e marcam pronto; o líder inicia a partida.
+
+O anfitrião precisa manter o jogo aberto. Fechar a janela da partida no
+anfitrião encerra o servidor e desconecta os amigos. Não há migração de
+servidor entre PCs. Fechar uma janela de cliente não encerra o anfitrião.
+
+Conexão usa TCP 48230. Se falhar, confira:
+- Todos na mesma rede local, sem rede de convidados/isolamento entre clientes.
+- IPv4 do anfitrião correto, sem http:// nem porta no campo.
+- Firewall do anfitrião permite o aplicativo/Node embarcado na rede privada.
+- Apenas uma cópia hospedando por computador/porta.
+Não precisa abrir portas no roteador nem usar IP público. IPv6 e conexão
+direta pela Internet não fazem parte desta versão LAN. Use a rede de pessoas
+de confiança; o tráfego LAN não usa TLS. Prefira sessão rápida a senhas nessa rede.
+
+Também é possível entrar pelo navegador no endereço http://IP-DO-ANFITRIAO:48230
+enquanto o anfitrião estiver aberto, usando nome e o mesmo código de sala.
+
+CONTROLES
+WASD / setas: mover. Mouse: mirar. Botão esquerdo segurado ou J: ataque básico.
+1, 2, 3: habilidades. Espaço: defender. E: segurar 4 segundos perto de aliado
+caído para reviver. Esc: ajuda/menu local. O menu não pausa o multiplayer.
+Botão musical no canto superior: ativar/desativar áudio.
+
+DADOS E LIMITES
+Dados locais ficam no perfil do usuário (AppData/Roaming/iron-crown-desktop/saves).
+Partidas em andamento não sobrevivem ao fechamento do anfitrião. Os bots não
+substituem um humano que perde conexão durante o combate: essa vaga fica
+reservada por até 60 segundos. É possível completar classes com bots antes
+de iniciar uma sala LAN. As salas suportam até quatro personagens no total.
+
+O pacote Windows foi montado com runtimes oficiais e hashes verificados.
+O aplicativo equivalente foi testado em Linux; execução do .exe em Windows
+físico ainda precisa ser confirmada no seu computador. Não há instalador,
+atualização automática nem assinatura digital própria deste projeto.
+
+Arte original em visão de cima, três arenas e três chefes preservados.

@@ -1,0 +1,38 @@
+{
+  "version": "1.1.0",
+  "filename": "IronCrown-Windows-x64.zip",
+  "size": 196153768,
+  "sha256": "444175d5544c47756a3883f0af5cc06ced93902cce3239585750c68a85e088d8",
+  "parts": [
+    {
+      "name": "IronCrown-PC.zip.001",
+      "size": 33554432,
+      "sha256": "002f6221a92f67ecdfc6a23fd6d897d49060731138633aa150dc5b459ebd937f"
+    },
+    {
+      "name": "IronCrown-PC.zip.002",
+      "size": 33554432,
+      "sha256": "9546bac5595a1562c0ca75cb720aa1276abc876651057d6c2da57e964c2c007b"
+    },
+    {
+      "name": "IronCrown-PC.zip.003",
+      "size": 33554432,
+      "sha256": "68b9f3634b8b5141944e1939b04cafd6136ca64be48412aa25d46bf780017463"
+    },
+    {
+      "name": "IronCrown-PC.zip.004",
+      "size": 33554432,
+      "sha256": "f7b42aa33ccfe91d5dd265413a0b5d7d4aa514c0860a3d1322def5443fa54d8f"
+    },
+    {
+      "name": "IronCrown-PC.zip.005",
+      "size": 33554432,
+      "sha256": "d1c8d5141841b66ddf5bf833216f560a8b0c6096ff1e59f069a5913bc7e02a06"
+    },
+    {
+      "name": "IronCrown-PC.zip.006",
+      "size": 28381608,
+      "sha256": "1d4a0eb2cb8c18e763a513057e21ae69247789437b6491fb100bbc90410f79e5"
+    }
+  ]
+}

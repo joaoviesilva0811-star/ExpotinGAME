@@ -1,0 +1,25 @@
+{
+  "name": "shadows-of-the-iron-crown",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Cooperative dark fantasy boss fights with an authoritative multiplayer server",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test": "node --test test/*.test.js",
+    "build": "node scripts/package.js",
+    "build:windows": "node --use-env-proxy scripts/desktop-build.js",
+    "build:linux": "node --use-env-proxy scripts/desktop-build.js --linux"
+  },
+  "dependencies": {
+    "ws": "8.22.0"
+  },
+  "devDependencies": {
+    "electron": "44.9.0",
+    "playwright-core": "1.56.1"
+  }
+}

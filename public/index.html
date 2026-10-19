@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#101213">
+  <meta name="description" content="Reúna seu grupo. Enfrente três chefes. Sobreviva à Coroa de Ferro. Um RPG cooperativo em tempo real para navegador.">
+  <title>Shadows of the Iron Crown</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script src="config.js"></script>
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="Iron Crown início"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M5 12l8 7 7-13 7 13 8-7-4 20H9zM9 36h22"/></svg><span>IRON CROWN<small>COOPERATIVE DARK FANTASY</small></span></a>
+    <nav><span id="network" class="connection"><i></i> INICIANDO</span><button id="audio-toggle" class="icon-btn" title="Ativar áudio" aria-label="Ativar áudio">♫</button><button id="help" class="icon-btn" title="Como jogar" aria-label="Como jogar">?</button><button id="fullscreen" class="icon-btn" title="Tela cheia" aria-label="Tela cheia">⛶</button></nav>
+  </header>
+  <main id="stage">
+    <canvas id="game" aria-label="Arena de combate de Shadows of the Iron Crown"></canvas>
+    <div class="vignette"></div>
+    <section id="home" class="screen">
+      <div class="hero-copy"><span class="eyebrow"><span class="line"></span> 1–4 JOGADORES · COOP ONLINE</span><h1>SHADOWS <em>of the</em><strong>IRON CROWN</strong></h1><p class="hero-subtitle">Três chefes. Uma última expedição.<br>O trono não cairá sozinho.</p><div class="hero-tags"><span>◈ COMBATE EM TEMPO REAL</span><span>◈ PIXEL ART 2D</span></div><button class="text-link" id="open-lore">Conheça os inimigos <span>↗</span></button></div>
+      <div class="entry-panel panel">
+        <div class="panel-top"><span class="eyebrow">A EXPEDIÇÃO COMEÇA AQUI</span><span class="ornament">✦</span></div><h2>Entre nas sombras.</h2><p class="muted" id="entry-subtitle">Escolha um nome. Reúna seus aliados.</p>
+        <form id="guest-form"><label for="player-name">NOME DO JOGADOR</label><input id="player-name" maxlength="20" minlength="2" placeholder="Como devemos chamar você?" autocomplete="nickname" required><button class="primary" type="submit" id="guest-submit">Jogar sem conta <span>→</span></button></form>
+        <div id="session-panel" hidden><p class="session-name">Bem-vindo, <strong id="session-name"></strong>.</p><button class="primary" id="create-room">Criar uma expedição <span>+</span></button><button class="secondary solo-button" id="create-solo">Jogar solo com 2 companheiros <span>◈</span></button><label class="check"><input type="checkbox" id="public-room"> Permitir entrada pela lista de salas públicas</label><div class="divider"><span>OU ENTRE COM UM CÓDIGO</span></div><form id="join-form" class="join"><input id="room-code" placeholder="IRON-XXXXXX" maxlength="11" aria-label="Código da sala" autocomplete="off" required><button type="submit" class="secondary" title="Entrar em uma sala">Entrar →</button></form><button class="text-link" id="public-rooms">Explorar salas públicas <span>↗</span></button><button class="text-link subtle" id="logout">Trocar de jogador</button></div>
+        <div id="account-links"><div class="divider"><span>SUA LENDA PODE CONTINUAR</span></div><div class="account-buttons"><button class="secondary" id="login">Entrar</button><button class="secondary" id="register">Criar conta</button></div><p class="fine">Contas opcionais. Seu recorde de equipe é salvo no servidor.</p></div>
+      </div>
+      <div class="home-footer"><span><i class="dot"></i> TRÊS ARENAS. QUINZE MINUTOS. UMA COROA.</span><button id="ranking" class="text-link">Quadro de lendas ↗</button></div>
+    </section>
+    <section id="lobby" class="screen" hidden></section>
+    <section id="hud" hidden>
+      <div id="team-panel"></div><div class="boss-panel"><div class="boss-caption"><span id="boss-round"></span><span id="timer">05:00</span></div><h2 id="boss-name"></h2><div class="boss-health"><div id="boss-health-fill"></div><span id="boss-hp"></span></div><span id="boss-phase"></span></div>
+      <div class="battle-meta"><span id="arena-name"></span><button id="battle-menu" class="icon-btn" aria-label="Menu">☰</button></div>
+      <div id="danger" role="status"></div><div id="countdown"></div><div id="down-message"></div>
+      <div class="player-panel"><canvas id="portrait" width="64" height="64"></canvas><div><div class="player-label"><strong id="my-name"></strong><span id="my-class"></span></div><div class="resource health"><i id="my-health"></i><span id="my-hp"></span></div><div class="resource energy"><i id="my-energy"></i><span id="my-en"></span></div><div id="status-effects"></div></div></div>
+      <div class="abilities" id="abilities"></div><div class="battle-tips"><span><kbd>E</kbd> segurar para reviver</span><span><kbd>Mouse</kbd> ataque básico</span><span><kbd>Espaço</kbd> defender</span></div>
+      <div id="touch-controls"><div id="joystick" aria-label="Movimentação"><span></span></div><div class="touch-actions"><button id="touch-revive" aria-label="Reviver">E</button><button id="touch-block" aria-label="Defender">ESCUDO</button><button id="touch-attack" aria-label="Ataque básico">ATACAR</button></div></div>
+    </section>
+    <section id="results" class="screen" hidden></section>
+  </main>
+  <div id="toasts" aria-live="polite"></div>
+  <dialog id="modal"><button id="close-modal" class="modal-close" aria-label="Fechar">×</button><div id="modal-content"></div></dialog>
+  <footer class="bottom-bar"><span>SHADOWS OF THE IRON CROWN</span><span id="footer-state">A escuridão espera por você.</span><span>V.1.1 · PC / LAN / CO-OP</span></footer>
+</body>
+</html>
