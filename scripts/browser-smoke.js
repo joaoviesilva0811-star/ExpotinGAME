@@ -17,7 +17,7 @@ try{
   await a.waitForFunction(()=>document.querySelectorAll('.member').length===2);
   await a.screenshot({path:'artifacts/02-sala.png',fullPage:true});
   await a.getByRole('button',{name:'Estou pronto'}).click();await b.getByRole('button',{name:'Estou pronto'}).click();await a.getByRole('button',{name:'Iniciar expedição'}).click();
-  await a.locator('#hud').waitFor({state:'visible'});await a.waitForTimeout(3500);
+  await a.locator('#hud').waitFor({state:'visible'});await a.waitForTimeout(18500);
   await a.mouse.move(970,520);await a.keyboard.down('KeyD');await a.waitForTimeout(1200);await a.keyboard.up('KeyD');
   await a.keyboard.press('Digit3');await a.keyboard.down('Space');await a.waitForTimeout(150);
   await a.screenshot({path:'artifacts/03-defesa.png',fullPage:true});await a.keyboard.up('Space');
@@ -25,7 +25,7 @@ try{
   await b.screenshot({path:'artifacts/04-ataque.png',fullPage:true});await b.mouse.up();
   const aEnergy=await a.locator('#my-en').textContent();if(aEnergy==='100 / 100')throw new Error('Energy did not decrease after skill and defense');
   await a.reload();await a.locator('#hud').waitFor({state:'visible'});await a.waitForTimeout(300);await a.screenshot({path:'artifacts/05-reconexao.png'});
-  const mobile=await player('Mobile',true);await mobile.screenshot({path:'artifacts/06-celular-inicio.png',fullPage:true});await mobile.locator('#create-room').click();await mobile.getByRole('button',{name:'Estou pronto'}).click();await mobile.getByRole('button',{name:'Iniciar expedição'}).click();await mobile.waitForTimeout(3400);
+  const mobile=await player('Mobile',true);await mobile.screenshot({path:'artifacts/06-celular-inicio.png',fullPage:true});await mobile.locator('#create-room').click();await mobile.getByRole('button',{name:'Estou pronto'}).click();await mobile.getByRole('button',{name:'Iniciar expedição'}).click();await mobile.waitForTimeout(18500);
   await mobile.screenshot({path:'artifacts/07-celular-combate.png',fullPage:true});
   if(!await mobile.locator('#joystick').isVisible())throw new Error('Mobile joystick missing');
   const stick=await mobile.locator('#joystick').boundingBox();await mobile.mouse.move(stick.x+stick.width/2,stick.y+stick.height/2);await mobile.mouse.down();await mobile.mouse.move(stick.x+stick.width-5,stick.y+stick.height/2);await mobile.waitForTimeout(700);await mobile.mouse.up();

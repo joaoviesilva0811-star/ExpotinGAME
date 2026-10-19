@@ -3,7 +3,6 @@ import {mkdir} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {tmpdir} from 'node:os';
 import assert from 'node:assert/strict';
-import {spawnSync} from 'node:child_process';
 
 const executable=process.env.IRON_DESKTOP_BINARY||resolve('dist/IronCrown-Linux-x64/iron-crown');
 const testRoot=resolve(tmpdir(),'iron-native-test-'+Date.now());
@@ -14,6 +13,10 @@ async function launch(id){
   const app=await electron.launch({executablePath:executable,args:process.platform==='linux'?['--no-sandbox','--ozone-platform=headless','--disable-gpu']:[],env:{...process.env,XDG_CONFIG_HOME:config,XDG_CACHE_HOME:cache},timeout:25000});apps.push(app);
   assert.equal(await app.evaluate(({app})=>app.isPackaged),true);
   const page=await app.firstWindow();page.on('pageerror',e=>errors.push(e.message));await page.setViewportSize({width:1120,height:820});
+  await app.context().addInitScript(()=>{
+    const Native=window.WebSocket;window.WebSocket=class extends Native{constructor(...args){super(...args);this.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.type==='welcome')window.__session=m.session;if(m.room)window.__room=m.room;});}};
+    const NativeAudio=window.Audio;window.__audio=[];window.Audio=function(...args){const a=new NativeAudio(...args);window.__audio.push(a);return a;};
+  });await page.reload();await page.waitForTimeout(900);
   return{app,page};
 }
 async function gameWindow(instance,action){
@@ -21,19 +24,33 @@ async function gameWindow(instance,action){
   game.on('pageerror',e=>errors.push(e.message));await game.setViewportSize({width:1440,height:960});await game.locator('.class-card').first().waitFor({timeout:20000});return game;
 }
 try{
-  const host=await launch('host');await host.page.screenshot({path:'artifacts/pc-01-menu.png'});
+  const host=await launch('host');await host.page.screenshot({path:'artifacts/pc-01-menu.png'});await host.page.locator('#sound-toggle').click();await host.page.waitForFunction(()=>window.__audio.some(a=>a.currentTime>.1&&!a.paused));
   await host.page.locator('#nickname').fill('Aldric PC');
   const solo=await gameWindow(host,()=>host.page.locator('#solo').click());
   const memberText=await solo.locator('.member-text').allTextContents();assert.ok(memberText.some(t=>t.includes('Lyra'))&&memberText.some(t=>t.includes('Nyx')));
   await solo.locator('[data-class="archer"]').click();await solo.waitForFunction(()=>document.querySelector('.member-text')?.textContent.includes('Arqueiro'));
   let members=await solo.locator('.member-text').allTextContents();assert.ok(members.some(t=>t.includes('Aldric')&&t.includes('COMPANHEIRO'))&&members.some(t=>t.includes('Nyx')));assert.ok(!members.some(t=>t.includes('Lyra')));
   await solo.locator('[data-class="knight"]').click();await solo.waitForFunction(()=>document.querySelector('.member-text')?.textContent.includes('Cavaleiro'));
+  await solo.locator('[data-hat="cowboy"]').click();await solo.waitForFunction(()=>window.__room.players.some(p=>p.name==='Aldric PC'&&p.hat==='cowboy'));
   await solo.screenshot({path:'artifacts/pc-02-solo.png'});
-  await solo.getByRole('button',{name:'Estou pronto'}).click();await solo.getByRole('button',{name:'Iniciar expedição'}).click();await solo.waitForTimeout(5000);
+  await solo.getByRole('button',{name:'Estou pronto'}).click();await solo.getByRole('button',{name:'Iniciar expedição'}).click();
+  let sawDialogue=false,sawAwakening=false,sawArrival=false;const deadline=performance.now()+25000;
+  while(performance.now()<deadline){
+    const r=await solo.evaluate(()=>window.__room);if(r?.state==='battle')break;if(!r?.intro||r.state==='lobby'){await solo.waitForTimeout(50);continue;}
+    await solo.waitForTimeout(90);
+    if(!sawArrival&&r.now>r.intro.started+1&&r.now<r.intro.gateAt){await solo.screenshot({path:'artifacts/pc-08-chegada.png'});sawArrival=true;}
+    if(!sawDialogue&&r?.now>r.intro.dialogueAt+.3){await solo.screenshot({path:'artifacts/pc-06-dialogo.png'});assert.ok(await solo.locator('#dialogue').isVisible());sawDialogue=true;}
+    if(!sawAwakening&&r?.boss.state==='awakening'&&r.now>r.intro.awakeningAt+1){await solo.screenshot({path:'artifacts/pc-09-despertar.png'});sawAwakening=true;}
+  }
+  assert.ok(sawDialogue&&sawAwakening);
+  await solo.waitForFunction(()=>window.__room.state==='battle',null,{timeout:25000});
+  await solo.keyboard.press('Tab');await solo.locator('[data-emote="step"]').click();await solo.waitForFunction(()=>window.__room.players.some(p=>p.name==='Aldric PC'&&p.emoteUntil>window.__room.now));await solo.screenshot({path:'artifacts/pc-07-emote.png'});
+  const energy=await solo.evaluate(()=>window.__room.players.find(p=>p.name==='Aldric PC').energy);await solo.keyboard.down('KeyD');await solo.keyboard.press('KeyE');await solo.waitForTimeout(200);await solo.keyboard.up('KeyD');
+  assert.ok(await solo.evaluate(before=>window.__room.players.find(p=>p.name==='Aldric PC').energy<before-12,energy));
+  await solo.keyboard.down('KeyD');await solo.waitForTimeout(1500);await solo.keyboard.up('KeyD');await solo.keyboard.down('KeyJ');await solo.keyboard.press('Digit1');await solo.keyboard.press('Digit3');await solo.waitForTimeout(12000);
   await solo.screenshot({path:'artifacts/pc-03-bots.png'});
-  const directory=resolve(testRoot,'frames');await mkdir(directory,{recursive:true});
-  for(let frame=0;frame<45;frame++){await solo.screenshot({path:resolve(directory,String(frame).padStart(3,'0')+'.png')});await solo.waitForTimeout(65);}
-  const film=spawnSync('ffmpeg',['-hide_banner','-loglevel','error','-y','-framerate','10','-i',resolve(directory,'%03d.png'),'-c:v','libx264','-preset','fast','-crf','23','-pix_fmt','yuv420p','-movflags','+faststart',resolve('artifacts/previa-pc.mp4')],{encoding:'utf8'});if(film.status!==0)console.log('Video optional:',film.stderr?.slice(0,300));
+  await solo.keyboard.up('KeyJ');
+  // Record a smooth preview separately with scripts/record-preview.js.
   await solo.close();await host.page.waitForTimeout(500);
   const a=await gameWindow(host,()=>host.page.locator('#host').click());
   assert.ok(await a.locator('.lan-info').isVisible());const code=await a.locator('.room-code-box strong').textContent();
@@ -45,12 +62,13 @@ try{
   const b=await gameWindow(peer,()=>peer.page.locator('#join-form button').click());
   await a.waitForFunction(()=>document.querySelectorAll('.member').length===2);await b.waitForFunction(()=>document.querySelectorAll('.member').length===2);
   assert.ok((await b.locator('.member-text').allTextContents()).some(text=>text.includes('Lyra PC')&&text.includes('Arqueiro')));
+  await a.locator('[data-hat="cake"]').click();await b.waitForFunction(()=>window.__room.players.some(p=>p.name==='Aldric PC'&&p.hat==='cake'));
   await a.screenshot({path:'artifacts/pc-04-lan.png'});
   await a.getByRole('button',{name:'Estou pronto'}).click();await b.getByRole('button',{name:'Estou pronto'}).click();await a.getByRole('button',{name:'Iniciar expedição'}).click();
-  await a.waitForTimeout(3500);await b.mouse.move(960,480);await b.mouse.down();await b.keyboard.press('Digit1');await b.waitForTimeout(1000);await b.mouse.up();await b.waitForTimeout(900);
+  await a.waitForTimeout(18500);await b.mouse.move(960,480);await b.mouse.down();await b.keyboard.press('Digit1');await b.waitForTimeout(1000);await b.mouse.up();await b.waitForTimeout(900);
   assert.equal(await a.locator('#boss-hp').textContent(),await b.locator('#boss-hp').textContent());
   const [hp,max]= (await b.locator('#boss-hp').textContent()).split('/').map(Number);assert.ok(hp<max);
   await b.reload();await b.locator('#hud').waitFor({state:'visible'});assert.equal(await b.locator('#my-name').textContent(),'Lyra PC');
   await a.screenshot({path:'artifacts/pc-05-lan-combate.png'});
-  assert.deepEqual(errors,[]);console.log('PASS: packaged native app, embedded Node runtime, solo bots/class replacement, combat, two native instances over TCP '+lan+', same boss, and client reconnection.');
+  assert.deepEqual(errors,[]);console.log('PASS: packaged native app, embedded Node runtime, audible menu track, hats, dialogues, emotes, energy-limited dash, solo bots/class replacement, combat, two native instances over TCP '+lan+', same boss, and client reconnection.');
 }finally{for(const app of apps.reverse())await app.close().catch(()=>{});}

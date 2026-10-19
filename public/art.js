@@ -1,3 +1,6 @@
+import { sceneImage } from './scenes.js';
+import { drawHat } from './cosmetics.js';
+import { characterFrame, bossFrame } from './animation.js';
 import { WORLD, CLASSES, BOSSES } from './shared.js';
 
 const canvas = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
@@ -182,29 +185,32 @@ export function bossSprite(round, frame=0) {
   }
   sprites.set(key,img);return img;
 }
-export function drawPlayer(c,p,time,{scale=1,alpha=1,attacking=false}={}){
-  const a=p.facing||0;
-  const direction=Math.abs(Math.cos(a))>.65?(Math.cos(a)>0?1:3):(Math.sin(a)>0?0:2);
-  const moving=Math.hypot(p.vx||0,p.vy||0)>12;
-  const frame=attacking?(Math.floor(time*13)%2):moving?(Math.floor(time*9)%3):0;
-  const img=playerSprite(p.classId,direction,frame,attacking);
+export function drawPlayer(c,p,time,{scale=1,alpha=1,attacking=false,now=time}={}){
+  const a=p.facing||0,direction=Math.abs(Math.cos(a))>.65?(Math.cos(a)>0?1:3):(Math.sin(a)>0?0:2);
+  const animated=characterFrame(p,time,now),img=animated?.image||playerSprite(p.classId,direction,0,attacking);
   c.save();c.globalAlpha=alpha;
   c.fillStyle='#030b1280';c.beginPath();c.ellipse(p.x,p.y+7,22*scale,9*scale,0,0,Math.PI*2);c.fill();
-  if(p.hp<=0){c.translate(p.x,p.y);c.rotate(-Math.PI/2);c.globalAlpha*=.55;c.drawImage(img,-38*scale,-63*scale,76*scale,80*scale);}
-  else c.drawImage(img,Math.round(p.x-38*scale),Math.round(p.y-63*scale+Math.sin(time*3)*.3),76*scale,80*scale);
-  c.restore();
+  c.translate(p.x,p.y);
+  if(p.hp<=0){c.rotate(-Math.PI/2);c.globalAlpha*=.5;}
+  else if(p.dodgeUntil>now){c.rotate(Math.sin((now-p.dodgeAt)/.24*Math.PI)*.35);c.globalAlpha*=.75;}
+  if(animated?.flip)c.scale(-1,1);
+  const hurt=now-(p.lastHurt??-10);if(hurt>=0&&hurt<.16){c.translate(Math.cos(a)*-3,0);c.filter='brightness(1.7)';}
+  c.drawImage(img,-img.width/2*scale,(-img.height+15)*scale,img.width*scale,img.height*scale);c.restore();const head=img.ironHead;if(head){const hx=animated?.flip?img.width-head.x:head.x;drawHat(c,{...p,facing:animated?.angle??p.facing,x:p.x+(hx-img.width/2)*scale,y:p.y+(head.y-img.height+15+61)*scale},now,scale);}else drawHat(c,p,now,scale);
 }
-export function drawBoss(c,b,round,time){
-  const img=bossSprite(round,['windup','execute'].includes(b.state)?1:0),sc=round===1?1.48:1.32;
+export function drawBoss(c,b,round,time,now=time){
+  const animation=bossFrame(b,round,time,now),img=animation||bossSprite(round,['windup','execute'].includes(b.state)?1:0),sc=round===1?1.1:1;
   c.save();c.fillStyle='#030510a0';c.beginPath();c.ellipse(b.x,b.y+8,68,25,0,0,Math.PI*2);c.fill();
-  const bob=b.state==='chase'?Math.sin(time*7)*2:Math.sin(time*2)*1.5;
   if(b.hp<=0)c.globalAlpha=.35;
-  if(b.state==='transition'){c.shadowColor=BOSSES[round].color;c.shadowBlur=25;}
-  c.drawImage(img,Math.round(b.x-78*sc),Math.round(b.y-115*sc+bob),156*sc,156*sc);c.restore();
+  if(b.state==='transition'){c.shadowColor=BOSSES[round].color;c.shadowBlur=22;}
+  if(now-b.hurtAt<.055)c.filter='brightness(1.4)';
+  let w=animation?210:206,h=animation?210:206;if(b.state==='fallen'){h*=.45;w*=1.1;}if(b.state==='dormant'){h*=round===1?.6:.77;w*=round===2?.77:1;c.filter='brightness(.5) saturate(.6)';}
+  const bob=b.state==='chase'?Math.sin(time*6)*1.3:0;
+  c.drawImage(img,Math.round(b.x-w*sc/2),Math.round(b.y-h*sc+23+bob),w*sc,h*sc);c.restore();
 }
 
 const terrains=new Map();
 export function terrain(round){
+  const painted=sceneImage(round);if(painted)return painted;
   if(terrains.has(round))return terrains.get(round);
   const img=canvas(WORLD.w,WORLD.h),c=img.getContext('2d'),random=rng(741+round*997);
   const palettes=[['#293233','#303a39','#323b39','#263031','#35403e'],['#202f29','#24382d','#283a2d','#293b30','#23332c'],['#2c2c39','#30313c','#33343e','#292c37','#35343f']][round];
@@ -258,6 +264,8 @@ export function terrain(round){
 }
 export function pillar(c,o,round){
   const x=o.x,y=o.y;
+  const painted=sceneImage(round);if(o.crop&&painted){const[sx,sy,sw,sh]=o.crop;c.drawImage(painted,sx,sy,sw,sh,sx*WORLD.w/1536,sy*WORLD.h/1024,sw*WORLD.w/1536,sh*WORLD.h/1024);return;}
+  if(o.kind){cover(c,o,round);return;}
   c.fillStyle='#060c1266';c.beginPath();c.ellipse(x+12,y+13,o.r+8,16,0,0,Math.PI*2);c.fill();
   if(round===1){
     poly(c,[[x-20,y+9],[x-8,y-18],[x-12,y-90],[x+8,y-105],[x+21,y-76],[x+14,y-17],[x+32,y+12],[x+11,y+5],[x+1,y+18],[x-8,y+3]],'#333d32');
@@ -271,6 +279,13 @@ export function pillar(c,o,round){
   for(let j=0;j<4;j++){rect(c,x-21,y-61+j*17,42,2,'#222f37');rect(c,x-21,y-59+j*17,42,1,'#6c746655');}
   rect(c,x-27,y-83,54,11,'#5f6760');rect(c,x-23,y-90,46,8,'#3e4c51');rect(c,x-26,y-84,51,2,'#91927c');
   if(round===2){rect(c,x-4,y-63,8,32,'#473f58');rect(c,x-9,y-52,18,4,'#aa9164');rect(c,x-2,y-61,3,25,'#aa9164');}
+}
+function cover(c,o,round){
+ const {x,y,r,kind}=o;c.save();c.translate(x,y);c.fillStyle='#050b1277';c.beginPath();c.ellipse(8,8,r+8,r*.55,0,0,7);c.fill();
+ if(kind==='stump'){c.fillStyle='#353b2d';c.fillRect(-r*.7,-29,r*1.4,34);c.fillStyle='#766e4c';c.beginPath();c.ellipse(0,-28,r*.72,r*.4,0,0,7);c.fill();c.strokeStyle='#4b5135';for(let i=1;i<=3;i++){c.beginPath();c.ellipse(0,-28,r*i*.18,r*i*.09,0,0,7);c.stroke();}}
+ else if(kind==='pew'){for(const yy of [-15,0]){rect(c,-r,yy-18,r*2,12,'#4c3841');rect(c,-r,yy-18,r*2,2,'#a18a67');}rect(c,-r,-38,7,46,'#4d4248');rect(c,r-7,-38,7,46,'#4d4248');}
+ else{for(let i=0;i<7;i++){const a=i*2.4,xx=Math.cos(a)*r*.6,yy=Math.sin(a)*r*.32;poly(c,[[xx-12,yy],[xx-9,yy-18],[xx+8,yy-23],[xx+16,yy-9],[xx+13,yy+3]],kind==='altar'?'#5c5467':kind==='stone'?'#4b6157':'#5b6261');rect(c,xx-7,yy-17,12,2,kind==='altar'?'#b49371':'#8a9282');}}
+ if(round===1)for(let i=0;i<5;i++)rect(c,-r+10+i*9,-12-Math.sin(i)*15,5,3,'#688457');c.restore();
 }
 export function light(c,x,y,r,color,alpha=.3){
   c.save();c.globalCompositeOperation='screen';c.globalAlpha=alpha;const g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,color);g.addColorStop(1,'transparent');c.fillStyle=g;c.fillRect(x-r,y-r,r*2,r*2);c.restore();

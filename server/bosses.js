@@ -1,0 +1,62 @@
+import { BOSSES, WORLD, clamp, distance } from '../public/shared.js';
+
+export const ATTACK_NAMES=[
+  ['Corte do Tirano','Tríade de Ferro','Ondas do Trono','Prisão dos Condenados','Investida Real — esquive da faixa!','Lâminas da Coroa'],
+  ['Jardim de Espinhos','Sopro da Putrefação','Pisada e Onda Sísmica','Raízes em Cruz','Esporos Errantes','Círculo da Colheita — encontre a zona segura!'],
+  ['Foice Dupla do Eclipse','Fissuras em Sequência','Sentença da Morte','Cruz da Catedral — saia das faixas!','Estrelas das Seis Asas','Pulso do Vazio — procure o centro!']
+];
+const cycle=[0,3,1,4,2,5];
+export function planBossAttack(room,forcedKind){
+  const b=room.boss,living=[...room.players.values()].filter(p=>room.active(p));if(!living.length)return;
+  const target=living[b.attackIndex%living.length];
+  let kind=forcedKind??cycle[b.attackIndex%cycle.length];
+  if(forcedKind===undefined&&distance(b,target)>355&&kind===0)kind=4;
+  b.attackIndex++;b.target=target.id;b.facing=Math.atan2(target.y-b.y,target.x-b.x);b.state='windup';b.attack=kind;
+  const heavy=[1,2,4].includes(kind),windup=(heavy?1.95:1.65)-(b.phase-1)*.12;
+  b.startedAt=room.now;b.until=room.now+windup;b.attackName=ATTACK_NAMES[room.round][kind];
+  b.recoveryFor=heavy?2:1.5;b.executeFor=.45;b.guarding=b.phase>1;
+  const add=(x,y,r,damage,options={})=>{
+    const h={id:`hazard-${++room.eventId}`,x,y,r,damage,at:b.until,end:b.until+.38,next:b.until,started:room.now,telegraph:true,...options};
+    h.next=h.at;if(options.end===undefined)h.end=h.at+.38;
+    room.hazards.push(h);b.executeFor=Math.max(b.executeFor,h.at-b.until+.35);return h;
+  };
+  const circle=(x,y,r,damage,delay=0,extra={})=>add(x,y,r,damage,{at:b.until+delay,...extra});
+  const cone=(angle,r,damage,delay=0)=>circle(b.x,b.y,r,damage,delay,{shape:'cone',angle,spread:room.round===2?1.18:.95});
+  const line=(ax,ay,bx,by,width,damage,delay=0,extra={})=>add((ax+bx)/2,(ay+by)/2,Math.hypot(bx-ax,by-ay)/2,damage,{shape:'line',angle:Math.atan2(by-ay,bx-ax),length:Math.hypot(bx-ax,by-ay),width,at:b.until+delay,...extra});
+  const volley=(count,spread,speed,damage,color,delay=0,radial=false)=>{
+    room.effects.push({kind:'volley',at:b.until+delay,x:b.x,y:b.y,count,spread,speed,damage,color,angle:b.facing,radial});
+    cone(b.facing,210,0,delay).warningOnly=true;
+  };
+  if(room.round===0){
+    if(kind===0){cone(b.facing,175,27);if(b.phase===3)cone(b.facing+.6,180,22,.8);}
+    if(kind===1){for(let i=0;i<3;i++)cone(b.facing+(i-1)*.7,168,22,i*.62);b.recoveryFor=2.25;}
+    if(kind===2){circle(b.x,b.y,140,30,0,{breaks:true});circle(b.x,b.y,260,25,.75,{inner:150,breaks:true});if(b.phase===3)circle(b.x,b.y,345,22,1.5,{inner:265,breaks:true});b.recoveryFor=2.1;}
+    if(kind===3){for(const p of living.slice(0,b.phase===1?1:2)){circle(p.x,p.y,66,14,0,{root:1.05,visual:'chains'});circle(p.x,p.y,142,24,1.65,{inner:76,visual:'chains'});}}
+    if(kind===4){
+      const len=clamp(distance(b,target)+65,210,390),tx=clamp(b.x+Math.cos(b.facing)*len,85,WORLD.w-85),ty=clamp(b.y+Math.sin(b.facing)*len,85,WORLD.h-85);
+      line(b.x,b.y,tx,ty,86,32,0,{breaks:true,visual:'charge'});circle(tx,ty,95,25,.7,{breaks:true});
+      b.charge={x:b.x,y:b.y,tx,ty,start:b.until,end:b.until+.65};b.recoveryFor=2.35;
+    }
+    if(kind===5)volley(b.phase===3?9:7,1.85,180,15,'blade');
+  }else if(room.round===1){
+    if(kind===0){living.forEach((p,i)=>circle(p.x,p.y,60,18,i*.18,{root:.9,visual:'roots'}));}
+    if(kind===1){for(let i=1;i<=3;i++){
+      const x=clamp(b.x+Math.cos(b.facing)*i*92,75,1125),y=clamp(b.y+Math.sin(b.facing)*i*92,75,685);
+      circle(x,y,75,5,i*.12,{end:b.until+4.5,tick:1,cloud:true});
+    }}
+    if(kind===2){circle(b.x,b.y,150,31,0,{breaks:true});circle(b.x,b.y,270,22,.8,{inner:170,breaks:true});}
+    if(kind===3){for(let i=0;i<4;i++){const a=b.facing+i*Math.PI/2;line(b.x,b.y,b.x+Math.cos(a)*350,b.y+Math.sin(a)*350,58,22,i*.18,{root:.65,visual:'roots'});}}
+    if(kind===4){volley(b.phase===3?12:9,Math.PI*2,145,13,'seed',0,true);circle(target.x,target.y,76,5,.9,{cloud:true,tick:1,end:b.until+4.2});}
+    if(kind===5){circle(b.x,b.y,300,30,0,{inner:128,breaks:true,visual:'roots'});for(let i=0;i<4;i++){const a=i*Math.PI/2+.4;circle(b.x+Math.cos(a)*210,b.y+Math.sin(a)*210,48,0,1.2,{solid:true,end:b.until+8,visual:'roots'});}}
+    if(b.phase>1&&kind!==5&&room.hazards.filter(h=>h.solid).length<4){const a=b.attackIndex*1.9;circle(clamp(b.x+Math.cos(a)*205,220,980),clamp(b.y+Math.sin(a)*175,170,590),28,0,.65,{solid:true,end:b.until+7,visual:'roots'});}
+  }else{
+    if(kind===0){cone(b.facing,215,30);cone(b.facing+Math.PI,220,28,.85);b.recoveryFor=1.8;}
+    if(kind===1){for(const p of living){circle(p.x,p.y,68,24);circle(clamp(p.x+Math.cos(b.facing+1.57)*100,70,1130),clamp(p.y+Math.sin(b.facing+1.57)*100,70,690),68,24,.65);}}
+    if(kind===2){circle(target.x,target.y,83,38,.2,{mark:target.id,breaks:true});circle(target.x,target.y,155,24,1.15,{inner:95,breaks:true});}
+    if(kind===3){line(80,b.y,1120,b.y,70,31,0,{breaks:true,visual:'void'});line(b.x,65,b.x,695,70,31,.65,{breaks:true,visual:'void'});}
+    if(kind===4){volley(b.phase===3?12:8,Math.PI*2,175,17,'void',0,true);volley(5,1.3,190,16,'void',.85);b.executeFor=1.15;}
+    if(kind===5){circle(b.x,b.y,350,32,0,{inner:145,breaks:true});for(let i=0;i<5;i++){const a=i*Math.PI*2/5;circle(clamp(b.x+Math.cos(a)*255,90,1110),clamp(b.y+Math.sin(a)*255,90,670),52,23,.9);}}
+    if(b.phase===3&&kind!==5)circle(target.x,target.y,62,20,1.6,{visual:'void'});
+  }
+  room.emit('warning',{text:b.attackName,kind,phase:b.phase,duration:windup,heavy});
+}

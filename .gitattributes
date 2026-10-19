@@ -2,3 +2,5 @@
 *.zip.* -text
 *.png -text
 *.mp4 -text
+# Preserve the upstream font license byte for byte.
+public/assets/fonts/OFL.txt -text whitespace=-blank-at-eol,cr-at-eol

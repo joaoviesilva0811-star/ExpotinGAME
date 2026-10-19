@@ -1,38 +1,53 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "filename": "IronCrown-Windows-x64.zip",
-  "size": 196153768,
-  "sha256": "444175d5544c47756a3883f0af5cc06ced93902cce3239585750c68a85e088d8",
+  "size": 270477938,
+  "sha256": "4150b1ce4f18d7671b200aecd8cb7d005eefcf554b695e763849db4afeaef986",
   "parts": [
     {
       "name": "IronCrown-PC.zip.001",
       "size": 33554432,
-      "sha256": "002f6221a92f67ecdfc6a23fd6d897d49060731138633aa150dc5b459ebd937f"
+      "sha256": "12c47fd684a0ec31ca13c442e99dfd79d38dfc33b5280eaf13c2dd6078d0924b"
     },
     {
       "name": "IronCrown-PC.zip.002",
       "size": 33554432,
-      "sha256": "9546bac5595a1562c0ca75cb720aa1276abc876651057d6c2da57e964c2c007b"
+      "sha256": "3e199479bddb42331a063e016af24cfb0d6c5ef9b3647fcb59f3f584cadb404c"
     },
     {
       "name": "IronCrown-PC.zip.003",
       "size": 33554432,
-      "sha256": "68b9f3634b8b5141944e1939b04cafd6136ca64be48412aa25d46bf780017463"
+      "sha256": "fbfe92c85a879d1e268e3aa3c017799ebe7142a09f8cca1401539c93b140fef3"
     },
     {
       "name": "IronCrown-PC.zip.004",
       "size": 33554432,
-      "sha256": "f7b42aa33ccfe91d5dd265413a0b5d7d4aa514c0860a3d1322def5443fa54d8f"
+      "sha256": "4bd9a63a927e67a2b6d51c7b0d86a520e589fcff7277cee8c1ed9479e7596976"
     },
     {
       "name": "IronCrown-PC.zip.005",
       "size": 33554432,
-      "sha256": "d1c8d5141841b66ddf5bf833216f560a8b0c6096ff1e59f069a5913bc7e02a06"
+      "sha256": "0bff7f14b0ec081e2e45bcdd273d2aabb0b093d8f585632777dcb35792acc6bb"
     },
     {
       "name": "IronCrown-PC.zip.006",
-      "size": 28381608,
-      "sha256": "1d4a0eb2cb8c18e763a513057e21ae69247789437b6491fb100bbc90410f79e5"
+      "size": 33554432,
+      "sha256": "6350a1a6cd86520dedce1cf71f6552b3430b51d926db492816fa93561aea190c"
+    },
+    {
+      "name": "IronCrown-PC.zip.007",
+      "size": 33554432,
+      "sha256": "2ee2cc0b277a27444837505b7e88a74974ca8ed35bed12973b99d88993de50d4"
+    },
+    {
+      "name": "IronCrown-PC.zip.008",
+      "size": 33554432,
+      "sha256": "88cdfdc7e1e6532ddd12e26d1d20576f68431040a958ac36253e239a89082852"
+    },
+    {
+      "name": "IronCrown-PC.zip.009",
+      "size": 2042482,
+      "sha256": "414c0cd642faa34ddf9b98938f81366211b997b7cbaf97ff1777f6a8cfee1ad1"
     }
   ]
 }

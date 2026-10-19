@@ -18,7 +18,7 @@
   </header>
   <main id="stage">
     <canvas id="game" aria-label="Arena de combate de Shadows of the Iron Crown"></canvas>
-    <div class="vignette"></div>
+    <div class="vignette"></div><div id="scene-fade" aria-hidden="true"></div><div id="cinema-caption" hidden></div><div id="story-card" hidden><span id="story-chapter"></span><h2 id="story-title"></h2><p id="story-text"></p></div>
     <section id="home" class="screen">
       <div class="hero-copy"><span class="eyebrow"><span class="line"></span> 1–4 JOGADORES · COOP ONLINE</span><h1>SHADOWS <em>of the</em><strong>IRON CROWN</strong></h1><p class="hero-subtitle">Três chefes. Uma última expedição.<br>O trono não cairá sozinho.</p><div class="hero-tags"><span>◈ COMBATE EM TEMPO REAL</span><span>◈ PIXEL ART 2D</span></div><button class="text-link" id="open-lore">Conheça os inimigos <span>↗</span></button></div>
       <div class="entry-panel panel">
@@ -31,17 +31,17 @@
     </section>
     <section id="lobby" class="screen" hidden></section>
     <section id="hud" hidden>
-      <div id="team-panel"></div><div class="boss-panel"><div class="boss-caption"><span id="boss-round"></span><span id="timer">05:00</span></div><h2 id="boss-name"></h2><div class="boss-health"><div id="boss-health-fill"></div><span id="boss-hp"></span></div><span id="boss-phase"></span></div>
-      <div class="battle-meta"><span id="arena-name"></span><button id="battle-menu" class="icon-btn" aria-label="Menu">☰</button></div>
-      <div id="danger" role="status"></div><div id="countdown"></div><div id="down-message"></div>
+      <div id="team-panel"></div><div class="boss-panel"><div class="boss-caption"><span id="boss-round"></span><span id="timer">05:00</span></div><h2 id="boss-name"></h2><div class="boss-health"><div id="boss-health-fill"></div><span id="boss-hp"></span></div><span id="boss-phase"></span><div id="boss-action"></div></div>
+      <div id="emote-wheel" hidden><span>EMOTES · TAB PARA FECHAR</span><div><button data-emote="step"><kbd>1</kbd> ♫ Passinho</button><button data-emote="cross"><kbd>2</kbd> ✦ Braços cruzados</button><button data-emote="spin"><kbd>3</kbd> ⟳ Giro</button><button data-emote="victory"><kbd>4</kbd> ♛ Celebração</button></div><small>Movimentar, atacar ou receber dano interrompe a dança.</small><button id="emote-close" aria-label="Fechar emotes">×</button></div><div class="battle-meta"><button id="emote-open" title="Tab · Emotes" aria-label="Abrir emotes">♫</button><span id="minion-count"></span><div class="zoom-controls"><button id="zoom-out" aria-label="Afastar câmera">−</button><span id="zoom-value">155%</span><button id="zoom-in" aria-label="Aproximar câmera">+</button></div><span id="arena-name"></span><button id="battle-menu" class="icon-btn" aria-label="Menu">☰</button></div>
+      <div id="dialogue" hidden><span id="dialogue-name"></span><p id="dialogue-text"></p></div><div id="danger" role="status"></div><div id="countdown"></div><div id="down-message"></div>
       <div class="player-panel"><canvas id="portrait" width="64" height="64"></canvas><div><div class="player-label"><strong id="my-name"></strong><span id="my-class"></span></div><div class="resource health"><i id="my-health"></i><span id="my-hp"></span></div><div class="resource energy"><i id="my-energy"></i><span id="my-en"></span></div><div id="status-effects"></div></div></div>
-      <div class="abilities" id="abilities"></div><div class="battle-tips"><span><kbd>E</kbd> segurar para reviver</span><span><kbd>Mouse</kbd> ataque básico</span><span><kbd>Espaço</kbd> defender</span></div>
-      <div id="touch-controls"><div id="joystick" aria-label="Movimentação"><span></span></div><div class="touch-actions"><button id="touch-revive" aria-label="Reviver">E</button><button id="touch-block" aria-label="Defender">ESCUDO</button><button id="touch-attack" aria-label="Ataque básico">ATACAR</button></div></div>
+      <div class="abilities" id="abilities"></div><div class="utility-slots"><button id="potion-slot" title="4 · Usar poção coletada"><kbd>4</kbd><canvas id="potion-icon" width="56" height="56"></canvas><strong hidden>◇</strong><small>SEM POÇÃO</small></button><button id="dash-slot" title="E · Dash · 20 de energia"><kbd>E</kbd><canvas id="dash-icon" width="56" height="56"></canvas><strong hidden>➶</strong><small id="dash-cd">20 ⚡</small></button></div><div class="battle-tips"><span><kbd>R</kbd> segurar para reviver</span><span><kbd>Mouse</kbd> ataque básico</span><span><kbd>Espaço</kbd> defender</span></div>
+      <div id="touch-controls"><div id="joystick" aria-label="Movimentação"><span></span></div><div class="touch-actions"><button id="touch-revive" aria-label="Reviver">R</button><button id="touch-dash" aria-label="Dash">DASH</button><button id="touch-block" aria-label="Defender">ESCUDO</button><button id="touch-attack" aria-label="Ataque básico">ATACAR</button></div></div>
     </section>
     <section id="results" class="screen" hidden></section>
   </main>
   <div id="toasts" aria-live="polite"></div>
   <dialog id="modal"><button id="close-modal" class="modal-close" aria-label="Fechar">×</button><div id="modal-content"></div></dialog>
-  <footer class="bottom-bar"><span>SHADOWS OF THE IRON CROWN</span><span id="footer-state">A escuridão espera por você.</span><span>V.1.1 · PC / LAN / CO-OP</span></footer>
+  <footer class="bottom-bar"><span>SHADOWS OF THE IRON CROWN</span><span id="footer-state">A escuridão espera por você.</span><span>V.1.2 · PC / LAN / CO-OP</span></footer>
 </body>
 </html>

@@ -9,6 +9,7 @@ import { pipeline } from 'node:stream/promises';
 import { spawnSync } from 'node:child_process';
 
 const root=fileURLToPath(new URL('../',import.meta.url));
+const project=JSON.parse(await readFile(join(root,'package.json'),'utf8'));
 const platform=process.argv.includes('--linux')?'linux':'win32';
 const electronVersion='44.9.0',nodeVersion='24.19.0';
 const cache=join(tmpdir(),'iron-crown-desktop-cache');
@@ -53,7 +54,7 @@ const game=join(output,'resources','app'),runtime=join(output,'resources','runti
 await mkdir(game,{recursive:true});await mkdir(runtime,{recursive:true});
 for(const name of ['desktop','server','public'])await cp(join(root,name),join(game,name),{recursive:true});
 await mkdir(join(game,'node_modules'),{recursive:true});await cp(join(root,'node_modules','ws'),join(game,'node_modules','ws'),{recursive:true});
-await writeFile(join(game,'package.json'),JSON.stringify({name:'iron-crown-desktop',version:'1.1.0',type:'module',main:'desktop/main.cjs',private:true},null,2));
+await writeFile(join(game,'package.json'),JSON.stringify({name:'iron-crown-desktop',version:project.version,type:'module',main:'desktop/main.cjs',private:true},null,2));
 await rm(join(output,'resources','default_app.asar'),{force:true});
 if(platform==='win32'){
   python(`import zipfile,sys,pathlib

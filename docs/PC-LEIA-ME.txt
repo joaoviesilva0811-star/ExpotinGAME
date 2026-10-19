@@ -1,4 +1,4 @@
-SHADOWS OF THE IRON CROWN — EDIÇÃO PC 1.1
+SHADOWS OF THE IRON CROWN — EDIÇÃO PC 1.2
 
 WINDOWS 10/11 DE 64 BITS
 
@@ -54,9 +54,14 @@ enquanto o anfitrião estiver aberto, usando nome e o mesmo código de sala.
 
 CONTROLES
 WASD / setas: mover. Mouse: mirar. Botão esquerdo segurado ou J: ataque básico.
-1, 2, 3: habilidades. Espaço: defender. E: segurar 4 segundos perto de aliado
+1, 2, 3: habilidades. Espaço: defender. R: segurar 4 segundos perto de aliado
 caído para reviver. Esc: ajuda/menu local. O menu não pausa o multiplayer.
-Botão musical no canto superior: ativar/desativar áudio.
+E: dash (20 de energia, 2,4s de recarga). 4: usar poção coletada.
+Tab: abrir emotes. Movimento, ataque e dano interrompem a dança.
+Roda do mouse ou + e -: zoom (começa em 155%).
+Escolha seu chapéu na preparação. É visual e aparece para todos.
+O som começa após a primeira interação; botão musical ativa/desativa.
+Cada arena tem trilha própria, sem precisar da Internet.
 
 DADOS E LIMITES
 Dados locais ficam no perfil do usuário (AppData/Roaming/iron-crown-desktop/saves).
@@ -71,3 +76,24 @@ físico ainda precisa ser confirmada no seu computador. Não há instalador,
 atualização automática nem assinatura digital própria deste projeto.
 
 Arte original em visão de cima, três arenas e três chefes preservados.
+
+NOVIDADES 1.2
+Chefes com seis padrões e três fases; vida e ritmo de combate rebalanceados.
+Lacaios com ataques direcionais, vida e drops de poção. A primeira morte
+de lacaio em cada arena garante um drop; as seguintes têm chance de 46%.
+Passe perto para coletar (até três). Tecla 4 usa a próxima guardada:
+cura recupera até 45 de vida; gelo desacelera inimigos próximos por 4s.
+As coberturas bloqueiam flechas e projéteis de ambos os lados.
+As áreas marcadas mostram a direção e o tempo até o impacto.
+O centro dos ataques em anel é seguro. Golpes laranja quebram defesa.
+Mais de 700 quadros, ataques em oito direções, emotes e chapéus.
+Diálogos antes das lutas, partículas, HUD e menu redesenhados.
+Bots podem cair, morrer e perder, com os mesmos recursos dos jogadores.
+
+ABERTURA E HISTÓRIA
+Cada arena começa com a chegada do grupo, fechamento do portão, diálogo e
+despertar do chefe. A abertura leva cerca de 18s e não consome o cronômetro.
+Entre arenas há 6s de resultados e 5s de travessia da masmorra. Ao fim das
+três lutas, o epílogo de 14s mostra o desfecho antes da pontuação final.
+Vitória completa, parcial e derrota têm histórias finais diferentes.
+Os três cenários e o corredor têm ilustrações próprias detalhadas.

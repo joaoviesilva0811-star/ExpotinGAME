@@ -17,7 +17,7 @@ function client(token){return new Promise((resolve,reject)=>{
   ws.on('open',()=>ws.send(JSON.stringify({type:'auth',token})));
   ws.on('error',reject);
   ws.on('message',raw=>{const m=JSON.parse(raw);messages.push(m);for(const w of [...waits])if(w.predicate(m)){waits.splice(waits.indexOf(w),1);clearTimeout(w.timeout);w.resolve(m);}
-    if(m.type==='welcome'){clearTimeout(timeout);resolve({ws,messages,send:(type,data={})=>ws.send(JSON.stringify({type,...data})),wait:predicate=>{const found=messages.find(predicate);if(found)return Promise.resolve(found);return new Promise((resolve,reject)=>{const w={predicate,resolve,timeout:setTimeout(()=>reject(new Error('Message timeout')),4500)};waits.push(w);});}});}
+    if(m.type==='welcome'){clearTimeout(timeout);resolve({ws,messages,send:(type,data={})=>ws.send(JSON.stringify({type,...data})),wait:predicate=>{const found=messages.find(predicate);if(found)return Promise.resolve(found);return new Promise((resolve,reject)=>{const w={predicate,resolve,timeout:setTimeout(()=>reject(new Error('Message timeout')),25000)};waits.push(w);});}});}
   });
 });}
 test('account hashing, credentials, sessions and logout persist in SQLite',async()=>{

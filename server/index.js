@@ -77,7 +77,7 @@ export function createGameServer(options = {}) {
       const target = resolve(publicDir, '.' + (path === '/' ? '/index.html' : path));
       if (!target.startsWith(publicDir + sep) || path.includes('\0')) return json(res, 403, { error: 'Acesso negado.' });
       const content = await readFile(target);
-      const mime = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon' };
+      const mime = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.ogg': 'audio/ogg', '.ttf': 'font/ttf', '.ico': 'image/x-icon' };
       res.writeHead(200, { 'Content-Type': mime[extname(target)] || 'application/octet-stream', 'Cache-Control': 'no-cache' }); res.end(req.method === 'HEAD' ? undefined : content);
     } catch (error) {
       if (error.code === 'ENOENT' || error.code === 'EISDIR') return json(res, 404, { error: 'Arquivo não encontrado.' });
@@ -162,7 +162,7 @@ export function createGameServer(options = {}) {
     const now = performance.now(), dt = Math.min(.25, (now - previous) / 1000); previous = now;
     for (const [code, r] of rooms) {
       r.tick(dt);
-      if (r.state === 'finished' && !r.finishedSaved) { r.bestScore = store.saveMatch(r); r.finishedSaved = true; }
+      if (['ending','finished'].includes(r.state) && !r.finishedSaved) { r.bestScore = store.saveMatch(r); r.finishedSaved = true; }
       if (![...r.players.values()].some(p=>!p.isBot)) { rooms.delete(code); continue; }
       const snapshot = r.snapshot();
       for (const p of r.players.values()) { const ws = clients.get(p.id); if (ws?.room === r) send(ws, 'snapshot', { room: snapshot }); }

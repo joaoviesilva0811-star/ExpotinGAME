@@ -1,6 +1,9 @@
-import { randomBytes } from 'node:crypto';
-import { WORLD, CLASSES, BOSSES, COSTS, COOLDOWNS, clamp, distance } from '../public/shared.js';
+import { randomBytes, randomInt } from 'node:crypto';
+import { WORLD, CLASSES, BOSSES, COSTS, COOLDOWNS, DODGE, clamp, distance, hazardContains, ARENA_OBSTACLES, HATS, EMOTES } from '../public/shared.js';
 import { thinkBots, BOT_NAMES } from './bots.js';
+import { planBossAttack } from './bosses.js';
+import { tickMinions } from './minions.js';
+import { dropPotion, tickLoot, usePotion, roundDialogue } from './loot.js';
 
 const uid = () => randomBytes(6).toString('hex');
 const stats = () => ({ damage: 0, taken: 0, avoided: 0, revives: 0, skills: 0 });
@@ -11,28 +14,24 @@ export function segmentDistance(a, b, o) {
   return Math.hypot(o.x - a.x - t * dx, o.y - a.y - t * dy);
 }
 export const makePlayer = (session, name) => ({
-  id: session, name, classId: 'knight', ready: false, connected: true, disconnectedAt: null,
+  id: session, name, hat:'none',emote:null,emoteAt:-10,emoteUntil:0,emoteReady:0,classId: 'knight', ready: false, connected: true, disconnectedAt: null,
   x: 270, y: 380, vx: 0, vy: 0, hp: 160, maxHp: 160, energy: 100, facing: 0,
   cds: [0, 0, 0], basicAt: 0, block: false, blockAt: 0, shieldUntil: 0, rootUntil: 0,
+  attackAt: -10, attackFor: .45, attackSlot: -1, dodgeAt: -10, dodgeUntil: 0, dodgeReady: 0, hitSafeUntil: 0,
   shadowBonus: 0, poisonUntil: 0, downAt: null, eliminated: false, revive: 0, reviveTarget: null,
   input: { x: 0, y: 0, ax: 1, ay: 0, block: false, attack: false, revive: false },
-  stats: stats(), roundStats: stats(), lastSeq: -1
+  potions: [], potionReady: 0, stats: stats(), roundStats: stats(), lastSeq: -1
 });
-export function obstacles(round) {
-  const r = [
-    [{ x: 170, y: 155, r: 27 }, { x: 1030, y: 155, r: 27 }, { x: 170, y: 605, r: 27 }, { x: 1030, y: 605, r: 27 }],
-    [{ x: 160, y: 155, r: 38 }, { x: 1040, y: 160, r: 38 }, { x: 155, y: 600, r: 38 }, { x: 1040, y: 600, r: 38 }],
-    [{ x: 170, y: 170, r: 30 }, { x: 1030, y: 170, r: 30 }, { x: 170, y: 590, r: 30 }, { x: 1030, y: 590, r: 30 }]
-  ];
-  return r[round] || r[0];
-}
+export const obstacles=round=>ARENA_OBSTACLES[round]||ARENA_OBSTACLES[0];
 export class Room {
   constructor(code, owner, name, isPublic = false, solo = false) {
     this.code = code; this.owner = owner; this.name = name; this.public = isPublic;
     this.players = new Map(); this.state = 'lobby'; this.round = 0; this.now = 0;
     this.events = []; this.eventId = 0; this.projectiles = []; this.hazards = []; this.effects = [];
+    this.drops=[];this.lootKills=0;this.dialogue=[];this.minions = []; this.nextWave = 0; this.waveIndex = 0;
     this.score = 0; this.wins = 0; this.results = []; this.created = Date.now();
     this.transitionAt = 0; this.remaining = 300; this.boss = null; this.finishedSaved = false;
+    this.lootRoll=randomInt;
     this.solo = solo; this.botsEnabled = solo;
   }
   emit(type, data = {}) {
@@ -92,16 +91,17 @@ export class Room {
     for (const p of this.players.values()) { p.ready = !!p.isBot; p.hp = p.maxHp; p.downAt = null; p.eliminated = false; }
   }
   prepareRound() {
-    this.state = 'countdown'; this.transitionAt = this.now + 3; this.remaining = 300;
-    this.projectiles = []; this.hazards = []; this.effects = [];
+    this.state = 'countdown'; this.transitionAt = this.now + 17.7; this.remaining = 300;
+    this.projectiles = []; this.hazards = []; this.effects = []; this.minions = []; this.drops=[];this.lootKills=0;this.intro={started:this.now,gateAt:this.now+3.55,dialogueAt:this.now+4,awakeningAt:this.now+10.3};this.gateClosed=false;this.awakened=false;this.dialogue=roundDialogue(this,4); this.nextWave = this.transitionAt+14; this.waveIndex = 0;
     const info = BOSSES[this.round];
     const hp = Math.round(info.hp * (.25 + .1875 * this.players.size));
-    this.boss = { x: 820, y: 380, hp, maxHp: hp, phase: 1, state: 'idle', until: this.now + 3,
-      facing: Math.PI, target: null, attackIndex: 0, nextAt: this.now + 5, slowUntil: 0, poison: [], immuneUntil: 0, attack: null };
+    this.boss = { x: 820, y: 380, hp, maxHp: hp, phase: 1, state: 'dormant', until: this.transitionAt,
+      isBoss: true, radius: info.radius, hurtAt: -10, startedAt: this.now, facing: Math.PI, target: null, attackIndex: 0, nextAt: this.now + 5, slowUntil: 0, poison: [], immuneUntil: 0, attack: null };
     let i = 0;
     for (const p of this.players.values()) {
       p.x = 265; p.y = 265 + i++ * 72; p.vx = 0; p.vy = 0;
       p.hp = p.hp > 0 ? Math.min(p.maxHp, p.hp + (p.maxHp - p.hp) * .5) : p.maxHp;
+      p.attackAt = -10; p.dodgeAt = -10; p.dodgeUntil = p.dodgeReady = p.hitSafeUntil = 0;
       p.energy = 100; p.cds = [0, 0, 0]; p.basicAt = 0; p.blockAt = 0; p.block = false;
       p.shieldUntil = 0; p.rootUntil = 0; p.shadowBonus = 0; p.poisonUntil = 0;
       p.downAt = null; p.eliminated = false; p.revive = 0; p.reviveTarget = null; p.roundStats = stats();
@@ -117,25 +117,43 @@ export class Room {
       if (![msg.x, msg.y, msg.ax, msg.ay].every(Number.isFinite)) return;
       p.input = { x: clamp(msg.x, -1, 1), y: clamp(msg.y, -1, 1), ax: clamp(msg.ax, -1, 1), ay: clamp(msg.ay, -1, 1), block: msg.block === true, attack: msg.attack === true, revive: msg.revive === true };
       p.lastInput = this.now;
+    } else if (msg.type === 'cosmetic' && this.state==='lobby' && Object.hasOwn(HATS,msg.hat))p.hat=msg.hat;
+    else if(msg.type==='emote'&&Object.hasOwn(EMOTES,msg.emote)&&this.active(p)&&this.now>=p.emoteReady&&['countdown','battle'].includes(this.state)){
+      p.emote=msg.emote;p.emoteAt=this.now;p.emoteUntil=this.now+3.6;p.emoteReady=this.now+5;p.vx=p.vy=0;p.input={x:0,y:0,ax:Math.cos(p.facing),ay:Math.sin(p.facing)};this.emit('emote',{owner:p.id,kind:msg.emote,x:p.x,y:p.y});
     } else if (msg.type === 'skill' && Number.isInteger(msg.slot) && msg.slot >= 0 && msg.slot < 3) this.skill(p, msg.slot);
+    else if (msg.type === 'dodge') this.dodge(p);
+    else if (msg.type === 'potion') usePotion(this,p);
   }
   active(p) { return p && p.connected && p.hp > 0 && !p.eliminated; }
-  canAct(p) { return this.state === 'battle' && this.active(p) && !p.block && !p.input.block && !p.input.revive; }
+  canAct(p) { return this.state === 'battle' && this.active(p) && !p.block && !p.input.block && !p.input.revive && this.now >= p.dodgeUntil; }
   hitBoss(p, amount) {
     if (this.state !== 'battle' || !this.boss || this.boss.hp <= 0 || this.now < this.boss.immuneUntil) return 0;
-    const actual = Math.min(amount, this.boss.hp); this.boss.hp -= actual;
+    if (this.boss.guarding && this.boss.state === 'windup') amount *= .65;
+    const actual = Math.min(Math.round(amount * 10) / 10, this.boss.hp); this.boss.hp -= actual; this.boss.hurtAt = this.now;
     p.stats.damage += actual; p.roundStats.damage += actual;
     this.emit('hit', { x: this.boss.x, y: this.boss.y - 40, amount: actual, owner: p.id, target: 'boss' });
     if (this.boss.hp <= 0) this.endRound(true);
     return actual;
   }
+  hitMinion(p, m, amount) {
+    if (m.hp <= 0 || this.now < m.activeAt || this.state !== 'battle') return 0;
+    const actual = Math.min(m.hp, amount); m.hp -= actual; m.hurtAt = this.now;
+    p.stats.damage += actual; p.roundStats.damage += actual;
+    this.emit('hit', { x:m.x, y:m.y-20, amount:actual, owner:p.id, target:m.id, minion:true });
+    if (m.hp <= 0) { dropPotion(this,m); this.emit('minionDeath', {x:m.x,y:m.y,kind:m.kind}); p.energy = Math.min(100,p.energy+8); }
+    return actual;
+  }
   melee(p, amount, reach) {
-    if (distance(p, this.boss) > reach + BOSSES[this.round].radius) return false;
-    if (obstacles(this.round).some(o => segmentDistance(p, this.boss, o) < o.r)) return false;
     const dir = normalize(p.input.ax || Math.cos(p.facing), p.input.ay || Math.sin(p.facing));
-    const target = normalize(this.boss.x - p.x, this.boss.y - p.y);
-    if (dir.x * target.x + dir.y * target.y < -.1) return false;
-    return this.hitBoss(p, amount) > 0;
+    const canHit = (target,radius) => {
+      if (distance(p,target)>reach+radius) return false;
+      if (obstacles(this.round).some(o=>segmentDistance(p,target,o)<o.r)) return false;
+      const n=normalize(target.x-p.x,target.y-p.y); return dir.x*n.x+dir.y*n.y>=.05;
+    };
+    let hit=false;
+    for(const m of this.minions) if(m.hp>0&&canHit(m,18)) hit=this.hitMinion(p,m,amount)>0||hit;
+    if(this.boss && canHit(this.boss,BOSSES[this.round].radius)) hit=this.hitBoss(p,amount)>0||hit;
+    return hit;
   }
   projectile(p, damage, color = 'arrow', opts = {}) {
     const dir = normalize(p.input.ax || Math.cos(p.facing), p.input.ay || Math.sin(p.facing));
@@ -144,21 +162,21 @@ export class Room {
   }
   basic(p) {
     if (!this.canAct(p) || this.now < p.basicAt) return;
-    const c = CLASSES[p.classId]; p.basicAt = this.now + c.interval; p.reviveTarget = null;
-    if (p.classId === 'archer') this.projectile(p, c.damage);
-    else { this.melee(p, c.damage + p.shadowBonus, c.range); p.shadowBonus = 0; }
+    p.emoteUntil=0;const c = CLASSES[p.classId]; p.basicAt = this.now + c.interval; p.reviveTarget = null;
+    p.attackAt = this.now; p.attackFor = p.classId === 'rogue' ? .38 : .52; p.attackSlot = -1;
+    this.effects.push({kind:'basic',at:this.now+(p.classId==='archer'?.17:.18),owner:p.id,damage:c.damage+p.shadowBonus,reach:c.range}); p.shadowBonus=0;
     this.emit('attack', { owner: p.id, kind: p.classId, x: p.x, y: p.y, angle: p.facing, slot: -1 });
   }
   skill(p, slot) {
     if (!this.canAct(p) || p.energy < COSTS[slot] || this.now < p.cds[slot]) return false;
-    p.energy -= COSTS[slot]; p.cds[slot] = this.now + COOLDOWNS[slot]; p.stats.skills++; p.roundStats.skills++;
-    p.reviveTarget = null;
+    p.emoteUntil=0;p.energy -= COSTS[slot]; p.cds[slot] = this.now + COOLDOWNS[slot]; p.stats.skills++; p.roundStats.skills++;
+    p.reviveTarget = null; p.attackAt = this.now; p.attackFor = slot===1?.62:.5; p.attackSlot = slot;
     if (p.classId === 'knight') {
       if (slot === 0) this.melee(p, 25, 112);
       if (slot === 1) {
         this.dash(p, 175); this.melee(p, 35, 105);
         if (this.boss?.state === 'windup' && this.boss.phase === 1 && distance(p, this.boss) < 155) {
-          this.hazards = this.hazards.filter(h => !h.telegraph); this.boss.state = 'recover'; this.boss.until = this.now + 1.6;
+          this.hazards = this.hazards.filter(h => !h.telegraph); this.effects = this.effects.filter(e=>e.kind!=='volley'); this.boss.charge=null; this.boss.guarding=false; this.boss.state = 'recover'; this.boss.until = this.now + 1.6;
           this.emit('notice', { text: 'Investida interrompeu o chefe!' });
         }
       }
@@ -170,13 +188,26 @@ export class Room {
     } else {
       if (slot === 0) { this.melee(p, 18, 94); this.effects.push({ at: this.now + .15, owner: p.id, kind: 'double' }); }
       if (slot === 1) { this.dash(p, 155); p.shadowBonus = 25; }
-      if (slot === 2 && distance(p, this.boss) < 96 + BOSSES[this.round].radius) {
-        this.boss.poison = this.boss.poison.filter(x => x.owner !== p.id);
-        this.boss.poison.push({ owner: p.id, next: this.now + 1, ticks: 3 });
+      if (slot === 2) {
+        const dir=normalize(p.input.ax||Math.cos(p.facing),p.input.ay||Math.sin(p.facing));
+        for(const target of [this.boss,...this.minions]){
+          const n=normalize(target.x-p.x,target.y-p.y);
+          if(target.hp<=0||distance(p,target)>96+(target.isBoss?BOSSES[this.round].radius:18)||dir.x*n.x+dir.y*n.y<.05||obstacles(this.round).some(o=>segmentDistance(p,target,o)<o.r))continue;
+          target.poison=(target.poison||[]).filter(x=>x.owner!==p.id);target.poison.push({owner:p.id,next:this.now+1,ticks:3});
+          this.emit('venom',{x:target.x,y:target.y});
+        }
       }
     }
     this.emit('attack', { owner: p.id, kind: p.classId, x: p.x, y: p.y, angle: p.facing, slot });
     return true;
+  }
+  dodge(p) {
+    if (!this.canAct(p) || p.energy<DODGE.cost || this.now<p.dodgeReady || this.now<p.rootUntil) return false;
+    const moving=p.input.x||p.input.y; const n=normalize(moving?p.input.x:p.input.ax||Math.cos(p.facing),moving?p.input.y:p.input.ay||Math.sin(p.facing));
+    p.emoteUntil=0;p.energy-=DODGE.cost; p.dodgeAt=this.now; p.dodgeUntil=this.now+DODGE.duration; p.dodgeReady=this.now+DODGE.cooldown;
+    p.dodgeVX=n.x*DODGE.distance/DODGE.duration; p.dodgeVY=n.y*DODGE.distance/DODGE.duration;
+    p.block=false; p.revive=0; p.reviveTarget=null;
+    this.emit('dodge',{owner:p.id,x:p.x,y:p.y,angle:Math.atan2(n.y,n.x)}); return true;
   }
   dash(p, length) {
     const dir = normalize(p.input.ax || Math.cos(p.facing), p.input.ay || Math.sin(p.facing));
@@ -189,13 +220,17 @@ export class Room {
     p.y = clamp(p.y + dy, WORLD.margin, WORLD.h - WORLD.margin);
     const solids = [...obstacles(this.round), ...this.hazards.filter(h => h.solid && h.at <= this.now)];
     for (const o of solids) {
-      const d = distance(p, o), min = o.r + 17;
+      const d = distance(p, o), min = o.r + (p.radius || 17);
       if (d < min) { const n = normalize(p.x - o.x, p.y - o.y); p.x = o.x + n.x * min; p.y = o.y + n.y * min; }
+    }
+    if(!p.isBoss && this.boss && this.boss.hp>0){
+      const b=this.boss,d=distance(p,b),min=BOSSES[this.round].radius+12;
+      if(d<min){const n=normalize(p.x-b.x,p.y-b.y);p.x=b.x+n.x*min;p.y=b.y+n.y*min;}
     }
     p.x = clamp(p.x, WORLD.margin, WORLD.w - WORLD.margin); p.y = clamp(p.y, WORLD.margin, WORLD.h - WORLD.margin);
   }
   hurt(p, amount, breaks = false) {
-    if (!this.active(p) || this.state !== 'battle') return;
+    if (!this.active(p) || this.state !== 'battle' || this.now<p.dodgeUntil) return;
     let factor = 1;
     if (p.block && !breaks) factor *= .4;
     if (p.shieldUntil > this.now) factor *= .5;
@@ -204,60 +239,35 @@ export class Room {
     const taken = Math.min(p.hp, final), avoided = amount - final;
     p.hp = Math.max(0, p.hp - final); p.stats.taken += taken; p.roundStats.taken += taken;
     p.stats.avoided += avoided; p.roundStats.avoided += avoided;
-    p.reviveTarget = null; p.revive = 0; p.lastHurt = this.now;
+    p.emoteUntil=0;p.reviveTarget = null; p.revive = 0; p.lastHurt = this.now;
     if (breaks && p.block) { p.block = false; p.blockAt = this.now + .8; this.emit('notice', { text: `${p.name}: defesa quebrada!` }); }
     this.emit('hurt', { owner: p.id, x: p.x, y: p.y, amount: final, blocked: factor < 1 });
-    if (p.hp <= 0) { p.downAt = this.now; p.block = false; p.vx = p.vy = 0; this.emit('notice', { text: `${p.name} caiu! Segure E perto para reviver.` }); }
+    if (p.hp <= 0) { p.downAt = this.now; p.block = false; p.vx = p.vy = 0; this.emit('notice', { text: `${p.name} caiu! Segure R perto para reviver.` }); }
   }
   endRound(won, reason = '') {
     if (this.state !== 'battle') return;
     const reward = won ? BOSSES[this.round].reward + Math.floor(this.remaining / 3) : 0;
     this.score += reward; if (won) this.wins++;
     const result = { round: this.round, won, reason, remaining: Math.ceil(this.remaining), reward, players: [...this.players.values()].map(p => ({ id: p.id, name: p.name, ...p.roundStats })) };
-    this.results.push(result); this.state = this.round === 2 ? 'finished' : 'round_end'; this.transitionAt = this.now + 7;
-    if (this.state === 'finished') {
+    this.results.push(result); this.state = this.round === 2 ? 'ending' : 'round_end'; this.outroStarted=this.now;this.transitionAt = this.now + 11;
+    if (this.state === 'ending') {
+      this.endingAt=this.now;this.transitionAt=this.now+14;this.boss.state=won?'fallen':'awakening';this.boss.startedAt=this.now;
       if (this.wins === 3) this.score += 150;
       this.score += [...this.players.values()].reduce((s, p) => s + Math.floor(p.stats.damage / 30 + p.stats.avoided / 8 + p.stats.revives * 30), 0);
     }
-    this.projectiles = []; this.hazards = []; this.effects = [];
+    this.projectiles = []; this.hazards = []; this.effects = []; this.minions = [];
     this.emit(won ? 'victory' : 'defeat', { text: won ? 'Chefe derrotado!' : reason });
   }
-  planAttack() {
-    const b = this.boss, living = [...this.players.values()].filter(p => this.active(p)); if (!living.length) return;
-    const target = living[b.attackIndex % living.length];
-    b.target = target.id; b.attackIndex++;
-    b.facing = Math.atan2(target.y - b.y, target.x - b.x);
-    b.state = 'windup'; b.until = this.now + (b.phase === 2 ? .95 : 1.3);
-    const kind = (b.attackIndex - 1) % 3;
-    b.attack = kind;
-    const hazard = (x, y, r, damage, opt = {}) => this.hazards.push({ id: uid(), x, y, r, damage, at: b.until, end: b.until + .32, telegraph: true, next: b.until, ...opt });
-    if (this.round === 0) {
-      if (kind === 0) hazard(b.x, b.y, 190, 25, { shape: 'cone', angle: b.facing, spread: 1.05 });
-      if (kind === 1) hazard(b.x, b.y, 230, 32, { breaks: true });
-      if (kind === 2) hazard(target.x, target.y, 85, 18, { root: 1.8 });
-    } else if (this.round === 1) {
-      if (kind === 0) { for (const p of living) hazard(p.x, p.y, 65, 20, { root: 1.5 }); }
-      if (kind === 1) hazard(target.x, target.y, 118, 8, { end: b.until + 5, tick: .8, cloud: true });
-      if (kind === 2) hazard(b.x, b.y, 205, 34, { breaks: true });
-      if (b.phase === 2 && this.hazards.filter(h => h.solid).length < 4) {
-        const angle = this.now * 2;
-        hazard(clamp(b.x + Math.cos(angle) * 200, 250, 950), clamp(b.y + Math.sin(angle) * 200, 200, 560), 29, 0, { solid: true, end: b.until + 9 });
-      }
-    } else {
-      if (kind === 0) hazard(b.x, b.y, 245, 36, { shape: 'cone', angle: b.facing, spread: 1.8, breaks: true });
-      if (kind === 1) {
-        for (const p of living) hazard(p.x, p.y, 83, 32, { at: b.until + .5, end: b.until + .85, next: b.until + .5, breaks: true });
-      }
-      if (kind === 2) hazard(target.x, target.y, 88, 42, { at: b.until + .65, end: b.until + 1, next: b.until + .65, mark: target.id, breaks: true });
-      if (b.phase === 2) hazard(250 + (Math.sin(this.now * 3) + 1) * 350, 160 + (Math.cos(this.now * 5) + 1) * 220, 70, 22, { at: b.until + .6, end: b.until + 1, next: b.until + .6 });
-    }
-    const names = [['Corte Devastador', 'Impacto do Trono — rompe defesa', 'Correntes dos Condenados'], ['Raízes Aprisionadoras', 'Sopro Venenoso', 'Pisada Sísmica — rompe defesa'], ['Foice do Eclipse — esquive!', 'Ruptura do Vazio', 'Marca da Morte — saia da marca!']];
-    this.emit('warning', { text: names[this.round][kind] });
-  }
+  planAttack(kind) { planBossAttack(this,kind); }
   tick(dt) {
     this.now += dt;
     for (const p of this.players.values()) if (!p.connected && p.disconnectedAt !== null && this.now - p.disconnectedAt > 60) this.remove(p.id);
-    if (this.state === 'countdown' && this.now >= this.transitionAt) { this.state = 'battle'; this.boss.nextAt = this.now + 1.5; return; }
+    if(this.state==='ending'&&this.now>=this.transitionAt){this.state='finished';return;}
+    if(this.state==='countdown'){
+      if(!this.gateClosed&&this.now>=this.intro.gateAt){this.gateClosed=true;this.emit('gate',{x:48,y:380});}
+      if(!this.awakened&&this.now>=this.intro.awakeningAt){this.awakened=true;this.boss.state='awakening';this.boss.startedAt=this.intro.awakeningAt;this.emit('awaken',{x:this.boss.x,y:this.boss.y,round:this.round});}
+      if(this.now>=this.transitionAt){this.state='battle';this.boss.state='idle';this.boss.nextAt=this.now+1.5;}return;
+    }
     if (this.state === 'round_end' && this.now >= this.transitionAt) { this.round++; this.prepareRound(); }
     if (this.state !== 'battle') return;
     this.remaining = Math.max(0, this.remaining - dt);
@@ -270,8 +280,9 @@ export class Room {
       if (!this.active(p)) continue;
       if (this.now - (p.lastInput || 0) > .6) p.input = { x: 0, y: 0 };
       const input = p.input;
+      if(input.x||input.y||input.attack||input.block||input.revive)p.emoteUntil=0;
       const was = p.block;
-      p.block = !!(input.block && p.energy > 0 && this.now >= p.blockAt);
+      p.block = !!(this.now>=p.dodgeUntil && input.block && p.energy > 0 && this.now >= p.blockAt);
       if (was && !p.block) p.blockAt = this.now + .4;
       if (p.block) {
         p.energy = Math.max(0, p.energy - 15 * dt);
@@ -282,6 +293,7 @@ export class Room {
       const smoothing = Math.min(1, dt * 16);
       p.vx += ((moving ? dir.x * speed : 0) - p.vx) * smoothing;
       p.vy += ((moving ? dir.y * speed : 0) - p.vy) * smoothing;
+      if(this.now<p.dodgeUntil){p.vx=p.dodgeVX;p.vy=p.dodgeVY;}
       this.move(p, p.vx * dt, p.vy * dt);
       if (input.ax || input.ay) p.facing = Math.atan2(input.ay, input.ax);
       if (input.attack) this.basic(p);
@@ -299,7 +311,12 @@ export class Room {
       } else { p.reviveTarget = null; p.revive = 0; }
     }
     for (const e of this.effects.filter(e => e.at <= this.now)) {
-      const p = this.players.get(e.owner); if (this.active(p)) this.melee(p, 18, 94);
+      if(e.kind==='volley'){
+        for(let i=0;i<e.count;i++){const a=e.angle+(e.radial?i/e.count*Math.PI*2:(i/(e.count-1)-.5)*e.spread);
+          this.projectiles.push({id:uid(),enemy:true,x:e.x,y:e.y,vx:Math.cos(a)*e.speed,vy:Math.sin(a)*e.speed,damage:e.damage,color:e.color,left:1050});}
+      }else{const p=this.players.get(e.owner);if(this.active(p)&&!p.block&&this.now>=p.dodgeUntil){
+        if(e.kind==='basic'&&p.classId==='archer')this.projectile(p,e.damage);else this.melee(p,e.damage||18,e.reach||94);
+      }}
     }
     this.effects = this.effects.filter(e => e.at > this.now);
     if (this.state !== 'battle') return;
@@ -312,30 +329,36 @@ export class Room {
     }
     b.poison = b.poison.filter(x => x.ticks > 0);
     if (this.state !== 'battle') return;
-    if (b.phase === 1 && b.hp / b.maxHp < BOSSES[this.round].threshold) {
-      b.phase = 2; b.state = 'transition'; b.until = this.now + 1.5; b.immuneUntil = b.until;
+    const threshold = b.phase===1?BOSSES[this.round].threshold:BOSSES[this.round].finalThreshold;
+    if (b.phase<3 && b.state!=='transition' && b.hp / b.maxHp < threshold) {
+      b.phase++;b.startedAt=this.now; b.charge=null; b.guarding=false; b.state = 'transition'; b.until = this.now + 1.5; b.immuneUntil = b.until;
       this.hazards = this.hazards.filter(h => !h.telegraph || h.at <= this.now);
-      this.emit('phase', { text: BOSSES[this.round].phase, x: b.x, y: b.y });
+      this.effects=this.effects.filter(e=>e.kind!=='volley'); this.nextWave=Math.min(this.nextWave,this.now+3);
+      this.emit('phase', { text: b.phase===3?BOSSES[this.round].finalPhase:BOSSES[this.round].phase, x: b.x, y: b.y });
     }
     if (b.state === 'transition' && this.now >= b.until) { b.state = 'idle'; b.nextAt = this.now + .6; }
     if (b.state === 'windup' && this.now >= b.until) {
-      b.state = 'execute'; b.until = this.now + .4;
+      b.state = 'execute'; b.startedAt=this.now; b.until = this.now + (b.executeFor||.45); b.guarding=false;
       this.emit('bossAttack', { x: b.x, y: b.y, kind: b.attack, round: this.round });
-    } else if (b.state === 'execute' && this.now >= b.until) { b.state = 'recover'; b.until = this.now + (b.phase === 2 ? .85 : 1.45); }
-    else if (b.state === 'recover' && this.now >= b.until) { b.state = 'idle'; b.nextAt = this.now + (b.phase === 2 ? .7 : 1.25); }
+    } else if (b.state === 'execute' && this.now >= b.until) { b.state = 'recover'; b.until = this.now + (b.recoveryFor||1.5); b.startedAt=this.now; }
+    else if (b.state === 'recover' && this.now >= b.until) { b.state = 'idle'; b.nextAt = this.now + (b.phase===3?.6:1); b.charge=null; }
     if (['idle', 'chase'].includes(b.state)) {
       const targets = [...this.players.values()].filter(p => this.active(p));
       const target = targets.find(p => p.id === b.target) || targets[0];
       if (target) {
         const dist = distance(b, target); b.facing = Math.atan2(target.y - b.y, target.x - b.x);
-        if (dist > 125) {
+        if (dist > 105) {
           b.state = 'chase'; const n = normalize(target.x - b.x, target.y - b.y);
-          const speed = BOSSES[this.round].speed * (b.phase === 2 ? 1.25 : 1) * (this.now < b.slowUntil ? .45 : 1);
-          this.move(b, n.x * speed * dt, n.y * speed * dt);
+          const speed = BOSSES[this.round].speed * (1+(b.phase-1)*.12) * (this.now < b.slowUntil ? .45 : 1);
+          let best=-Infinity,heading=b.facing;
+          for(const turn of [0,.55,-.55,1.05,-1.05,1.6,-1.6]){const a=b.facing+turn,probe={x:b.x+Math.cos(a)*90,y:b.y+Math.sin(a)*90};let score=-distance(probe,target)-Math.abs(turn)*7;if(obstacles(this.round).some(o=>distance(probe,o)<o.r+BOSSES[this.round].radius+3))score-=2000;if(probe.x<55||probe.x>1145||probe.y<55||probe.y>705)score-=2000;if(score>best){best=score;heading=a;}}
+          this.move(b, Math.cos(heading)*speed*dt, Math.sin(heading)*speed*dt);
         } else b.state = 'idle';
         if (this.now >= b.nextAt) this.planAttack();
       }
     }
+    if(b.charge && this.now>=b.charge.start && this.now<=b.charge.end){const q=b.charge,t=clamp((this.now-q.start)/(q.end-q.start),0,1);this.move(b,q.x+(q.tx-q.x)*t-b.x,q.y+(q.ty-q.y)*t-b.y);}
+    tickMinions(this,dt);tickLoot(this);
     this.tickHazards();
   }
   tickProjectiles(dt) {
@@ -345,39 +368,41 @@ export class Room {
       const old = { x: q.x, y: q.y }; q.x += q.vx * dt; q.y += q.vy * dt; q.left -= Math.hypot(q.vx, q.vy) * dt;
       // Swept segment collision: no arrow tunneling through boss or pillars.
       if ([...obstacles(this.round), ...this.hazards.filter(h => h.solid && h.at <= this.now)].some(o => segmentDistance(old, q, o) < o.r)) continue;
-      if (segmentDistance(old, q, this.boss) < BOSSES[this.round].radius + 6) {
-        const p = this.players.get(q.owner);
-        if (p) this.hitBoss(p, q.damage);
-        if (q.slow) this.boss.slowUntil = this.now + q.slow;
-      } else if (q.left > 0 && q.x > 0 && q.y > 0 && q.x < WORLD.w && q.y < WORLD.h) kept.push(q);
+      if(q.enemy){
+        const target=[...this.players.values()].find(p=>this.active(p)&&this.now>=p.dodgeUntil&&segmentDistance(old,q,p)<21);
+        if(target){if(this.now>=target.hitSafeUntil){this.hurt(target,q.damage);target.hitSafeUntil=this.now+.2;}continue;}
+      }else{
+        const targets=[...this.minions.filter(m=>m.hp>0&&this.now>=m.activeAt),this.boss].map(target=>({target,t:((target.x-old.x)*q.vx+(target.y-old.y)*q.vy)/(Math.hypot(q.vx,q.vy)||1)})).sort((a,b)=>a.t-b.t);
+        const hit=targets.find(({target})=>segmentDistance(old,q,target)<(target.isBoss?BOSSES[this.round].radius:18)+6)?.target;
+        if(hit){const p=this.players.get(q.owner);if(p){if(hit.isBoss)this.hitBoss(p,q.damage);else this.hitMinion(p,hit,q.damage);}if(q.slow&&hit.isBoss)this.boss.slowUntil=this.now+q.slow;continue;}
+      }
+      if(q.left>0&&q.x>0&&q.y>0&&q.x<WORLD.w&&q.y<WORLD.h)kept.push(q);
     }
     this.projectiles = this.state === 'battle' ? kept : [];
   }
   tickHazards() {
     for (const h of this.hazards) {
-      if (this.now < h.at || this.now > h.end || this.now < h.next || h.solid) continue;
+      if (this.now < h.at || this.now > h.end || this.now < h.next || h.solid || h.warningOnly) continue;
       h.next = h.tick ? this.now + h.tick : Infinity;
-      this.emit('impact', { x: h.x, y: h.y, r: h.r, round: this.round });
+      this.emit('impact', { x:h.x,y:h.y,r:h.r,inner:h.inner,shape:h.shape,angle:h.angle,length:h.length,width:h.width,spread:h.spread,round:this.round,minor:!!h.minion });
       for (const p of this.players.values()) {
-        if (!this.active(p) || distance(p, h) > h.r + 13) continue;
-        if (h.shape === 'cone') {
-          const a = Math.atan2(p.y - h.y, p.x - h.x);
-          if (Math.abs(Math.atan2(Math.sin(a - h.angle), Math.cos(a - h.angle))) > h.spread) continue;
-        }
-        this.hurt(p, h.damage, h.breaks);
+        if (!this.active(p)||this.now<p.dodgeUntil||this.now<p.hitSafeUntil||!hazardContains(p,h,13))continue;
+        this.hurt(p, h.damage, h.breaks); p.hitSafeUntil=this.now+.2;
         if (h.root && p.hp > 0) p.rootUntil = this.now + h.root;
       }
     }
     this.hazards = this.hazards.filter(h => h.end > this.now);
   }
   snapshot() {
-    const playerView = p => ({ id: p.id, name: p.name, classId: p.classId, isBot: !!p.isBot, ready: p.ready, connected: p.connected,
+    const playerView = p => ({ hat:p.hat,emote:p.emote,emoteAt:p.emoteAt,emoteUntil:p.emoteUntil,emoteReady:p.emoteReady,id: p.id, name: p.name, classId: p.classId, isBot: !!p.isBot, ready: p.ready, connected: p.connected,
       x: p.x, y: p.y, vx: p.vx, vy: p.vy, hp: p.hp, maxHp: p.maxHp, energy: p.energy, facing: p.facing,
+      attackAt:p.attackAt,attackFor:p.attackFor,attackSlot:p.attackSlot,lastHurt:p.lastHurt,dodgeAt:p.dodgeAt,dodgeUntil:p.dodgeUntil,dodgeReady:p.dodgeReady,
+      potions:p.potions,potionReady:p.potionReady,
       cds: p.cds, basicAt: p.basicAt, block: p.block, shieldUntil: p.shieldUntil, rootUntil: p.rootUntil,
       downAt: p.downAt, eliminated: p.eliminated, revive: p.revive, reviveTarget: p.reviveTarget, stats: p.stats });
     return { code: this.code, name: this.name, owner: this.owner, public: this.public, solo: this.solo, botsEnabled: this.botsEnabled, state: this.state, round: this.round,
-      now: this.now, transitionAt: this.transitionAt, remaining: this.remaining, boss: this.boss,
-      players: [...this.players.values()].map(playerView), projectiles: this.projectiles, hazards: this.hazards,
+      endingAt:this.endingAt,intro:this.intro,outroStarted:this.outroStarted,now: this.now, transitionAt: this.transitionAt, remaining: this.remaining, boss: this.boss,
+      players: [...this.players.values()].map(playerView), minions:this.minions,drops:this.drops,dialogue:this.dialogue, projectiles: this.projectiles, hazards: this.hazards,
       score: this.score, bestScore: this.bestScore || 0, wins: this.wins, results: this.results, events: this.events };
   }
 }

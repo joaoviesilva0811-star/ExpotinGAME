@@ -1,12 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { Room } from '../server/engine.js';
-import { CLASSES } from '../public/shared.js';
+import { Room, obstacles } from '../server/engine.js';
+import { CLASSES, BOSSES } from '../public/shared.js';
 
 function battle(classes = ['knight']) {
   const r = new Room('IRON-TEST22', 'a', 'Teste');
   classes.forEach((cls, i) => { const id=String.fromCharCode(97+i);const p=r.add(id,id);r.select(id,cls);p.ready=true; });
-  r.start('a');r.tick(3.01);return r;
+  r.start('a');r.tick(r.transitionAt-r.now+.01);return r;
 }
 function aim(r,p,x=1,y=0,seq=1){r.command(p.id,{type:'input',seq,x:0,y:0,ax:x,ay:y});}
 
@@ -19,7 +19,7 @@ test('leader and readiness are enforced; capacity is 4',()=>{
 test('class stats and boss HP scale with real participant count',()=>{
   const solo=battle(['archer']),group=battle(['knight','archer','rogue','knight']);
   assert.equal(solo.players.get('a').maxHp,100);assert.equal(group.players.get('c').maxHp,115);
-  assert.equal(group.boss.maxHp,1200);assert.ok(solo.boss.maxHp<group.boss.maxHp&&solo.boss.maxHp>=500);
+  assert.equal(group.boss.maxHp,BOSSES[0].hp);assert.ok(solo.boss.maxHp<group.boss.maxHp&&solo.boss.maxHp>=500);
 });
 test('skills consume resources once, enforce cooldown and reject duplicate sequence IDs',()=>{
   const r=battle(),p=r.players.get('a');p.x=700;p.y=380;aim(r,p);
@@ -31,10 +31,11 @@ test('skills consume resources once, enforce cooldown and reject duplicate seque
   r.command('a',{type:'setHp',seq:5,hp:999999,damage:99999});assert.equal(p.hp,160);assert.equal(r.boss.hp,r.boss.maxHp-25);
 });
 test('melee requires reach and aim; basic attack has a minimum interval',()=>{
-  const r=battle(),p=r.players.get('a');aim(r,p);r.basic(p);assert.equal(r.boss.hp,r.boss.maxHp);
-  p.x=740;p.y=380;r.now+=1;aim(r,p,-1,0,2);r.basic(p);assert.equal(r.boss.hp,r.boss.maxHp);
-  r.now+=1;aim(r,p,1,0,3);r.basic(p);assert.equal(r.boss.hp,r.boss.maxHp-12);
-  r.basic(p);assert.equal(r.boss.hp,r.boss.maxHp-12);
+  const r=battle(),p=r.players.get('a');aim(r,p);r.basic(p);r.tick(.2);assert.equal(r.boss.hp,r.boss.maxHp);
+  p.x=740;p.y=380;r.now+=1;aim(r,p,-1,0,2);r.basic(p);r.tick(.2);assert.equal(r.boss.hp,r.boss.maxHp);
+  r.now+=1;aim(r,p,1,0,3);r.basic(p);assert.equal(r.boss.hp,r.boss.maxHp); // Anticipation precedes contact.
+  r.tick(.2);assert.equal(r.boss.hp,r.boss.maxHp-12);
+  r.basic(p);r.tick(.2);assert.equal(r.boss.hp,r.boss.maxHp-12);
 });
 test('archer projectiles hit by collision, miss out of range and apply slow',()=>{
   const r=battle(['archer']),p=r.players.get('a');p.x=500;p.y=380;aim(r,p);
@@ -70,7 +71,7 @@ test('revive takes 4 uninterrupted seconds, damage resets progress, bleedout las
 });
 test('boss windup telegraphs, phase transition and attacks resolve on server',()=>{
   for(const round of [0,1,2]){
-    const r=battle();r.round=round;r.prepareRound();r.tick(3.01);r.planAttack();
+    const r=battle();r.round=round;r.prepareRound();r.tick(r.transitionAt-r.now+.01);r.planAttack(0);
     assert.equal(r.boss.state,'windup');assert.ok(r.hazards.length>0);assert.ok(r.hazards.every(h=>h.at>r.now));
     const p=r.players.get('a'),h=r.hazards[0];p.x=h.x+40;p.y=h.y;h.shape=undefined;
     const hp=p.hp;r.tickHazards();assert.equal(p.hp,hp);r.now=h.at+.01;r.tickHazards();assert.ok(p.hp<hp);
@@ -79,16 +80,16 @@ test('boss windup telegraphs, phase transition and attacks resolve on server',()
 });
 test('arena movement remains inside boundaries and solid pillars',()=>{
   const r=battle(),p=r.players.get('a');r.move(p,-10000,-10000);assert.equal(p.x,55);assert.equal(p.y,55);
-  p.x=170;p.y=155;r.move(p,0,0);assert.ok(Math.hypot(p.x-170,p.y-155)>=44);
+  const o=obstacles(0)[0];p.x=o.x;p.y=o.y;r.move(p,0,0);assert.ok(Math.hypot(p.x-o.x,p.y-o.y)>=o.r+17-.001);
 });
 test('full three-round progression gives coherent results, healing and a final score',()=>{
   const r=battle(),p=r.players.get('a');
   for(let round=0;round<3;round++){
     assert.equal(r.state,'battle');assert.equal(r.round,round);p.hp=80;r.hitBoss(p,99999);
     assert.equal(r.results.length,round+1);assert.equal(r.results[round].won,true);
-    if(round<2){assert.equal(r.state,'round_end');r.tick(7.1);assert.equal(p.hp,120);assert.equal(r.state,'countdown');r.tick(3.1);}
+    if(round<2){assert.equal(r.state,'round_end');r.tick(r.transitionAt-r.now+.01);assert.equal(p.hp,120);assert.equal(r.state,'countdown');r.tick(r.transitionAt-r.now+.01);}
   }
-  assert.equal(r.state,'finished');assert.equal(r.wins,3);assert.ok(r.score>=650);assert.ok(p.stats.damage>2000);
+  assert.equal(r.state,'ending');r.tick(r.transitionAt-r.now+.01);assert.equal(r.state,'finished');assert.equal(r.wins,3);assert.ok(r.score>=650);assert.ok(p.stats.damage>2000);
   r.restartLobby('a');assert.equal(r.state,'lobby');assert.equal(p.ready,false);
 });
 test('timeout and total wipe are losses, and disconnected identities reserve a slot',()=>{
