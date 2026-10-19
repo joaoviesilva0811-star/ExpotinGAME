@@ -4,7 +4,7 @@ Jogo 2D cooperativo para PC Windows, para 1 a 4 jogadores, com servidor local in
 
 ## Baixar o jogo pelo GitHub
 
-**[Baixar a versão Windows portátil](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/download/v1.4.0/IronCrown-Windows-x64.zip)** · **[Página da release](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/tag/v1.4.0)**
+**[Baixar a versão Windows portátil](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/download/v1.4.1/IronCrown-Windows-x64.zip)** · **[Página da release](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/tag/v1.4.1)**
 
 Extraia o ZIP completo e abra **Shadows of the Iron Crown.exe**. Não precisa instalar Node.js. A release é publicada pela automação do GitHub após a tag; o andamento aparece na aba **Actions**.
 
@@ -182,4 +182,10 @@ O servidor opera como uma instância única. Não há coordenação multi-instâ
 
 Nove modelos de impacto distinguem brasas, corte de aço, onda de pedras, raízes, nuvem venenosa, correntes, cristais, corte de foice e fenda do vazio. A seleção usa o tipo de área publicado pelo servidor; cortes acompanham o ângulo do golpe e nuvens de veneno não usam raízes.
 
-[Prévia dos nove modelos de impacto](preview/14-effect-models.png) · [Arqueiro em oito direções](preview/14-archer-real-directions.png)
+[Prévia dos nove modelos de impacto](preview/141-effect-models.png) · [Arqueiro em oito direções](preview/14-archer-real-directions.png)
+
+## Correção 1.4.1 — efeitos completos
+
+Cada efeito usa sua própria folha com seis quadros e margens transparentes. O cache preserva a célula inteira e registra as poses pelo mesmo ponto de contato com o chão. Cortes, fumaça, raízes e explosões não são mais amputados pelo recorte dos anéis; a geometria de dano e a borda do centro seguro continuam no chão.
+
+[Revisão dos 54 quadros](preview/141-all-effect-frames.png)

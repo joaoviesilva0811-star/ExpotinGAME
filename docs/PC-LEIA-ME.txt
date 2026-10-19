@@ -1,4 +1,4 @@
-SHADOWS OF THE IRON CROWN — EDIÇÃO PC 1.4
+SHADOWS OF THE IRON CROWN — EDIÇÃO PC 1.4.1
 
 WINDOWS 10/11 DE 64 BITS
 
@@ -122,3 +122,8 @@ cristais; os contornos dos próximos ataques ficam visíveis por cima.
 
 Nove modelos de impacto em 54 quadros: brasas, aço, pedras, raízes, veneno,
 correntes, cristais, foice e fenda do vazio, escolhidos pelo tipo do golpe.
+
+CORREÇÃO 1.4.1
+Folhas de efeitos reorganizadas com margens transparentes e quadros inteiros.
+Fumaça, correntes e raízes não são recortadas pelo centro dos ataques em anel.
+A borda da zona segura permanece marcada no chão. Dano e alcance preservados.

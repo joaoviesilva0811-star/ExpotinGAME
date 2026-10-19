@@ -1,3 +1,12 @@
+# Validação da correção 1.4.1
+
+- `npm test`: 43 testes, incluindo verificação das 732 poses e das 113 que ultrapassavam o cache anterior. Armas e membros ficam inteiros sem mudar a referência de posição ou escala do corpo.
+- `scripts/effect-clipping-review.js`: revisão de margens de todos os 54 quadros de efeitos e renderização de 432 combinações de pose/orientação, sem cortes no cache nem máscara circular sobre volumes no ar.
+- `scripts/weapon-clipping-review.js`: personagens e chefes desenhados com as armas completas; a imagem indica a borda do cache antigo para comparação.
+- A correção altera arte e renderização; o combate autoritativo e as geometrias de dano da 1.4 permanecem iguais.
+
+Abaixo, registro dos testes da versão 1.4 que estabelecem a base desta correção. As limitações de execução em Windows físico e entre PCs físicos continuam valendo.
+
 # Validação da versão 1.4
 
 Executada em Linux com Node 24.19.0, Chromium e Electron 44.9.0, em 19/10/2026.

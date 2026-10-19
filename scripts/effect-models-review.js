@@ -9,9 +9,9 @@ try{
   const rows=[['redEruption','steelSweep','stoneWave'],['rootEruption','poisonCloud','ironChains'],['crystalEruption','voidSweep','voidRift']],labels=['ERUPÇÃO DE BRASAS','CORTE DE AÇO','ONDA DE PEDRAS','RAÍZES ANCESTRAIS','NUVEM VENENOSA','CORRENTES DE FERRO','ESTILHAÇOS DO VAZIO','CORTE DA FOICE','FENDA DO VAZIO'];
   let drawn=0;
   for(let row=0;row<3;row++)for(let col=0;col<3;col++){
-   const x=col*480,y=85+row*328;c.save();c.beginPath();c.rect(x+12,y,456,300);c.clip();c.globalAlpha=.4;c.drawImage(terrain(row),100,150,450,300,x+12,y,456,300);c.globalAlpha=1;
-   drawn+=Number(drawVolume(c,['red','green','violet'][row],x+240,y+(row===0&&col>0||row===2&&col===1?170:254),row===0&&col>0||row===2&&col===1?350:250,.4,1,false,rows[row][col]));c.restore();c.font='21px Pixelify';c.fillStyle='#e5cfaa';c.fillText(labels[row*3+col],x+32,y+280);
+   const x=col*480,y=85+row*328;c.save();c.globalAlpha=.4;c.drawImage(terrain(row),100,150,450,300,x+12,y,456,300);c.globalAlpha=1;
+   drawn+=Number(drawVolume(c,['red','green','violet'][row],x+240,y+(row===0&&col>0||row===2&&col===1?170:254),row===0&&col>0||row===2&&col===1?350:190,.4,1,false,rows[row][col]));c.restore();c.font='21px Pixelify';c.fillStyle='#e5cfaa';c.fillText(labels[row*3+col],x+32,y+280);
   }
   Object.assign(canvas.style,{position:'fixed',inset:0,width:'100vw',height:'100vh',zIndex:100});document.body.append(canvas);return drawn;
- });assert.equal(result,9);await page.screenshot({path:'artifacts/14-effect-models.png'});console.log('PASS: all nine distinct animated models loaded and rendered.');
+ });assert.equal(result,9);await page.screenshot({path:'artifacts/141-effect-models.png'});console.log('PASS: all nine distinct animated models loaded and rendered.');
 }finally{await browser.close();}

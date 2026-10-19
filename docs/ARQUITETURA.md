@@ -63,3 +63,13 @@ Telegraphs mantêm a geometria do dano, com contornos separados para anéis. Ras
 `chooseBossAttack` separa padrões próximos e distantes para cada chefe, evita repetição imediata e alterna alvos. Os novos padrões 6 e 7 trazem controle a distância e pressão próxima. Todas as áreas ficam fixas após o aviso, e transições de fase cancelam preparações/rajadas pendentes. O evento `shot` publica a direção real do projétil no instante do disparo, inclusive quando uma cobertura o absorve antes do próximo snapshot.
 
 Nove modelos de impacto distinguem brasas, corte de aço, onda de pedras, raízes, nuvem venenosa, correntes, cristais, corte de foice e fenda do vazio. A seleção usa o tipo de área publicado pelo servidor; cortes acompanham o ângulo do golpe e nuvens de veneno não usam raízes.
+
+## Correção 1.4.1
+
+`animation-layout.js` mantém as dimensões lógicas de cada personagem como referência de posição, porém dimensiona o cache para conter armas e membros que ultrapassam essa referência. O desenho compensa a margem sem mudar o corpo ou a escala. O inventário dos 732 quadros identifica 113 poses que ultrapassavam o cache anterior; a verificação inclui todas as poses armazenadas.
+
+Os efeitos usam nove folhas individuais `fx-<modelo>.png`, com duas colunas e três linhas. `volumes.js` conserva as células inteiras com margem adicional, sem máscara para disfarçar cortes. A análise de alfa calcula o contato real com o chão e a largura de referência do modelo; partículas e projéteis também desenham a imagem completa. As folhas antigas de três linhas são preservadas como referências de arte, mas não são carregadas pelo renderizador.
+
+`drawGroundFX` continua recortando o chão à geometria do dano. `drawFX` desenha os volumes completos no ar, sem abrir um buraco circular no meio das raízes ou da fumaça. Uma borda sobreposta mantém o centro seguro do anel identificável; a colisão não mudou.
+
+`analyze-effects.py` encontra faixas transparentes reais e salva `effect-frames.json`, sem editar os originais. O cache usa essas coordenadas em vez de supor células iguais; o contato com o chão é registrado pela base de cada pose. Isso preserva, por exemplo, a base dos portais que cruza a divisão nominal de uma folha.

@@ -9,7 +9,7 @@ on:
       tag:
         description: 'Tag existente para publicar'
         required: true
-        default: 'v1.4.0'
+        default: 'v1.4.1'
 
 permissions:
   contents: read

@@ -1,3 +1,5 @@
+import {frameCacheLayout,drawAnimatedFrame} from './animation-layout.js';
+export {drawAnimatedFrame} from './animation-layout.js';
 import {facingRow,archerPose} from './animation-state.js';
 export {facingRow} from './animation-state.js';
 // Animation atlases contain distinct drawn poses, not copies of one idle sprite.
@@ -14,12 +16,17 @@ function frame(name,row,col,boss=false){
   const key=`${name}:${row}:${col}:${mirror}`;if(cache.has(key))return cache.get(key);
   const cols=6,rows=name==='direction-acolyte'?7:name==='minions'?3:name.startsWith('emote-')?4:name.startsWith('direction-')?8:6,cw=image.width/cols,ch=image.height/rows;
   const crop=metadata[name]?.frames[row]?.[col],head=metadata[name]?.heads?.[row]?.[col];
-  const c=document.createElement('canvas');c.width=boss?210:100;c.height=boss?210:92;
+  const c=document.createElement('canvas'),nominalWidth=boss?210:100,nominalHeight=boss?210:92;c.width=nominalWidth;c.height=nominalHeight;
   const ctx=c.getContext('2d');ctx.imageSmoothingEnabled=false;
   const scale=boss?Math.min(198/cw,194/ch):Math.min(94/cw,78/ch),w=cw*scale,h=ch*scale;
-  if(crop){const [sx,sy,sw,sh]=crop,sc=metadata[name].scale;ctx.drawImage(image,sx,sy,sw,sh,c.width/2+(sx-(col+.5)*cw)*sc,c.height-sh*sc-9,sw*sc,sh*sc);if(head)c.ironHead={x:c.width/2+(head[0]-(col+.5)*cw)*sc,y:c.height-sh*sc-9+(head[1]-sy)*sc};}
+  if(crop){
+    const [sx,sy,sw,sh]=crop,sc=metadata[name].scale,x=nominalWidth/2+(sx-(col+.5)*cw)*sc,y=nominalHeight-sh*sc-9;
+    const layout=frameCacheLayout(nominalWidth,nominalHeight,x,y,sw*sc,sh*sc);c.width=layout.cacheWidth;c.height=layout.cacheHeight;c.ironFrame=layout;ctx.imageSmoothingEnabled=false;
+    ctx.drawImage(image,sx,sy,sw,sh,x-layout.left,y-layout.top,sw*sc,sh*sc);
+    if(head)c.ironHead={x:nominalWidth/2+(head[0]-(col+.5)*cw)*sc,y:y+(head[1]-sy)*sc};
+  }
   else ctx.drawImage(image,col*cw,row*ch,cw,ch,(c.width-w)/2,c.height-h-3,w,h);
-  if(mirror){const copy=document.createElement('canvas');copy.width=c.width;copy.height=c.height;const dc=copy.getContext('2d');dc.translate(c.width,0);dc.scale(-1,1);dc.drawImage(c,0,0);if(c.ironHead)copy.ironHead={x:c.width-c.ironHead.x,y:c.ironHead.y};cache.set(key,copy);return copy;}
+  if(mirror){const copy=document.createElement('canvas');copy.width=c.width;copy.height=c.height;const dc=copy.getContext('2d');dc.translate(c.width,0);dc.scale(-1,1);dc.drawImage(c,0,0);if(c.ironFrame)copy.ironFrame={...c.ironFrame,left:c.ironFrame.width-c.ironFrame.left-c.width};if(c.ironHead)copy.ironHead={x:nominalWidth-c.ironHead.x,y:c.ironHead.y};cache.set(key,copy);return copy;}
   cache.set(key,c);return c;
 }
 export function characterFrame(p,time,now){
@@ -58,7 +65,7 @@ export function drawMinion(c,m,time,now){
   const image=directional||frame('minions',m.round,col);const spawning=now<m.activeAt;
   c.save();c.translate(m.x,m.y);c.globalAlpha=spawning?.35:1;
   c.fillStyle='#0007';c.beginPath();c.ellipse(0,7,18,7,0,0,7);c.fill();
-  if(image){if(!directional&&Math.cos(m.facing)<0)c.scale(-1,1);if(now-m.hurtAt<.14)c.filter='brightness(1.8)';if(m.state==='chase')c.translate(0,Math.sin(time*6)*.8);c.drawImage(image,-41,-64,82,75);}
+  if(image){if(!directional&&Math.cos(m.facing)<0)c.scale(-1,1);if(now-m.hurtAt<.14)c.filter='brightness(1.8)';if(m.state==='chase')c.translate(0,Math.sin(time*6)*.8);drawAnimatedFrame(c,image,-41,-64,82,75);}
   else{c.fillStyle=['#a06167','#86a269','#9781b1'][m.round];c.fillRect(-12,-32,24,32);}
   c.restore();
   if(!spawning){c.fillStyle='#151d26';c.fillRect(m.x-19,m.y-66,38,3);c.fillStyle=['#d16a72','#94c36d','#b792e7'][m.round];c.fillRect(m.x-19,m.y-66,38*m.hp/m.maxHp,3);}

@@ -93,9 +93,11 @@ export function drawFX(c){
  for(const f of fields){
   const age=f.total-f.life;
   c.save();
-  // Tall plumes can rise outside the outer edge, but the safe hole stays clear.
-  if(f.h.inner){const h=f.h;c.beginPath();c.rect(-2000,-2000,5200,4800);c.moveTo(h.x+h.inner,h.y);c.arc(h.x,h.y,h.inner,0,Math.PI*2);c.clip('evenodd');}
+  // Only the ground layer is clipped to damage geometry. Cutting a hole in
+  // airborne billboards amputates roots, blades and clouds. Their emitters
+  // still sit outside the safe center, whose boundary is drawn above the FX.
   for(const b of f.volumes){if(drawn++>=160)break;drawVolume(c,f.kind,b.x,b.y,b.width,(age-b.delay)/1.2,.88,b.flip,f.model,b.angle||0);}
+  if(f.h.inner){c.globalAlpha=Math.min(.9,f.life*2);c.strokeStyle='#101c1de0';c.lineWidth=4;c.beginPath();c.arc(f.h.x,f.h.y,f.h.inner,0,Math.PI*2);c.stroke();c.strokeStyle='#d5f2cf';c.lineWidth=1.3;c.stroke();}
   c.restore();
  }
  c.globalCompositeOperation='lighter';

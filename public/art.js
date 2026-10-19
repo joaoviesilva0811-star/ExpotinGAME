@@ -1,3 +1,4 @@
+import {drawAnimatedFrame} from './animation-layout.js';
 import { sceneImage } from './scenes.js';
 import { characterFrame, bossFrame } from './animation.js';
 import { WORLD, CLASSES, BOSSES } from './shared.js';
@@ -195,7 +196,7 @@ export function drawPlayer(c,p,time,{scale=1,alpha=1,attacking=false,now=time}={
   if(animated?.flip)c.scale(-1,1);
   if(animated?.bowPhase==='aim'&&Math.hypot(p.vx||0,p.vy||0)>12)c.translate(0,Math.sin(time*8)*.8);
   const hurt=now-(p.lastHurt??-10);if(hurt>=0&&hurt<.16){c.translate(Math.cos(a)*-3,0);c.filter='brightness(1.7)';}
-  c.drawImage(img,-img.width/2*scale,(-img.height+15)*scale,img.width*scale,img.height*scale);c.restore();
+  const iw=img.ironFrame?.width||img.width,ih=img.ironFrame?.height||img.height;drawAnimatedFrame(c,img,-iw/2*scale,(-ih+15)*scale,iw*scale,ih*scale);c.restore();
 }
 export function drawBoss(c,b,round,time,now=time){
   const animation=bossFrame(b,round,time,now),img=animation||bossSprite(round,['windup','execute'].includes(b.state)?1:0),sc=round===1?1.1:1;
@@ -205,7 +206,7 @@ export function drawBoss(c,b,round,time,now=time){
   if(now-b.hurtAt<.055)c.filter='brightness(1.4)';
   let w=animation?210:206,h=animation?210:206;if(b.state==='fallen'){h*=.45;w*=1.1;}if(b.state==='dormant'){h*=round===1?.6:.77;w*=round===2?.77:1;c.filter='brightness(.5) saturate(.6)';}
   const bob=b.state==='chase'?Math.sin(time*6)*1.3:0;
-  c.drawImage(img,Math.round(b.x-w*sc/2),Math.round(b.y-h*sc+23+bob),w*sc,h*sc);c.restore();
+  drawAnimatedFrame(c,img,Math.round(b.x-w*sc/2),Math.round(b.y-h*sc+23+bob),w*sc,h*sc);c.restore();
 }
 
 const terrains=new Map();
