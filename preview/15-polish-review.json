@@ -1,0 +1,439 @@
+{
+  "report": {
+    "walk": [
+      {
+        "name": "varkhul-south",
+        "count": 12
+      },
+      {
+        "name": "tharazul-south",
+        "count": 12
+      },
+      {
+        "name": "varkhul-east",
+        "count": 12
+      },
+      {
+        "name": "varkhul-north",
+        "count": 12
+      },
+      {
+        "name": "tharazul-north",
+        "count": 12
+      },
+      {
+        "name": "tharazul-east",
+        "count": 12
+      },
+      {
+        "name": "azrakiel-south",
+        "count": 12
+      },
+      {
+        "name": "azrakiel-north",
+        "count": 12
+      },
+      {
+        "name": "azrakiel-east",
+        "count": 12
+      }
+    ],
+    "hurt": [
+      {
+        "name": "knight",
+        "count": 16
+      },
+      {
+        "name": "archer",
+        "count": 16
+      },
+      {
+        "name": "varkhul",
+        "count": 16
+      },
+      {
+        "name": "rogue",
+        "count": 16
+      },
+      {
+        "name": "tharazul",
+        "count": 16
+      },
+      {
+        "name": "azrakiel",
+        "count": 16
+      },
+      {
+        "name": "revenant",
+        "count": 16
+      },
+      {
+        "name": "thornling",
+        "count": 16
+      },
+      {
+        "name": "acolyte",
+        "count": 16
+      }
+    ],
+    "walkHashes": [
+      {
+        "name": "varkhul",
+        "direction": "south",
+        "unique": 12
+      },
+      {
+        "name": "varkhul",
+        "direction": "east",
+        "unique": 12
+      },
+      {
+        "name": "varkhul",
+        "direction": "north",
+        "unique": 12
+      },
+      {
+        "name": "tharazul",
+        "direction": "south",
+        "unique": 12
+      },
+      {
+        "name": "tharazul",
+        "direction": "east",
+        "unique": 12
+      },
+      {
+        "name": "tharazul",
+        "direction": "north",
+        "unique": 12
+      },
+      {
+        "name": "azrakiel",
+        "direction": "south",
+        "unique": 12
+      },
+      {
+        "name": "azrakiel",
+        "direction": "east",
+        "unique": 12
+      },
+      {
+        "name": "azrakiel",
+        "direction": "north",
+        "unique": 12
+      }
+    ],
+    "hurtHashes": [
+      {
+        "name": "knight",
+        "direction": 0,
+        "unique": 4
+      },
+      {
+        "name": "knight",
+        "direction": 1,
+        "unique": 4
+      },
+      {
+        "name": "knight",
+        "direction": 2,
+        "unique": 4
+      },
+      {
+        "name": "knight",
+        "direction": 3,
+        "unique": 4
+      },
+      {
+        "name": "archer",
+        "direction": 0,
+        "unique": 4
+      },
+      {
+        "name": "archer",
+        "direction": 1,
+        "unique": 4
+      },
+      {
+        "name": "archer",
+        "direction": 2,
+        "unique": 4
+      },
+      {
+        "name": "archer",
+        "direction": 3,
+        "unique": 4
+      },
+      {
+        "name": "rogue",
+        "direction": 0,
+        "unique": 4
+      },
+      {
+        "name": "rogue",
+        "direction": 1,
+        "unique": 4
+      },
+      {
+        "name": "rogue",
+        "direction": 2,
+        "unique": 4
+      },
+      {
+        "name": "rogue",
+        "direction": 3,
+        "unique": 4
+      },
+      {
+        "name": "varkhul",
+        "direction": 0,
+        "unique": 4
+      },
+      {
+        "name": "varkhul",
+        "direction": 1,
+        "unique": 4
+      },
+      {
+        "name": "varkhul",
+        "direction": 2,
+        "unique": 4
+      },
+      {
+        "name": "varkhul",
+        "direction": 3,
+        "unique": 4
+      },
+      {
+        "name": "tharazul",
+        "direction": 0,
+        "unique": 4
+      },
+      {
+        "name": "tharazul",
+        "direction": 1,
+        "unique": 4
+      },
+      {
+        "name": "tharazul",
+        "direction": 2,
+        "unique": 4
+      },
+      {
+        "name": "tharazul",
+        "direction": 3,
+        "unique": 4
+      },
+      {
+        "name": "azrakiel",
+        "direction": 0,
+        "unique": 4
+      },
+      {
+        "name": "azrakiel",
+        "direction": 1,
+        "unique": 4
+      },
+      {
+        "name": "azrakiel",
+        "direction": 2,
+        "unique": 4
+      },
+      {
+        "name": "azrakiel",
+        "direction": 3,
+        "unique": 4
+      },
+      {
+        "name": "revenant",
+        "direction": 0,
+        "unique": 4
+      },
+      {
+        "name": "revenant",
+        "direction": 1,
+        "unique": 4
+      },
+      {
+        "name": "revenant",
+        "direction": 2,
+        "unique": 4
+      },
+      {
+        "name": "revenant",
+        "direction": 3,
+        "unique": 4
+      },
+      {
+        "name": "thornling",
+        "direction": 0,
+        "unique": 4
+      },
+      {
+        "name": "thornling",
+        "direction": 1,
+        "unique": 4
+      },
+      {
+        "name": "thornling",
+        "direction": 2,
+        "unique": 4
+      },
+      {
+        "name": "thornling",
+        "direction": 3,
+        "unique": 4
+      },
+      {
+        "name": "acolyte",
+        "direction": 0,
+        "unique": 4
+      },
+      {
+        "name": "acolyte",
+        "direction": 1,
+        "unique": 4
+      },
+      {
+        "name": "acolyte",
+        "direction": 2,
+        "unique": 4
+      },
+      {
+        "name": "acolyte",
+        "direction": 3,
+        "unique": 4
+      }
+    ],
+    "chase": [
+      12,
+      12,
+      12
+    ],
+    "edgeFailures": []
+  },
+  "budgets": [
+    {
+      "quality": "low",
+      "peak": {
+        "particles": 500,
+        "pooled": 0,
+        "smoke": 17,
+        "fields": 16,
+        "budget": {
+          "particles": 500,
+          "smoke": 18,
+          "volumes": 42,
+          "detail": 0.45
+        }
+      },
+      "light": {
+        "enabled": true,
+        "active": 8,
+        "limit": 8,
+        "textures": 1
+      },
+      "after": {
+        "particles": 0,
+        "pooled": 500,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 500,
+          "smoke": 18,
+          "volumes": 42,
+          "detail": 0.45
+        }
+      }
+    },
+    {
+      "quality": "medium",
+      "peak": {
+        "particles": 1000,
+        "pooled": 0,
+        "smoke": 48,
+        "fields": 16,
+        "budget": {
+          "particles": 1000,
+          "smoke": 48,
+          "volumes": 90,
+          "detail": 0.72
+        }
+      },
+      "light": {
+        "enabled": true,
+        "active": 16,
+        "limit": 16,
+        "textures": 1
+      },
+      "after": {
+        "particles": 0,
+        "pooled": 1000,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1000,
+          "smoke": 48,
+          "volumes": 90,
+          "detail": 0.72
+        }
+      }
+    },
+    {
+      "quality": "high",
+      "peak": {
+        "particles": 1800,
+        "pooled": 0,
+        "smoke": 70,
+        "fields": 16,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        }
+      },
+      "light": {
+        "enabled": true,
+        "active": 24,
+        "limit": 24,
+        "textures": 1
+      },
+      "after": {
+        "particles": 0,
+        "pooled": 1800,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        }
+      }
+    }
+  ],
+  "settings": {
+    "fps": 60.009837678307946,
+    "p95": 16.799999999999727,
+    "cpu": 0.33278688556346736,
+    "particles": 0,
+    "pooled": 0,
+    "smoke": 0,
+    "fields": 0,
+    "budget": {
+      "particles": 500,
+      "smoke": 18,
+      "volumes": 42,
+      "detail": 0.45
+    },
+    "quality": "low",
+    "lights": {
+      "enabled": false,
+      "active": 0,
+      "limit": 8,
+      "textures": 1
+    }
+  },
+  "errors": []
+}

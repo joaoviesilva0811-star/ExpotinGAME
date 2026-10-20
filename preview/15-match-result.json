@@ -1,0 +1,81 @@
+{
+  "results": [
+    {
+      "score": 1815,
+      "wins": 3,
+      "state": "finished",
+      "rounds": 3,
+      "damage": [
+        6216.20000000001,
+        6343.499999999997,
+        8737.499999999989,
+        5994.800000000004
+      ],
+      "keys": [
+        "iron-crown",
+        "living-root",
+        "void-wing"
+      ],
+      "secretUnlocked": true,
+      "vaultOpenedAt": 351.2251158080009
+    },
+    {
+      "score": 1815,
+      "wins": 3,
+      "state": "finished",
+      "rounds": 3,
+      "damage": [
+        6216.20000000001,
+        6343.499999999997,
+        8737.499999999989,
+        5994.800000000004
+      ],
+      "keys": [
+        "iron-crown",
+        "living-root",
+        "void-wing"
+      ],
+      "secretUnlocked": true,
+      "vaultOpenedAt": 351.2251158080009
+    },
+    {
+      "score": 1815,
+      "wins": 3,
+      "state": "finished",
+      "rounds": 3,
+      "damage": [
+        6216.20000000001,
+        6343.499999999997,
+        8737.499999999989,
+        5994.800000000004
+      ],
+      "keys": [
+        "iron-crown",
+        "living-root",
+        "void-wing"
+      ],
+      "secretUnlocked": true,
+      "vaultOpenedAt": 351.2251158080009
+    },
+    {
+      "score": 1815,
+      "wins": 3,
+      "state": "finished",
+      "rounds": 3,
+      "damage": [
+        6216.20000000001,
+        6343.499999999997,
+        8737.499999999989,
+        5994.800000000004
+      ],
+      "keys": [
+        "iron-crown",
+        "living-root",
+        "void-wing"
+      ],
+      "secretUnlocked": true,
+      "vaultOpenedAt": 351.2251158080009
+    }
+  ],
+  "errors": []
+}

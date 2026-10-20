@@ -89,6 +89,7 @@ test('full three-round progression gives coherent results, healing and a final s
   for(let round=0;round<3;round++){
     assert.equal(r.state,'battle');assert.equal(r.round,round);p.hp=80;r.hitBoss(p,99999);
     assert.equal(r.results.length,round+1);assert.equal(r.results[round].won,true);
+    for(let i=0;i<100&&!r.keyDrop.collectedAt;i++)r.tick(.05);assert.ok(r.keyDrop.collectedAt);
     if(round<2){assert.equal(r.state,'round_end');r.tick(r.transitionAt-r.now+.01);assert.equal(p.hp,120);assert.equal(r.state,'countdown');r.tick(r.transitionAt-r.now+.01);}
   }
   assert.equal(r.state,'ending');r.tick(r.transitionAt-r.now+.01);assert.equal(r.state,'finished');assert.equal(r.wins,3);assert.ok(r.score>=650);assert.ok(p.stats.damage>2000);

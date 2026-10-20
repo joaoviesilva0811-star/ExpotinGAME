@@ -3,9 +3,11 @@ const {fork}=require('node:child_process');
 const {join,resolve}=require('node:path');
 const {pathToFileURL}=require('node:url');
 const {existsSync}=require('node:fs');
+const {readFile,writeFile}=require('node:fs/promises');
 
 const applicationRoot=existsSync(join(__dirname,'server','index.js'))?__dirname:resolve(__dirname,'..');
 let launcher,game,serverProcess,launching=false,quitting=false,serverStopping=Promise.resolve();
+let gameOrigin=null,preferencesWrite=Promise.resolve();
 const launcherUrl=pathToFileURL(join(__dirname,'launcher.html')).href;
 function privateAddress(text){
   if(text==='localhost')return'127.0.0.1';
@@ -42,6 +44,18 @@ function restrictWindow(win,allowed){
   win.webContents.session.setPermissionRequestHandler((_wc,_permission,callback)=>callback(false));
 }
 app.whenReady().then(()=>{
+  const preferencesPath=join(app.getPath('userData'),'presentation.json');
+  const trustedGame=event=>{try{return game&&!game.isDestroyed()&&event.sender===game.webContents&&event.senderFrame===game.webContents.mainFrame&&new URL(event.senderFrame.url).origin===gameOrigin;}catch{return false;}};
+  ipcMain.handle('iron:preferences:get',async event=>{
+    if(!trustedGame(event))throw new Error('Origem não autorizada.');
+    await preferencesWrite.catch(()=>{});const {cleanSettings}=await import('../public/presentation.js');
+    try{return cleanSettings(JSON.parse(await readFile(preferencesPath,'utf8')));}catch{return cleanSettings();}
+  });
+  ipcMain.handle('iron:preferences:save',async(event,value)=>{
+    if(!trustedGame(event))throw new Error('Origem não autorizada.');
+    const {cleanSettings}=await import('../public/presentation.js');const settings=cleanSettings(value&&typeof value==='object'?value:{});
+    preferencesWrite=preferencesWrite.catch(()=>{}).then(()=>writeFile(preferencesPath,JSON.stringify(settings)));await preferencesWrite;return settings;
+  });
   launcher=new BrowserWindow({width:1120,height:820,minWidth:920,minHeight:700,backgroundColor:'#101415',title:'Shadows of the Iron Crown',autoHideMenuBar:true,webPreferences:{preload:join(__dirname,'preload.cjs'),nodeIntegration:false,contextIsolation:true,sandbox:true}});
   restrictWindow(launcher,url=>url===launcherUrl);launcher.loadFile(join(__dirname,'launcher.html'));
   launcher.on('close',()=>{quitting=true;stopServer();if(game&&!game.isDestroyed())game.destroy();});
@@ -64,7 +78,8 @@ app.whenReady().then(()=>{
       const target=new URL(base);target.searchParams.set('desktop','1');target.searchParams.set('mode',mode);target.searchParams.set('name',name);target.searchParams.set('class',classId);
       if(info?.lan?.length)target.searchParams.set('lan',info.lan.join(','));
       if(typeof request.code==='string'&&request.code.trim())target.searchParams.set('code',request.code.trim().toUpperCase());
-      game=new BrowserWindow({width:1440,height:960,minWidth:960,minHeight:650,backgroundColor:'#101415',title:'Shadows of the Iron Crown — '+(mode==='solo'?'Solo com companheiros':'Rede local'),autoHideMenuBar:true,webPreferences:{nodeIntegration:false,contextIsolation:true,sandbox:true}});
+      gameOrigin=base;
+      game=new BrowserWindow({width:1440,height:960,minWidth:960,minHeight:650,backgroundColor:'#101415',title:'Shadows of the Iron Crown — '+(mode==='solo'?'Solo com companheiros':'Rede local'),autoHideMenuBar:true,webPreferences:{preload:join(__dirname,'game-preload.cjs'),nodeIntegration:false,contextIsolation:true,sandbox:true}});
       restrictWindow(game,url=>{try{return new URL(url).origin===base;}catch{return false;}});
       game.on('closed',()=>{game=null;stopServer();if(!quitting&&!launcher.isDestroyed())launcher.show();});
       await game.loadURL(target.href);launcher.hide();return{ok:true};

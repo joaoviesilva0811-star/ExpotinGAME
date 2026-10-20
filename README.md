@@ -4,7 +4,7 @@ Jogo 2D cooperativo para PC Windows, para 1 a 4 jogadores, com servidor local in
 
 ## Baixar o jogo pelo GitHub
 
-**[Baixar a versão Windows portátil](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/download/v1.4.1/IronCrown-Windows-x64.zip)** · **[Página da release](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/tag/v1.4.1)**
+**[Baixar a versão Windows portátil](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/download/v1.5.0/IronCrown-Windows-x64.zip)** · **[Página da release](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/tag/v1.5.0)**
 
 Extraia o ZIP completo e abra **Shadows of the Iron Crown.exe**. Não precisa instalar Node.js. A release é publicada pela automação do GitHub após a tag; o andamento aparece na aba **Actions**.
 
@@ -68,6 +68,14 @@ Para jogar pela rede local, acesse `http://IP-DO-SERVIDOR:3000` em cada disposit
 
 No celular: joystick, ataque, escudo, reviver e habilidades na tela; mira automática no chefe e câmera que acompanha o jogador no modo retrato. Celular é um suporte inicial; PC oferece mais área visível.
 
+[Prévia em vídeo](preview/previa-pc.mp4) · [A Câmara da Coroa](preview/15-native-vault.png) · [Animações novas](preview/15-walk-contact.png)
+
+## Atualização 1.5 — As Três Chaves
+
+Cada chefe vencido deixa uma chave mágica personalizada. O grupo a recolhe automaticamente para destrancar a passagem seguinte. Conquiste as três para ver Aldric, Lyra e Nyx abrindo a Câmara da Coroa em um novo cenário com porta animada.
+
+São 252 quadros adicionais de caminhada dos chefes e reação a dano, 984 quadros de atores no total. Movimento local com resposta imediata, interpolação remota, câmera com recuo direcional ao receber dano, iluminação dinâmica em 2D e bots com melhor separação e resgate. A engrenagem permite ajustar efeitos, tremor, luzes e ver FPS/P95/CPU. Os avisos de perigo continuam completos em todas as qualidades.
+
 ## Atualização 1.4 — Cerco das Feras
 
 - Corrigidas as poses desenhadas do arqueiro: as vistas leste, nordeste e sudeste usam as vistas opostas verificadas, espelhadas. Capuz, corpo e arco acompanham a direção do disparo.
@@ -93,13 +101,13 @@ No celular: joystick, ataque, escudo, reviver e habilidades na tela; mira autom�
 ## Atualização 1.2 — Combate e direção artística
 
 - Caminhada 35–37% mais lenta, ataques básicos com antecipação e câmera próxima (155%), suave e ajustável até 200%.
-- Mais de 700 quadros nos atlas de sprites: caminhada, reação a dano, golpes, invocação e quatro emotes. Ataques de heróis, chefes e lacaios escolhem oito direções; onde necessário, uma direção usa espelhamento de uma pose compatível.
-- Seis padrões por chefe, três fases, projéteis hostis, investidas, ondas com centro seguro, cruzes e ataques em sequência. Vida base para quatro jogadores: 5.600 / 7.200 / 9.200, ajustada ao grupo.
+- 984 quadros nos atlas dos personagens: caminhada, reação a dano, golpes, invocação e quatro emotes. Ataques de heróis, chefes e lacaios escolhem oito direções; onde necessário, uma direção usa espelhamento de uma pose compatível.
+- Oito padrões por chefe, três fases, projéteis hostis, investidas, ondas com centro seguro, cruzes e ataques em sequência. Vida base para quatro jogadores: 5.600 / 7.200 / 9.200, ajustada ao grupo.
 - Lacaios mortais com preparação visível, colisões, invocação limitada e drops. Primeiro abate sempre derruba poção; depois há chance de 46%. Três espaços de inventário; coleta por proximidade. Cura +45 ou gelo em raio de 230 com lentidão de 4s; tecla 4 usa a primeira guardada.
 - Dash no E: custa 20, recarga de 2,4s e proteção de 0,24s. Reviver passa para R. Tab abre quatro danças próprias; interrompidas ao mover, atacar ou sofrer dano.
 - Castelos, floresta e catedral com coberturas distintas que bloqueiam flechas e projéteis. Chefes contornam obstáculos e miram o grupo; a área anunciada fica fixa para permitir a esquiva.
 - HUD com ícones desenhados, molduras de metal, zonas de perigo com contorno/progresso, poeira, faíscas, fragmentos, rachaduras, rastros de flecha e efeitos de gelo.
-- História em três capítulos, cutscenes de entrada com portão, despertar próprio de cada chefe, corredor animado entre arenas e epílogo de 14s com três desfechos. Cenas ficam fora dos 300s de combate.
+- História em três capítulos, cutscenes de entrada com portão, despertar próprio de cada chefe, corredor animado entre arenas e epílogo com três desfechos e câmara secreta de 18s na vitória completa. Cenas ficam fora dos 300s de combate.
 - Cenários pintados detalhados com mosaicos, velas, reflexos e coberturas; colisões e recortes de oclusão seguem os objetos desenhados. Botões com bordas e fonte em pixel.
 - Menu com ilustração original; tema próprio, três trilhas de combate e sons de armas e chefes, disponíveis offline. Som inicia após a primeira interação; botão musical permite silenciar. Os emotes não incluem músicas licenciadas do TikTok.
 
@@ -176,7 +184,7 @@ dist/          Pacotes gerados por npm run build
 
 ## Limites desta entrega
 
-Esta versão tem balanceamento inicial reforçado por simulações de equipe, mas ainda não houve teste de carga em larga escala nem avaliação com jogadores externos. Os atlas novos têm 732 quadros desenhados: 216 de movimentos/reações, 288 de ataques direcionais dos heróis/chefes, 72 de emotes e 156 de lacaios. O acólito reutiliza uma direção espelhada para completar os oito sentidos. Não há interpolação por esqueleto: são sequências de quadros e pequenas transformações de impacto no Canvas. Trilha e efeitos são composição e síntese próprias renderizadas em Ogg, sem gravações orquestrais ou músicas do TikTok.
+Esta versão tem balanceamento inicial reforçado por simulações de equipe, mas ainda não houve teste de carga em larga escala nem avaliação com jogadores externos. Os atlas têm 984 quadros desenhados: 108 novas poses de caminhada dos chefes e 144 reações direcionais de dano, somadas à base de 732: 216 de movimentos/reações, 288 de ataques direcionais dos heróis/chefes, 72 de emotes e 156 de lacaios. O acólito reutiliza uma direção espelhada para completar os oito sentidos. Não há interpolação por esqueleto: são sequências de quadros e pequenas transformações de impacto no Canvas. Trilha e efeitos são composição e síntese próprias renderizadas em Ogg, sem gravações orquestrais ou músicas do TikTok.
 
 O servidor opera como uma instância única. Não há coordenação multi-instância, chat, matchmaking automático, cadastro por e-mail ou restauração de partidas após reinício. O ranking agrupa a formação por seus nomes de exibição ordenados; não é um sistema competitivo com identidade verificada. HTTPS, domínio, disco persistente e publicação dependem da hospedagem escolhida e não são fornecidos pelo código. Para a edição PC/LAN, a hospedagem não é necessária. O Dockerfile é uma opção de empacotamento e exige validação na hospedagem de destino.
 

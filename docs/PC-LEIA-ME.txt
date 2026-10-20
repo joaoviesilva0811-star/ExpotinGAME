@@ -1,4 +1,4 @@
-SHADOWS OF THE IRON CROWN — EDIÇÃO PC 1.4.1
+SHADOWS OF THE IRON CROWN — EDIÇÃO PC 1.5.0
 
 WINDOWS 10/11 DE 64 BITS
 
@@ -127,3 +127,23 @@ CORREÇÃO 1.4.1
 Folhas de efeitos reorganizadas com margens transparentes e quadros inteiros.
 Fumaça, correntes e raízes não são recortadas pelo centro dos ataques em anel.
 A borda da zona segura permanece marcada no chão. Dano e alcance preservados.
+
+NOVIDADES 1.5 — AS TRÊS CHAVES
+Cada chefe derrotado deixa sua chave mágica exclusiva. O grupo se aproxima
+e a recolhe automaticamente; não ocupa os espaços de poção. A chave abre
+a passagem para a próxima arena. O HUD mostra as chaves conquistadas.
+Vencendo as três lutas, Aldric, Lyra e Nyx usam as três chaves na porta
+da Câmara da Coroa. O final secreto mostra a porta abrindo e a coroa.
+Se uma rodada for perdida, não há chave nem abertura do final secreto.
+
+108 novas poses de caminhada dos chefes e 144 poses de reação a dano,
+com transições curtas, recuo e movimentos secundários. O arqueiro mantém
+a direção da mira durante o disparo. A câmera reage ao dano recebido.
+Movimento local mais imediato e interpolação das outras posições.
+Luzes de tochas, magia, flechas e impactos, com sombras reativas em 2D.
+Bots procuram se afastar uns dos outros e designam um resgatador por aliado.
+
+No botão de engrenagem: efeitos baixo/médio/alto, força da câmera (zero
+desativa o tremor), acompanhamento da mira, destaque do jogador, luzes
+dinâmicas e medidor de FPS/P95/CPU. As opções ficam salvas no computador.
+Os avisos de perigo continuam completos em qualquer qualidade.

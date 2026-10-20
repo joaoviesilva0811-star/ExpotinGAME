@@ -73,3 +73,15 @@ Os efeitos usam nove folhas individuais `fx-<modelo>.png`, com duas colunas e tr
 `drawGroundFX` continua recortando o chão à geometria do dano. `drawFX` desenha os volumes completos no ar, sem abrir um buraco circular no meio das raízes ou da fumaça. Uma borda sobreposta mantém o centro seguro do anel identificável; a colisão não mudou.
 
 `analyze-effects.py` encontra faixas transparentes reais e salva `effect-frames.json`, sem editar os originais. O cache usa essas coordenadas em vez de supor células iguais; o contato com o chão é registrado pela base de cada pose. Isso preserva, por exemplo, a base dos portais que cruza a divisão nominal de uma folha.
+
+## Apresentação e chaves na 1.5
+
+`motion.js` compartilha aceleração exponencial e colisões com o servidor. O cliente antecipa somente a imagem do jogador local, com correção gradual, prazo de 200ms sem snapshot e limite de extrapolação. Dano, energia, deslocamento oficial, habilidades e resultados continuam exclusivos do servidor. Outras entidades usam um buffer de oito snapshots, atraso visual de 65ms e extrapolação máxima de 80ms.
+
+`animation-timing.js` separa caminhada, preparação, execução e recuperação. `boss-walk.js` usa 108 poses adicionais; `hurt-sprites.js` usa 144 reações e evita reiniciar a primeira pose em cada dano contínuo. Durante o disparo/mira, o arqueiro conserva a sequência de oito direções com recuo aditivo. Transições de pose duram 45ms com os pés ancorados.
+
+`presentation.js` define orçamentos de partículas de 500/1000/1800, fumaça de 18/48/96 e volumes de 42/90/160. Partículas são reaproveitadas e removidas por troca com a última posição. `FrameMonitor` mede intervalos de quadro e tempo de renderização; não estima FPS a partir de um valor fixo. `lighting.js` guarda texturas de luz e máscaras de sombra em cache; limita as luzes a 8/16/24. São efeitos de iluminação em Canvas 2D, sem ray tracing ou oclusão física.
+
+`server/keys.js` gera a chave exclusiva somente após vitória. A coleta é automática por proximidade validada no servidor, compartilhada pela equipe e independente das poções. A passagem fica bloqueada até a coleta, inclusive se a conexão cair; o cliente não pode criar uma chave por comando. Os snapshots carregam inventário, portão liberado e abertura da câmara. Após três vitórias com as três chaves, o servidor sinaliza a abertura da câmara secreta. A cena encena as três classes da história, sem criar participantes de rede ou mudar estatísticas. As chaves reiniciam ao começar outra expedição e não são inventário persistente de conta.
+
+No aplicativo nativo, o modo solo usa uma porta efêmera. Para preservar as opções entre aberturas, `game-preload.cjs` expõe somente leitura/gravação de preferências de apresentação. O processo principal valida a janela e o frame emissor, sanitiza os campos com `cleanSettings`, serializa a gravação e usa um único arquivo fixo `presentation.json` no perfil Electron. Não recebe caminhos de arquivo nem permite comandos de combate. No navegador comum, o armazenamento continua local à origem.

@@ -1,4 +1,6 @@
-import {drawAnimatedFrame} from './animation-layout.js';
+import {drawCastShadow} from './lighting.js';
+import {actorMotion} from './animation-timing.js';
+import {drawAnimatedFrame,drawActorFrame} from './animation-layout.js';
 import { sceneImage } from './scenes.js';
 import { characterFrame, bossFrame } from './animation.js';
 import { WORLD, CLASSES, BOSSES } from './shared.js';
@@ -189,24 +191,26 @@ export function drawPlayer(c,p,time,{scale=1,alpha=1,attacking=false,now=time}={
   const a=p.facing||0,direction=Math.abs(Math.cos(a))>.65?(Math.cos(a)>0?1:3):(Math.sin(a)>0?0:2);
   const animated=characterFrame(p,time,now),img=animated?.image||playerSprite(p.classId,direction,0,attacking);
   c.save();c.globalAlpha=alpha;
+  drawCastShadow(c,img,p,(img.ironFrame?.width||img.width)*scale,(img.ironFrame?.height||img.height)*scale,15*scale);
   c.fillStyle='#030b1280';c.beginPath();c.ellipse(p.x,p.y+7,22*scale,9*scale,0,0,Math.PI*2);c.fill();
   c.translate(p.x,p.y);
+  const motion=actorMotion(p,time,now);if(p.hp>0){c.translate(0,motion.lift);c.rotate(motion.lean);c.scale(motion.sx,motion.sy);}
   if(p.hp<=0){c.rotate(-Math.PI/2);c.globalAlpha*=.5;}
   else if(p.dodgeUntil>now){c.rotate(Math.sin((now-p.dodgeAt)/.24*Math.PI)*.35);c.globalAlpha*=.75;}
   if(animated?.flip)c.scale(-1,1);
   if(animated?.bowPhase==='aim'&&Math.hypot(p.vx||0,p.vy||0)>12)c.translate(0,Math.sin(time*8)*.8);
   const hurt=now-(p.lastHurt??-10);if(hurt>=0&&hurt<.16){c.translate(Math.cos(a)*-3,0);c.filter='brightness(1.7)';}
-  const iw=img.ironFrame?.width||img.width,ih=img.ironFrame?.height||img.height;drawAnimatedFrame(c,img,-iw/2*scale,(-ih+15)*scale,iw*scale,ih*scale);c.restore();
+  const iw=img.ironFrame?.width||img.width,ih=img.ironFrame?.height||img.height;drawActorFrame(c,p.id||p.classId,img,-iw/2*scale,(-ih+15)*scale,iw*scale,ih*scale,time);c.restore();
 }
 export function drawBoss(c,b,round,time,now=time){
   const animation=bossFrame(b,round,time,now),img=animation||bossSprite(round,['windup','execute'].includes(b.state)?1:0),sc=round===1?1.1:1;
-  c.save();c.fillStyle='#030510a0';c.beginPath();c.ellipse(b.x,b.y+8,68,25,0,0,Math.PI*2);c.fill();
+  c.save();drawCastShadow(c,img,b,animation?210:206,animation?210:206,23);c.fillStyle='#030510a0';c.beginPath();c.ellipse(b.x,b.y+8,68,25,0,0,Math.PI*2);c.fill();
   if(b.hp<=0)c.globalAlpha=.35;
   if(b.state==='transition'){c.shadowColor=BOSSES[round].color;c.shadowBlur=22;}
   if(now-b.hurtAt<.055)c.filter='brightness(1.4)';
   let w=animation?210:206,h=animation?210:206;if(b.state==='fallen'){h*=.45;w*=1.1;}if(b.state==='dormant'){h*=round===1?.6:.77;w*=round===2?.77:1;c.filter='brightness(.5) saturate(.6)';}
   const bob=b.state==='chase'?Math.sin(time*6)*1.3:0;
-  drawAnimatedFrame(c,img,Math.round(b.x-w*sc/2),Math.round(b.y-h*sc+23+bob),w*sc,h*sc);c.restore();
+  const motion=actorMotion(b,time,now,true);c.translate(b.x,b.y+23+bob+motion.lift);c.rotate(motion.lean);c.scale(motion.sx*(b.walkFlip?-1:1),motion.sy);drawActorFrame(c,'boss-'+round,img,-w*sc/2,-h*sc,w*sc,h*sc,time);c.restore();
 }
 
 const terrains=new Map();
@@ -288,8 +292,10 @@ function cover(c,o,round){
  else{for(let i=0;i<7;i++){const a=i*2.4,xx=Math.cos(a)*r*.6,yy=Math.sin(a)*r*.32;poly(c,[[xx-12,yy],[xx-9,yy-18],[xx+8,yy-23],[xx+16,yy-9],[xx+13,yy+3]],kind==='altar'?'#5c5467':kind==='stone'?'#4b6157':'#5b6261');rect(c,xx-7,yy-17,12,2,kind==='altar'?'#b49371':'#8a9282');}}
  if(round===1)for(let i=0;i<5;i++)rect(c,-r+10+i*9,-12-Math.sin(i)*15,5,3,'#688457');c.restore();
 }
+const glowCache=new Map();
 export function light(c,x,y,r,color,alpha=.3){
-  c.save();c.globalCompositeOperation='screen';c.globalAlpha=alpha;const g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,color);g.addColorStop(1,'transparent');c.fillStyle=g;c.fillRect(x-r,y-r,r*2,r*2);c.restore();
+ let image=glowCache.get(color);if(!image){image=document.createElement('canvas');image.width=image.height=192;const q=image.getContext('2d'),g=q.createRadialGradient(96,96,0,96,96,96);g.addColorStop(0,color);g.addColorStop(1,'transparent');q.fillStyle=g;q.fillRect(0,0,192,192);glowCache.set(color,image);}
+ c.save();c.globalCompositeOperation='screen';c.globalAlpha=alpha;c.drawImage(image,x-r,y-r,r*2,r*2);c.restore();
 }
 export function torch(c,x,y,time,color='#f0a663'){
   rect(c,x-5,y,10,17,'#1a222b');rect(c,x-8,y-2,16,5,'#8e7452');
@@ -304,4 +310,15 @@ export function exportAtlas(){
     for(let f=0;f<8;f++){c.drawImage(playerSprite(cls,d,f%3,f>=6),f*76,row*80);frames.push({name:`${cls}-${d}-${f}`,x:f*76,y:row*80,w:76,h:80});}row++;
   }
   return {url:out.toDataURL('image/png'),frames};
+}
+
+const silhouetteCache=new WeakMap();
+export function drawPlayerHighlight(c,p,time,now){
+ const pose=characterFrame(p,time,now);if(!pose)return;const img=pose.image;let entry=silhouetteCache.get(img);
+ if(!entry){
+  const fill=document.createElement('canvas');fill.width=img.width;fill.height=img.height;fill.ironFrame=img.ironFrame;const q=fill.getContext('2d');q.fillStyle='#ffe5a5';q.fillRect(0,0,fill.width,fill.height);q.globalCompositeOperation='destination-in';q.drawImage(img,0,0);
+  const edge=document.createElement('canvas');edge.width=img.width+4;edge.height=img.height+4;if(img.ironFrame)edge.ironFrame={...img.ironFrame,left:img.ironFrame.left-2,top:img.ironFrame.top-2};const e=edge.getContext('2d');for(const[x,y]of [[-1.25,0],[1.25,0],[0,-1.25],[0,1.25]])e.drawImage(fill,2+x,2+y);e.globalCompositeOperation='destination-out';e.drawImage(fill,2,2);entry={fill,edge};silhouetteCache.set(img,entry);
+ }
+ const m=actorMotion(p,time,now),w=img.ironFrame?.width||img.width,h=img.ironFrame?.height||img.height;
+ c.save();c.translate(p.x,p.y+m.lift);c.rotate(m.lean);c.scale((pose.flip?-1:1)*m.sx,m.sy);c.globalAlpha=.85;drawAnimatedFrame(c,entry.edge,-w/2,-h+15,w,h);c.globalAlpha=.1;drawAnimatedFrame(c,entry.fill,-w/2,-h+15,w,h);c.restore();
 }

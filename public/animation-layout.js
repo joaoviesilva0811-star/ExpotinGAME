@@ -11,3 +11,16 @@ export function drawAnimatedFrame(c,image,x,y,width,height){
  const sx=width/layout.width,sy=height/layout.height;
  c.drawImage(image,x+layout.left*sx,y+layout.top*sy,image.width*sx,image.height*sy);
 }
+
+// Brief aligned pose transitions keep feet/body anchored. Source frames remain
+// complete; no temporary image allocation or image readback in the render loop.
+const mixes=new Map();
+export function resetPoseMixes(){mixes.clear();}
+export function drawActorFrame(c,key,image,x,y,width,height,time){
+ let m=mixes.get(key);
+ if(!m){m={current:image,previous:null,at:time};mixes.set(key,m);}
+ if(m.current!==image){m.previous=m.current;m.current=image;m.at=time;}
+ const t=Math.max(0,Math.min(1,(time-m.at)/.045));
+ if(m.previous&&t<1){const alpha=c.globalAlpha;c.globalAlpha=alpha*(1-t);drawAnimatedFrame(c,m.previous,x,y,width,height);c.globalAlpha=alpha*t;drawAnimatedFrame(c,image,x,y,width,height);c.globalAlpha=alpha;}else{m.previous=null;drawAnimatedFrame(c,image,x,y,width,height);}
+ if(mixes.size>160)for(const k of mixes.keys()){if(k===key)continue;mixes.delete(k);if(mixes.size<=100)break;}
+}

@@ -1,12 +1,14 @@
 import {WORLD,clamp} from './shared.js';
 const images=new Map();
-for(const name of ['arena-throne','arena-forest','arena-cathedral','corridor']){const img=new Image();img.onload=()=>images.set(name,img);img.src=new URL(`./assets/${name}.png`,import.meta.url).href;}
+for(const name of ['arena-throne','arena-forest','arena-cathedral','corridor','secret-chamber','secret-chamber-open']){const img=new Image();img.onload=()=>images.set(name,img);img.src=new URL(`./assets/${name}.png`,import.meta.url).href;}
 export const sceneImage=round=>images.get(typeof round==='string'?round:['arena-throne','arena-forest','arena-cathedral'][round]);
 export function cinematicPlayer(room,p,index,now){
  if(room.state==='countdown'&&room.intro){
   const t=clamp((now-room.intro.started-index*.16)/3.25,0,1);
   if(t<1)return{...p,x:-35+(p.x+35)*t,y:365+index*18+(p.y-365-index*18)*t,vx:98,vy:(p.y-365-index*18)/3.25,facing:0,emoteUntil:0,attackAt:-10};
  }
+ if(room.state==='ending'&&now<room.endingAt)return p;
+ if(room.state==='ending'&&room.secretUnlocked){const t=Math.max(0,now-room.endingAt),walk=clamp((t-8)/3,0,1);return{...p,x:510+index*90,y:495-walk*165,vx:0,vy:t>8&&t<11?-70:0,facing:-Math.PI/2,attackAt:-10,emoteUntil:0,hp:100};}
  if(room.state==='ending'&&p.hp>0){const t=clamp((now-room.endingAt)/3.8,0,1);return{...p,x:p.x+(490+index*66-p.x)*t,y:p.y+(485+index%2*30-p.y)*t,vx:t<1?95:0,vy:0,facing:-Math.PI/2,emoteUntil:0,attackAt:-10};}
  if(room.state==='round_end'&&now-room.outroStarted>=6){
   const t=clamp((now-room.outroStarted-6)/5,0,1);

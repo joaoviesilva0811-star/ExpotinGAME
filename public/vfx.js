@@ -1,15 +1,18 @@
+import {QUALITY} from './presentation.js';
 import {createVolumes,drawVolume,drawVolumeGlow,drawSmoke,drawMissileVolume} from './volumes.js';
 import {impactAreaPoints,traceImpactArea,impactStyle} from './impact-geometry.js';
 // Bounded layered effects: tapered weapon trails, airborne sparks and ground debris.
-let smokeCount=0;
+let smokeCount=0,budget=QUALITY.high;const pool=[];
+export function setEffectsQuality(name){budget=QUALITY[name]||QUALITY.high;}
+export function effectsStats(){return{particles:particles.length,pooled:pool.length,smoke:smokeCount,fields:fields.length,budget:{...budget}};}
 const particles=[],decals=[],slashes=[],launches=[],fields=[],projectileTraces=new Map();
 export function resetFX(){particles.length=decals.length=slashes.length=launches.length=fields.length=0;projectileTraces.clear();smokeCount=0;}
 const palette={gold:['#fff5d9','#e6bf77','#94714d'],red:['#ffe6cd','#e68b71','#763d48'],green:['#efffd6','#a3d77e','#47715c'],violet:['#faf1ff','#bd99e7','#6b538d'],ice:['#ffffff','#c3efff','#689fbf']};
 function spawn(x,y,colors,count,type,speed,angle=null,kind='red'){
- for(let i=0,n=Math.min(count,1800-particles.length);i<n;i++){
-  if(type==='smoke'&&smokeCount>=96)break;if(type==='smoke')smokeCount++;
+ for(let i=0,n=Math.min(Math.ceil(count*budget.detail),budget.particles-particles.length);i<n;i++){
+  if(type==='smoke'&&smokeCount>=budget.smoke)break;if(type==='smoke')smokeCount++;
   const a=angle===null?Math.random()*Math.PI*2:angle+(Math.random()-.5)*1.2,s=speed*(.25+Math.random()*.75),life=type==='smoke'?1.1+Math.random()*.7:type==='dust'?.65+Math.random()*.55:.25+Math.random()*.6;
-  particles.push({x,y,z:type==='dust'?2:12,vx:Math.cos(a)*s,vy:Math.sin(a)*s*.65,vz:type==='smoke'?15+Math.random()*18:type==='dust'?10:35+Math.random()*90,life,total:life,type,kind,color:colors[i%colors.length],size:type==='smoke'?48+Math.random()*38:type==='dust'?7+Math.random()*13:1.2+Math.random()*2.2,rotation:Math.random()*7});
+  const p=pool.pop()||{};Object.assign(p,{x,y,z:type==='dust'?2:12,vx:Math.cos(a)*s,vy:Math.sin(a)*s*.65,vz:type==='smoke'?15+Math.random()*18:type==='dust'?10:35+Math.random()*90,life,total:life,type,kind,color:colors[i%colors.length],size:type==='smoke'?48+Math.random()*38:type==='dust'?7+Math.random()*13:1.2+Math.random()*2.2,rotation:Math.random()*7});particles.push(p);
  }
 }
 export function impactFX(x,y,kind='gold',heavy=false){
@@ -25,7 +28,7 @@ export function slashFX(x,y,angle,kind='gold',heavy=false,wait=.12){
 }
 export function bowFX(x,y,angle,kind='gold',wait=.17){if(launches.length<32)launches.push({x,y,angle,kind,wait});}
 export function stepFX(dt){
- for(let i=particles.length-1;i>=0;i--){const p=particles[i];p.life-=dt;if(p.life<=0){if(p.type==='smoke')smokeCount--;particles.splice(i,1);continue;}p.x+=p.vx*dt;p.y+=p.vy*dt;p.z+=p.vz*dt;p.vz-=(p.type==='smoke'?8:p.type==='dust'?15:235)*dt;p.rotation+=dt*5;
+ for(let i=particles.length-1;i>=0;i--){const p=particles[i];p.life-=dt;if(p.life<=0){if(p.type==='smoke')smokeCount--;pool.push(p);particles[i]=particles.at(-1);particles.pop();continue;}p.x+=p.vx*dt;p.y+=p.vy*dt;p.z+=p.vz*dt;p.vz-=(p.type==='smoke'?8:p.type==='dust'?15:235)*dt;p.rotation+=dt*5;
   if(p.z<0){p.z=0;p.vz*=-.3;p.vx*=.65;p.vy*=.65;}p.vx*=Math.exp(-dt*(p.type==='dust'?2:.7));p.vy*=Math.exp(-dt*(p.type==='dust'?2:.7));}
  for(let i=launches.length-1;i>=0;i--){const b=launches[i];b.wait-=dt;if(b.wait>0)continue;spawn(b.x+Math.cos(b.angle)*24,b.y+Math.sin(b.angle)*24,palette[b.kind]||palette.gold,9,'spark',100,b.angle);spawn(b.x,b.y,['#9c937c','#776f5b'],3,'dust',25);launches.splice(i,1);}
  for(let i=fields.length-1;i>=0;i--){fields[i].life-=dt;if(fields[i].life<=0)fields.splice(i,1);}
@@ -47,8 +50,8 @@ function drawAreaImpact(c,f){
  const extent=h.shape==='line'?h.length+h.width:h.r*2;c.fillRect(h.x-extent,h.y-extent,extent*2,extent*2);
  c.globalCompositeOperation='source-over';
  if(!h.inner)drawVolumeGlow(c,f.kind,h.x,h.y,h.r||h.width,fade*.45);
- for(const p of f.points){
-  const a=p.seed*.73,reach=13+(p.seed%13),lift=Math.sin(Math.min(1,t*3)*Math.PI)*8;
+ for(let i=0;i<f.points.length;i+=budget.detail<.6?3:budget.detail<1?2:1){const p=f.points[i];
+  const a=p.angle,reach=p.reach,lift=Math.sin(Math.min(1,t*3)*Math.PI)*8;
   c.save();c.translate(p.x,p.y);c.rotate(a);c.globalAlpha=fade*.65;c.strokeStyle='#090e16';c.lineWidth=3;
   c.beginPath();c.moveTo(-reach,0);c.lineTo(-3,-3);c.lineTo(2,2);c.lineTo(reach,-2);c.moveTo(2,2);c.lineTo(5,9);c.stroke();
   c.strokeStyle=colors[1];c.lineWidth=1;c.globalAlpha=fade*.6;c.stroke();
@@ -96,7 +99,7 @@ export function drawFX(c){
   // Only the ground layer is clipped to damage geometry. Cutting a hole in
   // airborne billboards amputates roots, blades and clouds. Their emitters
   // still sit outside the safe center, whose boundary is drawn above the FX.
-  for(const b of f.volumes){if(drawn++>=160)break;drawVolume(c,f.kind,b.x,b.y,b.width,(age-b.delay)/1.2,.88,b.flip,f.model,b.angle||0);}
+  for(let i=0;i<f.volumes.length;i+=budget.detail<.6?3:budget.detail<1?2:1){const b=f.volumes[i];if(drawn++>=budget.volumes)break;drawVolume(c,f.kind,b.x,b.y,b.width,(age-b.delay)/1.2,.88,b.flip,f.model,b.angle||0);}
   if(f.h.inner){c.globalAlpha=Math.min(.9,f.life*2);c.strokeStyle='#101c1de0';c.lineWidth=4;c.beginPath();c.arc(f.h.x,f.h.y,f.h.inner,0,Math.PI*2);c.stroke();c.strokeStyle='#d5f2cf';c.lineWidth=1.3;c.stroke();}
   c.restore();
  }
@@ -126,7 +129,7 @@ export function drawProjectile(c,p,time){
 }
 export function hazardImpact(h,kind){
  if(h.minor){impactFX(h.x,h.y,kind,false);return;}
- const model=impactStyle(h,kind),points=impactAreaPoints(h),colors=palette[kind]||palette.red;
+ const model=impactStyle(h,kind),points=impactAreaPoints(h).map(p=>({...p,angle:p.seed*.73,reach:13+p.seed%13})),colors=palette[kind]||palette.red;
  if(fields.length>=16)fields.shift();fields.push({h:{...h},kind,model,points,volumes:createVolumes(h,points,model),life:1.45,total:1.45});
  // Emit throughout the interior as well as along the perimeter. A bounded subset
  // feeds the airborne simulation; the surface layer still covers every cell.
@@ -136,3 +139,5 @@ export function hazardImpact(h,kind){
  }
  if(!h.inner)impactFX(h.x,h.y,kind,true);
 }
+
+export function effectsOcclude(p){return fields.some(f=>f.volumes.some(v=>Math.abs(v.x-p.x)<v.width*.55&&p.y-v.y<25&&p.y-v.y>-v.width*1.25));}

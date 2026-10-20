@@ -1,5 +1,5 @@
 export class AudioEngine {
-  constructor(){this.enabled=false;this.ctx=null;this.volume=.17;this.lastMusic=0;this.beat=0;this.track=null;this.trackName=null;this.samples=new Map();this.lastSample=new Map();this.musicVolume=.36;}
+  constructor(){this.enabled=false;this.ctx=null;this.volume=.17;this.lastMusic=0;this.beat=0;this.track=null;this.trackName=null;this.samples=new Map();this.noiseBuffers=new Map();this.lastSample=new Map();this.musicVolume=.36;}
   async toggle(){
     if(!this.ctx){const AudioContext=window.AudioContext||window.webkitAudioContext;if(!AudioContext)return false;this.ctx=new AudioContext();this.master=this.ctx.createGain();this.master.gain.value=this.volume;this.master.connect(this.ctx.destination);}
     await this.ctx.resume();this.enabled=!this.enabled;this.master.gain.setTargetAtTime(this.enabled?this.volume:0,this.ctx.currentTime,.1);if(this.track)this.track.volume=this.enabled?this.musicVolume:0;return this.enabled;
@@ -15,10 +15,13 @@ export class AudioEngine {
     g.gain.setValueAtTime(.001,t);g.gain.exponentialRampToValueAtTime(gain,t+.012);g.gain.exponentialRampToValueAtTime(.001,t+duration);o.connect(g);g.connect(this.master);o.start(t);o.stop(t+duration+.03);
   }
   noise(duration=.12,gain=.35,cutoff=1800){
-    if(!this.enabled||!this.ctx)return;const n=Math.floor(this.ctx.sampleRate*duration),b=this.ctx.createBuffer(1,n,this.ctx.sampleRate),data=b.getChannelData(0);
-    for(let i=0;i<n;i++)data[i]=(Math.random()*2-1)*(1-i/n);const source=this.ctx.createBufferSource(),filter=this.ctx.createBiquadFilter(),g=this.ctx.createGain();source.buffer=b;filter.type='lowpass';filter.frequency.value=cutoff;g.gain.value=gain;source.connect(filter);filter.connect(g);g.connect(this.master);source.start();
+    if(!this.enabled||!this.ctx)return;const key=duration.toFixed(3);let b=this.noiseBuffers.get(key);if(!b){const n=Math.floor(this.ctx.sampleRate*duration);b=this.ctx.createBuffer(1,n,this.ctx.sampleRate);const data=b.getChannelData(0);for(let i=0;i<n;i++)data[i]=(Math.random()*2-1)*(1-i/n);this.noiseBuffers.set(key,b);}
+    const source=this.ctx.createBufferSource(),filter=this.ctx.createBiquadFilter(),g=this.ctx.createGain();source.buffer=b;filter.type='lowpass';filter.frequency.value=cutoff;g.gain.value=gain;source.connect(filter);filter.connect(g);g.connect(this.master);source.start();
   }
   fx(kind,round=0){
+    if(kind==='sword'){this.sample('slash',.8);this.tone(125,.17,'triangle',.13,-65);return;}
+    if(kind==='dagger'){this.sample('slash',.4);this.tone(520,.065,'triangle',.1,-270);return;}
+    if(kind==='heavyHit'){this.sample('hit',.85);this.tone(72,.19,'sine',.24,-35);return;}
     const samples={attack:'slash',arrow:'arrow',hit:'hit',block:'block',dash:'dash',roar:'roar-'+round};if(samples[kind]){this.sample(samples[kind],kind==='roar'?.8:.7);return;}
     if(kind==='gate'){this.noise(.55,.5,550);this.tone(54,.6,'triangle',.45,-27);this.tone(171,.4,'triangle',.12,-60);}
     if(kind==='pickup'){this.tone(660,.22,'sine',.24);this.tone(990,.35,'sine',.13);}
