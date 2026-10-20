@@ -1,0 +1,3759 @@
+{
+  "version": "1.7.0",
+  "environment": "Linux cloud; Electron44.9; virtual Gamepad API; Windows and physical controllers untested.",
+  "damage": [
+    25,
+    32,
+    18
+  ],
+  "rescueSprites": {
+    "clips": [
+      {
+        "name": "rogue",
+        "count": 64
+      },
+      {
+        "name": "archer",
+        "count": 64
+      },
+      {
+        "name": "knight",
+        "count": 64
+      }
+    ],
+    "sourceFrames": 192,
+    "sourceEdge": 0,
+    "edgeFailures": 0,
+    "rows": [
+      {
+        "name": "knight",
+        "row": 0,
+        "unique": 8
+      },
+      {
+        "name": "knight",
+        "row": 1,
+        "unique": 8
+      },
+      {
+        "name": "knight",
+        "row": 2,
+        "unique": 8
+      },
+      {
+        "name": "knight",
+        "row": 3,
+        "unique": 8
+      },
+      {
+        "name": "knight",
+        "row": 4,
+        "unique": 8
+      },
+      {
+        "name": "knight",
+        "row": 5,
+        "unique": 8
+      },
+      {
+        "name": "knight",
+        "row": 6,
+        "unique": 8
+      },
+      {
+        "name": "knight",
+        "row": 7,
+        "unique": 8
+      },
+      {
+        "name": "archer",
+        "row": 0,
+        "unique": 8
+      },
+      {
+        "name": "archer",
+        "row": 1,
+        "unique": 8
+      },
+      {
+        "name": "archer",
+        "row": 2,
+        "unique": 8
+      },
+      {
+        "name": "archer",
+        "row": 3,
+        "unique": 8
+      },
+      {
+        "name": "archer",
+        "row": 4,
+        "unique": 8
+      },
+      {
+        "name": "archer",
+        "row": 5,
+        "unique": 8
+      },
+      {
+        "name": "archer",
+        "row": 6,
+        "unique": 8
+      },
+      {
+        "name": "archer",
+        "row": 7,
+        "unique": 8
+      },
+      {
+        "name": "rogue",
+        "row": 0,
+        "unique": 8
+      },
+      {
+        "name": "rogue",
+        "row": 1,
+        "unique": 8
+      },
+      {
+        "name": "rogue",
+        "row": 2,
+        "unique": 8
+      },
+      {
+        "name": "rogue",
+        "row": 3,
+        "unique": 8
+      },
+      {
+        "name": "rogue",
+        "row": 4,
+        "unique": 8
+      },
+      {
+        "name": "rogue",
+        "row": 5,
+        "unique": 8
+      },
+      {
+        "name": "rogue",
+        "row": 6,
+        "unique": 8
+      },
+      {
+        "name": "rogue",
+        "row": 7,
+        "unique": 8
+      }
+    ],
+    "subframes": 30,
+    "errors": []
+  },
+  "items": {
+    "items": [
+      {
+        "name": "heal",
+        "count": 8
+      },
+      {
+        "name": "ice",
+        "count": 8
+      },
+      {
+        "name": "cursed",
+        "count": 8
+      },
+      {
+        "name": "royal",
+        "count": 8
+      }
+    ],
+    "rows": [
+      {
+        "name": "heal",
+        "unique": 8
+      },
+      {
+        "name": "ice",
+        "unique": 8
+      },
+      {
+        "name": "cursed",
+        "unique": 8
+      },
+      {
+        "name": "royal",
+        "unique": 8
+      }
+    ],
+    "edgeFailures": 0,
+    "errors": []
+  },
+  "balance": {
+    "method": "Four ordinary AI command streams, deterministic loot, same updated rescue AI in both cases. Not a player skill benchmark.",
+    "reports": [
+      {
+        "mode": "v1.6-reference",
+        "damage": [
+          12,
+          15,
+          10
+        ],
+        "bossHP": [
+          5600,
+          7200,
+          9200
+        ],
+        "wins": 3,
+        "combatSeconds": [
+          83,
+          85,
+          132
+        ],
+        "phases": [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            2,
+            3
+          ]
+        ],
+        "players": [
+          {
+            "class": "knight",
+            "damage": 7652.2000000000035,
+            "taken": 239.7,
+            "avoided": 80.3,
+            "revives": 0,
+            "skills": 162,
+            "comboPoints": 125.43666666666601,
+            "maxCombo": 58
+          },
+          {
+            "class": "archer",
+            "damage": 5647.9,
+            "taken": 271.25,
+            "avoided": 0,
+            "revives": 0,
+            "skills": 162,
+            "comboPoints": 68.40916666666669,
+            "maxCombo": 48
+          },
+          {
+            "class": "rogue",
+            "damage": 9231.899999999998,
+            "taken": 271.5,
+            "avoided": 13.5,
+            "revives": 1,
+            "skills": 166,
+            "comboPoints": 152.9799999999998,
+            "maxCombo": 66
+          },
+          {
+            "class": "archer",
+            "damage": 5248.000000000003,
+            "taken": 113,
+            "avoided": 0,
+            "revives": 0,
+            "skills": 161,
+            "comboPoints": 71.29250000000002,
+            "maxCombo": 44
+          }
+        ]
+      },
+      {
+        "mode": "v1.7",
+        "damage": [
+          25,
+          32,
+          18
+        ],
+        "bossHP": [
+          6440,
+          8280,
+          10580
+        ],
+        "wins": 3,
+        "combatSeconds": [
+          57,
+          63,
+          80
+        ],
+        "phases": [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            2,
+            3
+          ]
+        ],
+        "players": [
+          {
+            "class": "knight",
+            "damage": 7861.400000000008,
+            "taken": 167.6,
+            "avoided": 99.4,
+            "revives": 0,
+            "skills": 115,
+            "comboPoints": 119.15166666666666,
+            "maxCombo": 59
+          },
+          {
+            "class": "archer",
+            "damage": 7227.300000000004,
+            "taken": 65,
+            "avoided": 0,
+            "revives": 0,
+            "skills": 116,
+            "comboPoints": 126.90083333333314,
+            "maxCombo": 74
+          },
+          {
+            "class": "rogue",
+            "damage": 8183.099999999988,
+            "taken": 125.3,
+            "avoided": 14.7,
+            "revives": 0,
+            "skills": 112,
+            "comboPoints": 144.68333333333322,
+            "maxCombo": 62
+          },
+          {
+            "class": "archer",
+            "damage": 6084.199999999999,
+            "taken": 134,
+            "avoided": 0,
+            "revives": 0,
+            "skills": 117,
+            "comboPoints": 83.41583333333325,
+            "maxCombo": 39
+          }
+        ]
+      }
+    ]
+  },
+  "nativeRescue": {
+    "method": "Controlled server fixture, not ordinary combat; packaged native client, virtual Gamepad API, no production test endpoint.",
+    "checks": [
+      "native gamepad human→bot, normal 4s channel, help/rise frames",
+      "bot→native human, authoritative HUD progress and recovery",
+      "bot→bot around physical pillar, no wall penetration"
+    ],
+    "errors": []
+  },
+  "couch": {
+    "players": [
+      {
+        "id": "bf425e2b1820203ff82950d1f83177da",
+        "name": "Lyra Couch",
+        "classId": "archer",
+        "energy": 100,
+        "skills": 1
+      },
+      {
+        "id": "6a98a1abf6af31e187a3a47510d27114",
+        "name": "Jogador 2",
+        "classId": "knight",
+        "energy": 80.10400503200005,
+        "skills": 1
+      },
+      {
+        "id": "1a9efd1a52a907d9a34f88a17113c4c7",
+        "name": "Jogador 3",
+        "classId": "rogue",
+        "energy": 84.66812528400006,
+        "skills": 1
+      }
+    ],
+    "windows": 1,
+    "activeMusicTracks": 1,
+    "errors": [],
+    "hardware": "Gamepad API virtual devices, not physical USB/Bluetooth controllers"
+  },
+  "fullNative": {
+    "score": 2129,
+    "wins": 3,
+    "keys": [
+      {
+        "round": 0,
+        "id": "iron-crown",
+        "name": "Chave da Coroa Sangrenta",
+        "color": "#ec6c75",
+        "carrier": "bot-19fa2cb569e3",
+        "at": 76.72703219300006
+      },
+      {
+        "round": 1,
+        "id": "living-root",
+        "name": "Chave do Coração Verde",
+        "color": "#9fd88b",
+        "carrier": "3e30a86d5ce399a2670fbbb6690879e6",
+        "at": 188.12415478699992
+      },
+      {
+        "round": 2,
+        "id": "void-wing",
+        "name": "Chave das Seis Asas",
+        "color": "#bd9cf2",
+        "carrier": "bot-b9be3c7f59fc",
+        "at": 387.48965876500023
+      }
+    ],
+    "secretUnlocked": true,
+    "vaultOpenedAt": 398.46788791500046,
+    "results": [
+      {
+        "round": 0,
+        "won": true,
+        "reason": "",
+        "remaining": 245,
+        "reward": 181,
+        "players": [
+          {
+            "id": "3e30a86d5ce399a2670fbbb6690879e6",
+            "name": "Lyra",
+            "damage": 2027.4,
+            "taken": 14,
+            "avoided": 0,
+            "revives": 0,
+            "skills": 35,
+            "comboPoints": 29.985000000000003,
+            "maxCombo": 45
+          },
+          {
+            "id": "bot-b9be3c7f59fc",
+            "name": "Aldric",
+            "damage": 1985.099999999999,
+            "taken": 53.3,
+            "avoided": 30.7,
+            "revives": 0,
+            "skills": 32,
+            "comboPoints": 21.81499999999999,
+            "maxCombo": 23
+          },
+          {
+            "id": "bot-19fa2cb569e3",
+            "name": "Nyx",
+            "damage": 2478.5,
+            "taken": 11,
+            "avoided": 0,
+            "revives": 0,
+            "skills": 34,
+            "comboPoints": 51.830000000000034,
+            "maxCombo": 59
+          }
+        ]
+      },
+      {
+        "round": 1,
+        "won": true,
+        "reason": "",
+        "remaining": 220,
+        "reward": 223,
+        "players": [
+          {
+            "id": "3e30a86d5ce399a2670fbbb6690879e6",
+            "name": "Lyra",
+            "damage": 1809.7,
+            "taken": 40,
+            "avoided": 0,
+            "revives": 0,
+            "skills": 47,
+            "comboPoints": 19.98666666666667,
+            "maxCombo": 32
+          },
+          {
+            "id": "bot-b9be3c7f59fc",
+            "name": "Aldric",
+            "damage": 2850.300000000002,
+            "taken": 64.5,
+            "avoided": 15.5,
+            "revives": 0,
+            "skills": 45,
+            "comboPoints": 35.60250000000002,
+            "maxCombo": 34
+          },
+          {
+            "id": "bot-19fa2cb569e3",
+            "name": "Nyx",
+            "damage": 3431.9999999999977,
+            "taken": 83.8,
+            "avoided": 13.2,
+            "revives": 0,
+            "skills": 46,
+            "comboPoints": 46.72499999999998,
+            "maxCombo": 36
+          }
+        ]
+      },
+      {
+        "round": 2,
+        "won": true,
+        "reason": "",
+        "remaining": 132,
+        "reward": 293,
+        "players": [
+          {
+            "id": "3e30a86d5ce399a2670fbbb6690879e6",
+            "name": "Lyra",
+            "damage": 4285.1,
+            "taken": 116.5,
+            "avoided": 0,
+            "revives": 0,
+            "skills": 65,
+            "comboPoints": 71.14833333333333,
+            "maxCombo": 41
+          },
+          {
+            "id": "bot-b9be3c7f59fc",
+            "name": "Aldric",
+            "damage": 3027.1000000000004,
+            "taken": 185.9,
+            "avoided": 49.1,
+            "revives": 0,
+            "skills": 93,
+            "comboPoints": 14.655833333333332,
+            "maxCombo": 18
+          },
+          {
+            "id": "bot-19fa2cb569e3",
+            "name": "Nyx",
+            "damage": 4917.7999999999965,
+            "taken": 239.3,
+            "avoided": 13.7,
+            "revives": 1,
+            "skills": 92,
+            "comboPoints": 52.40583333333319,
+            "maxCombo": 60
+          }
+        ]
+      }
+    ],
+    "players": [
+      {
+        "name": "Lyra",
+        "isBot": false,
+        "stats": {
+          "damage": 8122.200000000003,
+          "taken": 170.5,
+          "avoided": 0,
+          "revives": 0,
+          "skills": 147,
+          "comboPoints": 121.11999999999988,
+          "maxCombo": 45
+        }
+      },
+      {
+        "name": "Aldric",
+        "isBot": true,
+        "stats": {
+          "damage": 7862.500000000008,
+          "taken": 303.70000000000005,
+          "avoided": 95.30000000000001,
+          "revives": 0,
+          "skills": 170,
+          "comboPoints": 72.07333333333337,
+          "maxCombo": 34
+        }
+      },
+      {
+        "name": "Nyx",
+        "isBot": true,
+        "stats": {
+          "damage": 10828.300000000005,
+          "taken": 334.1,
+          "avoided": 26.9,
+          "revives": 1,
+          "skills": 172,
+          "comboPoints": 150.96083333333408,
+          "maxCombo": 60
+        }
+      }
+    ],
+    "perf": [
+      {
+        "at": 18,
+        "round": 0,
+        "fps": 60,
+        "p95": 16.80000000000291,
+        "cpu": 0.589999999354283,
+        "particles": 0,
+        "pooled": 60,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 1
+        }
+      },
+      {
+        "at": 19,
+        "round": 0,
+        "fps": 60,
+        "p95": 16.80000000000291,
+        "cpu": 0.589999999354283,
+        "particles": 2,
+        "pooled": 58,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 1
+        }
+      },
+      {
+        "at": 23,
+        "round": 0,
+        "fps": 38.36317135549878,
+        "p95": 33.400000000001455,
+        "cpu": 2.96923076800811,
+        "particles": 161,
+        "pooled": 533,
+        "smoke": 4,
+        "fields": 0,
+        "budget": {
+          "particles": 1169,
+          "smoke": 41,
+          "volumes": 68,
+          "detail": 0.649519052838329
+        },
+        "effectDetail": 42,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 5
+        }
+      },
+      {
+        "at": 24,
+        "round": 0,
+        "fps": 50.329074719318584,
+        "p95": 33.39999999999782,
+        "cpu": 1.886538460277594,
+        "particles": 107,
+        "pooled": 587,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1169,
+          "smoke": 41,
+          "volumes": 68,
+          "detail": 0.649519052838329
+        },
+        "effectDetail": 42,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 5
+        }
+      },
+      {
+        "at": 28,
+        "round": 0,
+        "fps": 50.32420400658089,
+        "p95": 33.400000000001455,
+        "cpu": 2.4980769243377905,
+        "particles": 143,
+        "pooled": 551,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1169,
+          "smoke": 41,
+          "volumes": 68,
+          "detail": 0.649519052838329
+        },
+        "effectDetail": 42,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 5
+        }
+      },
+      {
+        "at": 29,
+        "round": 0,
+        "fps": 22.624434389140223,
+        "p95": 100,
+        "cpu": 6.991304345752882,
+        "particles": 111,
+        "pooled": 583,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1169,
+          "smoke": 41,
+          "volumes": 68,
+          "detail": 0.649519052838329
+        },
+        "effectDetail": 42,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 5
+        }
+      },
+      {
+        "at": 33,
+        "round": 0,
+        "fps": 52,
+        "p95": 33.400000000001455,
+        "cpu": 1.7769230770377011,
+        "particles": 103,
+        "pooled": 591,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 658,
+          "smoke": 13,
+          "volumes": 21,
+          "detail": 0.36535446722156006
+        },
+        "effectDetail": 13,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 5
+        }
+      },
+      {
+        "at": 34,
+        "round": 0,
+        "fps": 52,
+        "p95": 33.400000000001455,
+        "cpu": 1.7769230770377011,
+        "particles": 45,
+        "pooled": 649,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 658,
+          "smoke": 13,
+          "volumes": 21,
+          "detail": 0.36535446722156006
+        },
+        "effectDetail": 13,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 5
+        }
+      },
+      {
+        "at": 38,
+        "round": 0,
+        "fps": 49.18839153959666,
+        "p95": 33.39999999999418,
+        "cpu": 2.449999999701977,
+        "particles": 195,
+        "pooled": 499,
+        "smoke": 1,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 12,
+          "limit": 24,
+          "textures": 6
+        }
+      },
+      {
+        "at": 39,
+        "round": 0,
+        "fps": 49.18839153959666,
+        "p95": 33.39999999999418,
+        "cpu": 2.449999999701977,
+        "particles": 195,
+        "pooled": 499,
+        "smoke": 1,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 12,
+          "limit": 24,
+          "textures": 6
+        }
+      },
+      {
+        "at": 43,
+        "round": 0,
+        "fps": 55,
+        "p95": 33.299999999995634,
+        "cpu": 2.090909090638161,
+        "particles": 79,
+        "pooled": 615,
+        "smoke": 1,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 6
+        }
+      },
+      {
+        "at": 44,
+        "round": 0,
+        "fps": 55,
+        "p95": 33.299999999995634,
+        "cpu": 2.090909090638161,
+        "particles": 79,
+        "pooled": 615,
+        "smoke": 1,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 6
+        }
+      },
+      {
+        "at": 48,
+        "round": 0,
+        "fps": 48.204623708804725,
+        "p95": 33.400000000001455,
+        "cpu": 1.5959183686241811,
+        "particles": 284,
+        "pooled": 410,
+        "smoke": 10,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 6
+        }
+      },
+      {
+        "at": 49,
+        "round": 0,
+        "fps": 48.204623708804725,
+        "p95": 33.400000000001455,
+        "cpu": 1.5959183686241811,
+        "particles": 117,
+        "pooled": 577,
+        "smoke": 5,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 6
+        }
+      },
+      {
+        "at": 53,
+        "round": 0,
+        "fps": 60,
+        "p95": 16.700000000004366,
+        "cpu": 1.3599999994039536,
+        "particles": 50,
+        "pooled": 644,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 6
+        }
+      },
+      {
+        "at": 54,
+        "round": 0,
+        "fps": 60,
+        "p95": 16.700000000004366,
+        "cpu": 1.3599999994039536,
+        "particles": 487,
+        "pooled": 207,
+        "smoke": 12,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 11,
+          "limit": 24,
+          "textures": 7
+        }
+      },
+      {
+        "at": 58,
+        "round": 0,
+        "fps": 60,
+        "p95": 16.799999999995634,
+        "cpu": 1.1699999993046124,
+        "particles": 77,
+        "pooled": 617,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 7
+        }
+      },
+      {
+        "at": 59,
+        "round": 0,
+        "fps": 60,
+        "p95": 16.799999999995634,
+        "cpu": 1.1699999993046124,
+        "particles": 77,
+        "pooled": 617,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 7
+        }
+      },
+      {
+        "at": 63,
+        "round": 0,
+        "fps": 58.04230201672405,
+        "p95": 16.80000000000291,
+        "cpu": 1.8728813574475758,
+        "particles": 59,
+        "pooled": 635,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 7
+        }
+      },
+      {
+        "at": 64,
+        "round": 0,
+        "fps": 59.994000599940094,
+        "p95": 16.80000000000291,
+        "cpu": 1.199999999254942,
+        "particles": 33,
+        "pooled": 661,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 7
+        }
+      },
+      {
+        "at": 68,
+        "round": 0,
+        "fps": 58.03659256344728,
+        "p95": 16.80000000000291,
+        "cpu": 1.644067795094797,
+        "particles": 76,
+        "pooled": 618,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 7
+        }
+      },
+      {
+        "at": 69,
+        "round": 0,
+        "fps": 60.00393468424125,
+        "p95": 16.80000000000291,
+        "cpu": 1.1934426229019635,
+        "particles": 83,
+        "pooled": 611,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 7
+        }
+      },
+      {
+        "at": 73,
+        "round": 0,
+        "fps": 48.19988195947247,
+        "p95": 33.39999999999418,
+        "cpu": 1.8346938779767679,
+        "particles": 229,
+        "pooled": 465,
+        "smoke": 10,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 7
+        }
+      },
+      {
+        "at": 74,
+        "round": 0,
+        "fps": 48.19988195947247,
+        "p95": 33.39999999999418,
+        "cpu": 1.8346938779767679,
+        "particles": 229,
+        "pooled": 465,
+        "smoke": 10,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 7
+        }
+      },
+      {
+        "at": 105,
+        "round": 1,
+        "fps": 57,
+        "p95": 33.30000000000291,
+        "cpu": 0.5368421051585883,
+        "particles": 0,
+        "pooled": 694,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 9
+        }
+      },
+      {
+        "at": 106,
+        "round": 1,
+        "fps": 57,
+        "p95": 33.30000000000291,
+        "cpu": 0.5368421051585883,
+        "particles": 59,
+        "pooled": 635,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 18,
+          "limit": 24,
+          "textures": 9
+        }
+      },
+      {
+        "at": 110,
+        "round": 1,
+        "fps": 38.3631713554985,
+        "p95": 33.40000000000873,
+        "cpu": 3.000000001146243,
+        "particles": 70,
+        "pooled": 624,
+        "smoke": 2,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 10
+        }
+      },
+      {
+        "at": 111,
+        "round": 1,
+        "fps": 50.16722408026799,
+        "p95": 33.40000000000873,
+        "cpu": 1.5490196075509577,
+        "particles": 82,
+        "pooled": 612,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 10
+        }
+      },
+      {
+        "at": 115,
+        "round": 1,
+        "fps": 60.003934684242104,
+        "p95": 16.70000000001164,
+        "cpu": 1.4360655731842167,
+        "particles": 78,
+        "pooled": 616,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 10
+        }
+      },
+      {
+        "at": 116,
+        "round": 1,
+        "fps": 60.003934684242104,
+        "p95": 16.70000000001164,
+        "cpu": 1.4360655731842167,
+        "particles": 87,
+        "pooled": 607,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 10
+        }
+      },
+      {
+        "at": 120,
+        "round": 1,
+        "fps": 56,
+        "p95": 33.30000000000291,
+        "cpu": 1.8107142855546303,
+        "particles": 366,
+        "pooled": 328,
+        "smoke": 12,
+        "fields": 5,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 8,
+          "limit": 24,
+          "textures": 10
+        }
+      },
+      {
+        "at": 121,
+        "round": 1,
+        "fps": 56,
+        "p95": 33.30000000000291,
+        "cpu": 1.8107142855546303,
+        "particles": 283,
+        "pooled": 411,
+        "smoke": 12,
+        "fields": 4,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 8,
+          "limit": 24,
+          "textures": 10
+        }
+      },
+      {
+        "at": 125,
+        "round": 1,
+        "fps": 44,
+        "p95": 33.39999999999418,
+        "cpu": 1.8613636368377642,
+        "particles": 244,
+        "pooled": 450,
+        "smoke": 10,
+        "fields": 3,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 13,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 126,
+        "round": 1,
+        "fps": 44,
+        "p95": 33.39999999999418,
+        "cpu": 1.8613636368377642,
+        "particles": 251,
+        "pooled": 443,
+        "smoke": 12,
+        "fields": 3,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 13,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 130,
+        "round": 1,
+        "fps": 33.44481605351199,
+        "p95": 33.40000000002328,
+        "cpu": 2.364705883404788,
+        "particles": 89,
+        "pooled": 605,
+        "smoke": 3,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 131,
+        "round": 1,
+        "fps": 51,
+        "p95": 33.29999999998836,
+        "cpu": 2.0137254908388735,
+        "particles": 165,
+        "pooled": 529,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 135,
+        "round": 1,
+        "fps": 49.183553019869876,
+        "p95": 33.39999999999418,
+        "cpu": 1.7859999990463258,
+        "particles": 88,
+        "pooled": 606,
+        "smoke": 6,
+        "fields": 3,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 136,
+        "round": 1,
+        "fps": 49.183553019869876,
+        "p95": 33.39999999999418,
+        "cpu": 1.7859999990463258,
+        "particles": 49,
+        "pooled": 645,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 140,
+        "round": 1,
+        "fps": 40.650406504064584,
+        "p95": 33.39999999999418,
+        "cpu": 1.5380952393724805,
+        "particles": 256,
+        "pooled": 438,
+        "smoke": 10,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 141,
+        "round": 1,
+        "fps": 40.650406504064584,
+        "p95": 33.39999999999418,
+        "cpu": 1.5380952393724805,
+        "particles": 256,
+        "pooled": 438,
+        "smoke": 10,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 145,
+        "round": 1,
+        "fps": 60.00393468424125,
+        "p95": 16.70000000001164,
+        "cpu": 1.2836065585495995,
+        "particles": 35,
+        "pooled": 659,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 146,
+        "round": 1,
+        "fps": 58.036592563446455,
+        "p95": 16.800000000017462,
+        "cpu": 1.4288135597766456,
+        "particles": 237,
+        "pooled": 457,
+        "smoke": 9,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 150,
+        "round": 1,
+        "fps": 60.00983767830792,
+        "p95": 16.70000000001164,
+        "cpu": 1.5836065585007433,
+        "particles": 66,
+        "pooled": 628,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 151,
+        "round": 1,
+        "fps": 60,
+        "p95": 16.70000000001164,
+        "cpu": 1.373333332935969,
+        "particles": 72,
+        "pooled": 622,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 155,
+        "round": 1,
+        "fps": 60.00393468424125,
+        "p95": 16.70000000001164,
+        "cpu": 1.2508196713494473,
+        "particles": 58,
+        "pooled": 636,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 156,
+        "round": 1,
+        "fps": 60.00393468424125,
+        "p95": 16.70000000001164,
+        "cpu": 1.2508196713494473,
+        "particles": 85,
+        "pooled": 609,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 160,
+        "round": 1,
+        "fps": 46,
+        "p95": 33.39999999999418,
+        "cpu": 1.5869565233588219,
+        "particles": 334,
+        "pooled": 360,
+        "smoke": 11,
+        "fields": 5,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 161,
+        "round": 1,
+        "fps": 46.23253983867768,
+        "p95": 33.30000000001746,
+        "cpu": 1.2744680849161554,
+        "particles": 110,
+        "pooled": 584,
+        "smoke": 5,
+        "fields": 3,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 165,
+        "round": 1,
+        "fps": 58.03659256344811,
+        "p95": 16.800000000017462,
+        "cpu": 1.4711864403748915,
+        "particles": 96,
+        "pooled": 598,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 166,
+        "round": 1,
+        "fps": 60,
+        "p95": 16.79999999998836,
+        "cpu": 1.628333333383004,
+        "particles": 85,
+        "pooled": 609,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 170,
+        "round": 1,
+        "fps": 50.32907471931806,
+        "p95": 33.30000000001746,
+        "cpu": 1.5692307685430233,
+        "particles": 339,
+        "pooled": 355,
+        "smoke": 10,
+        "fields": 5,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 14,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 171,
+        "round": 1,
+        "fps": 53.99460053994569,
+        "p95": 33.30000000001746,
+        "cpu": 1.6166666666114773,
+        "particles": 333,
+        "pooled": 361,
+        "smoke": 9,
+        "fields": 5,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 12,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 175,
+        "round": 1,
+        "fps": 37.38317757009346,
+        "p95": 33.39999999999418,
+        "cpu": 1.5921052635500306,
+        "particles": 187,
+        "pooled": 507,
+        "smoke": 4,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 176,
+        "round": 1,
+        "fps": 49,
+        "p95": 33.39999999999418,
+        "cpu": 1.442857142917964,
+        "particles": 91,
+        "pooled": 603,
+        "smoke": 2,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 180,
+        "round": 1,
+        "fps": 47.21621089907508,
+        "p95": 33.39999999999418,
+        "cpu": 1.9395833328987162,
+        "particles": 236,
+        "pooled": 458,
+        "smoke": 8,
+        "fields": 3,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 181,
+        "round": 1,
+        "fps": 51.150895140664666,
+        "p95": 33.39999999999418,
+        "cpu": 1.567307692594253,
+        "particles": 33,
+        "pooled": 661,
+        "smoke": 0,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 185,
+        "round": 1,
+        "fps": 50,
+        "p95": 33.30000000001746,
+        "cpu": 1.6600000002980233,
+        "particles": 64,
+        "pooled": 630,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 11
+        }
+      },
+      {
+        "at": 216,
+        "round": 2,
+        "fps": 60,
+        "p95": 16.79999999998836,
+        "cpu": 0.5866666667163372,
+        "particles": 0,
+        "pooled": 694,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 13
+        }
+      },
+      {
+        "at": 217,
+        "round": 2,
+        "fps": 60,
+        "p95": 16.79999999998836,
+        "cpu": 0.5866666667163372,
+        "particles": 1,
+        "pooled": 693,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 13
+        }
+      },
+      {
+        "at": 221,
+        "round": 2,
+        "fps": 39.3468424158959,
+        "p95": 33.40000000002328,
+        "cpu": 1.8349999997764825,
+        "particles": 144,
+        "pooled": 550,
+        "smoke": 1,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 14
+        }
+      },
+      {
+        "at": 222,
+        "round": 2,
+        "fps": 39.3468424158959,
+        "p95": 33.40000000002328,
+        "cpu": 1.8349999997764825,
+        "particles": 144,
+        "pooled": 550,
+        "smoke": 1,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 14
+        }
+      },
+      {
+        "at": 227,
+        "round": 2,
+        "fps": 60,
+        "p95": 16.70000000001164,
+        "cpu": 1.3733333336810272,
+        "particles": 57,
+        "pooled": 637,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 14
+        }
+      },
+      {
+        "at": 231,
+        "round": 2,
+        "fps": 51.9948005199477,
+        "p95": 33.39999999999418,
+        "cpu": 1.8269230763499553,
+        "particles": 96,
+        "pooled": 598,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 10,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 232,
+        "round": 2,
+        "fps": 51.9948005199477,
+        "p95": 33.39999999999418,
+        "cpu": 1.8269230763499553,
+        "particles": 166,
+        "pooled": 528,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 236,
+        "round": 2,
+        "fps": 52.134566201062064,
+        "p95": 33.30000000001746,
+        "cpu": 1.4716981118017773,
+        "particles": 63,
+        "pooled": 631,
+        "smoke": 5,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 237,
+        "round": 2,
+        "fps": 52.134566201062064,
+        "p95": 33.30000000001746,
+        "cpu": 1.4716981118017773,
+        "particles": 63,
+        "pooled": 631,
+        "smoke": 5,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 242,
+        "round": 2,
+        "fps": 54,
+        "p95": 33.29999999998836,
+        "cpu": 1.5574074072970285,
+        "particles": 87,
+        "pooled": 607,
+        "smoke": 1,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 246,
+        "round": 2,
+        "fps": 56.074766355140184,
+        "p95": 33.29999999998836,
+        "cpu": 1.6771929815672992,
+        "particles": 234,
+        "pooled": 460,
+        "smoke": 6,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 11,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 247,
+        "round": 2,
+        "fps": 56.074766355140184,
+        "p95": 33.29999999998836,
+        "cpu": 1.6771929815672992,
+        "particles": 84,
+        "pooled": 610,
+        "smoke": 1,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 251,
+        "round": 2,
+        "fps": 40,
+        "p95": 33.39999999999418,
+        "cpu": 1.9525000002235173,
+        "particles": 361,
+        "pooled": 333,
+        "smoke": 6,
+        "fields": 5,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 13,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 252,
+        "round": 2,
+        "fps": 40,
+        "p95": 33.39999999999418,
+        "cpu": 1.9525000002235173,
+        "particles": 361,
+        "pooled": 333,
+        "smoke": 6,
+        "fields": 5,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 13,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 256,
+        "round": 2,
+        "fps": 41.314184536690696,
+        "p95": 33.39999999999418,
+        "cpu": 1.6238095238804817,
+        "particles": 475,
+        "pooled": 219,
+        "smoke": 12,
+        "fields": 4,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 9,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 257,
+        "round": 2,
+        "fps": 41.314184536690696,
+        "p95": 33.39999999999418,
+        "cpu": 1.6238095238804817,
+        "particles": 475,
+        "pooled": 219,
+        "smoke": 12,
+        "fields": 4,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 9,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 261,
+        "round": 2,
+        "fps": 60,
+        "p95": 16.79999999998836,
+        "cpu": 1.1883333335320154,
+        "particles": 78,
+        "pooled": 616,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 262,
+        "round": 2,
+        "fps": 60.003934684239525,
+        "p95": 16.70000000001164,
+        "cpu": 1.2081967225817383,
+        "particles": 67,
+        "pooled": 627,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 266,
+        "round": 2,
+        "fps": 60.003934684239525,
+        "p95": 16.70000000001164,
+        "cpu": 1.036065573819348,
+        "particles": 50,
+        "pooled": 644,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 8,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 267,
+        "round": 2,
+        "fps": 60.003934684239525,
+        "p95": 16.70000000001164,
+        "cpu": 1.036065573819348,
+        "particles": 100,
+        "pooled": 594,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 271,
+        "round": 2,
+        "fps": 58,
+        "p95": 16.800000000046566,
+        "cpu": 2.049999998818184,
+        "particles": 63,
+        "pooled": 631,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 272,
+        "round": 2,
+        "fps": 58,
+        "p95": 16.800000000046566,
+        "cpu": 2.049999998818184,
+        "particles": 63,
+        "pooled": 631,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 276,
+        "round": 2,
+        "fps": 52.994700529945156,
+        "p95": 33.40000000002328,
+        "cpu": 1.7226415082531155,
+        "particles": 196,
+        "pooled": 498,
+        "smoke": 4,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 14,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 277,
+        "round": 2,
+        "fps": 59.02606984751599,
+        "p95": 16.79999999998836,
+        "cpu": 1.5783333348731199,
+        "particles": 100,
+        "pooled": 594,
+        "smoke": 3,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 281,
+        "round": 2,
+        "fps": 47.425474254744685,
+        "p95": 33.399999999965075,
+        "cpu": 1.7346938781592312,
+        "particles": 334,
+        "pooled": 360,
+        "smoke": 12,
+        "fields": 4,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 282,
+        "round": 2,
+        "fps": 47.425474254744685,
+        "p95": 33.399999999965075,
+        "cpu": 1.7346938781592312,
+        "particles": 334,
+        "pooled": 360,
+        "smoke": 12,
+        "fields": 4,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 286,
+        "round": 2,
+        "fps": 60,
+        "p95": 16.79999999998836,
+        "cpu": 1.5866666652262211,
+        "particles": 88,
+        "pooled": 606,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 13,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 287,
+        "round": 2,
+        "fps": 60,
+        "p95": 16.79999999998836,
+        "cpu": 1.5866666652262211,
+        "particles": 88,
+        "pooled": 606,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 13,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 291,
+        "round": 2,
+        "fps": 60,
+        "p95": 16.70000000001164,
+        "cpu": 0.9433333332339923,
+        "particles": 64,
+        "pooled": 630,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 292,
+        "round": 2,
+        "fps": 60,
+        "p95": 16.70000000001164,
+        "cpu": 0.9433333332339923,
+        "particles": 64,
+        "pooled": 630,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 296,
+        "round": 2,
+        "fps": 60,
+        "p95": 16.79999999998836,
+        "cpu": 1.1350000001490117,
+        "particles": 24,
+        "pooled": 670,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 297,
+        "round": 2,
+        "fps": 56.069250442653264,
+        "p95": 33.29999999998836,
+        "cpu": 1.3350877197165238,
+        "particles": 7,
+        "pooled": 687,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 15
+        }
+      },
+      {
+        "at": 301,
+        "round": 2,
+        "fps": 52.13456620106356,
+        "p95": 33.40000000002328,
+        "cpu": 2.166037736355134,
+        "particles": 64,
+        "pooled": 630,
+        "smoke": 1,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 11,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 302,
+        "round": 2,
+        "fps": 52.13456620106356,
+        "p95": 33.40000000002328,
+        "cpu": 2.166037736355134,
+        "particles": 64,
+        "pooled": 630,
+        "smoke": 1,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 11,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 306,
+        "round": 2,
+        "fps": 42.29785559708688,
+        "p95": 33.40000000002328,
+        "cpu": 1.6860465098952138,
+        "particles": 292,
+        "pooled": 402,
+        "smoke": 9,
+        "fields": 3,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 14,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 307,
+        "round": 2,
+        "fps": 42.29785559708688,
+        "p95": 33.40000000002328,
+        "cpu": 1.6860465098952138,
+        "particles": 140,
+        "pooled": 554,
+        "smoke": 8,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 14,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 311,
+        "round": 2,
+        "fps": 59.020263623845544,
+        "p95": 16.70000000001164,
+        "cpu": 1.6949999998013179,
+        "particles": 220,
+        "pooled": 474,
+        "smoke": 12,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 312,
+        "round": 2,
+        "fps": 48,
+        "p95": 33.40000000002328,
+        "cpu": 1.7041666678463419,
+        "particles": 309,
+        "pooled": 385,
+        "smoke": 12,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 317,
+        "round": 2,
+        "fps": 60,
+        "p95": 16.79999999998836,
+        "cpu": 1.4549999999503294,
+        "particles": 346,
+        "pooled": 348,
+        "smoke": 10,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 10,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 321,
+        "round": 2,
+        "fps": 59.99400059993791,
+        "p95": 16.800000000046566,
+        "cpu": 1.043333334227403,
+        "particles": 41,
+        "pooled": 653,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 322,
+        "round": 2,
+        "fps": 59.99400059993791,
+        "p95": 16.800000000046566,
+        "cpu": 1.043333334227403,
+        "particles": 41,
+        "pooled": 653,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 326,
+        "round": 2,
+        "fps": 60.003934684242964,
+        "p95": 16.79999999998836,
+        "cpu": 1.1295081958418987,
+        "particles": 6,
+        "pooled": 688,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 327,
+        "round": 2,
+        "fps": 60.003934684242964,
+        "p95": 16.79999999998836,
+        "cpu": 1.1295081958418987,
+        "particles": 16,
+        "pooled": 678,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 331,
+        "round": 2,
+        "fps": 51.1458640700299,
+        "p95": 33.399999999965075,
+        "cpu": 1.6269230768084526,
+        "particles": 157,
+        "pooled": 537,
+        "smoke": 3,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 11,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 332,
+        "round": 2,
+        "fps": 51.1458640700299,
+        "p95": 33.399999999965075,
+        "cpu": 1.6269230768084526,
+        "particles": 157,
+        "pooled": 537,
+        "smoke": 3,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 11,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 336,
+        "round": 2,
+        "fps": 48.1998819594711,
+        "p95": 33.300000000046566,
+        "cpu": 1.5836734686579024,
+        "particles": 150,
+        "pooled": 544,
+        "smoke": 4,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 337,
+        "round": 2,
+        "fps": 48.1998819594711,
+        "p95": 33.300000000046566,
+        "cpu": 1.5836734686579024,
+        "particles": 150,
+        "pooled": 544,
+        "smoke": 4,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 341,
+        "round": 2,
+        "fps": 44.26955238563699,
+        "p95": 33.40000000002328,
+        "cpu": 2.226666667064031,
+        "particles": 158,
+        "pooled": 536,
+        "smoke": 11,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 342,
+        "round": 2,
+        "fps": 44.26955238563699,
+        "p95": 33.40000000002328,
+        "cpu": 2.226666667064031,
+        "particles": 443,
+        "pooled": 251,
+        "smoke": 12,
+        "fields": 6,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 9,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 346,
+        "round": 2,
+        "fps": 50.1672240802687,
+        "p95": 33.40000000002328,
+        "cpu": 1.7980392163290697,
+        "particles": 312,
+        "pooled": 382,
+        "smoke": 12,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 8,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 347,
+        "round": 2,
+        "fps": 50.1672240802687,
+        "p95": 33.40000000002328,
+        "cpu": 1.7980392163290697,
+        "particles": 312,
+        "pooled": 382,
+        "smoke": 12,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 8,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 351,
+        "round": 2,
+        "fps": 60.003934684239525,
+        "p95": 16.79999999998836,
+        "cpu": 1.303278689013153,
+        "particles": 5,
+        "pooled": 689,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 352,
+        "round": 2,
+        "fps": 60.003934684242964,
+        "p95": 16.70000000001164,
+        "cpu": 1.019672129486428,
+        "particles": 150,
+        "pooled": 544,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 356,
+        "round": 2,
+        "fps": 60.003934684242964,
+        "p95": 16.79999999998836,
+        "cpu": 0.9377049161273925,
+        "particles": 4,
+        "pooled": 690,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 357,
+        "round": 2,
+        "fps": 60.003934684242964,
+        "p95": 16.79999999998836,
+        "cpu": 0.9377049161273925,
+        "particles": 4,
+        "pooled": 690,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 361,
+        "round": 2,
+        "fps": 54.10190832185841,
+        "p95": 33.300000000046566,
+        "cpu": 2.390909090909091,
+        "particles": 15,
+        "pooled": 679,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 362,
+        "round": 2,
+        "fps": 54.10190832185841,
+        "p95": 33.300000000046566,
+        "cpu": 2.390909090909091,
+        "particles": 15,
+        "pooled": 679,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 366,
+        "round": 2,
+        "fps": 60.003934684239525,
+        "p95": 16.70000000001164,
+        "cpu": 1.0360655743079108,
+        "particles": 29,
+        "pooled": 665,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 8,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 367,
+        "round": 2,
+        "fps": 60.003934684239525,
+        "p95": 16.70000000001164,
+        "cpu": 1.0360655743079108,
+        "particles": 29,
+        "pooled": 665,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 8,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 371,
+        "round": 2,
+        "fps": 34.428487113909895,
+        "p95": 33.40000000002328,
+        "cpu": 1.8714285701513291,
+        "particles": 90,
+        "pooled": 604,
+        "smoke": 8,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 11,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 372,
+        "round": 2,
+        "fps": 34.428487113909895,
+        "p95": 33.40000000002328,
+        "cpu": 1.8714285701513291,
+        "particles": 90,
+        "pooled": 604,
+        "smoke": 8,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 11,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 376,
+        "round": 2,
+        "fps": 58.04230201672405,
+        "p95": 16.79999999998836,
+        "cpu": 1.4203389835054592,
+        "particles": 272,
+        "pooled": 422,
+        "smoke": 8,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 377,
+        "round": 2,
+        "fps": 58.04230201672405,
+        "p95": 16.79999999998836,
+        "cpu": 1.4203389835054592,
+        "particles": 272,
+        "pooled": 422,
+        "smoke": 8,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 16
+        }
+      },
+      {
+        "at": 382,
+        "round": 2,
+        "fps": 60.00983767830792,
+        "p95": 16.79999999998836,
+        "cpu": 1.3180327862501144,
+        "particles": 288,
+        "pooled": 406,
+        "smoke": 12,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 16
+        }
+      }
+    ],
+    "errors": []
+  },
+  "windows": {
+    "version": "1.7.0",
+    "bytes": 441207004,
+    "sha256": "043d471239213b33a6a4f84aa4542731ef8e4406014f7d74f0d60de39cafed98",
+    "entries": 272,
+    "checkedSourceFiles": 175,
+    "parts": 14,
+    "CRC": "pass",
+    "PE": "x64",
+    "reconstructed": "identical"
+  },
+  "preview": {
+    "file": "preview/previa-pc.mp4",
+    "durationSeconds": 68.233333,
+    "bytes": 30858911,
+    "source": "Packaged native app, virtual Gamepad API, ordinary client inputs, native arrival and 45s of battle. No combat state edits.",
+    "encoding": "60 FPS container; source capture cadence varies. Original battle soundtrack mixed for the preview; not a native audio capture."
+  }
+}

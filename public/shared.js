@@ -1,18 +1,19 @@
 export const WORLD = { w: 1200, h: 760, margin: 55 };
 export const CLASSES = {
-  knight: { name: 'Cavaleiro', role: 'Tanque • proteção', hp: 160, speed: 116, damage: 12, range: 96, interval: .82, color: '#e6b76c',
+  knight: { name: 'Cavaleiro', role: 'Tanque • proteção', hp: 160, speed: 116, damage: 25, range: 96, interval: .82, color: '#e6b76c',
     skills: ['Golpe de Espada', 'Investida de Ferro', 'Muralha Real'], descriptions: ['25 de dano próximo', 'Avança e causa 35 de dano', '4s: protege você e aliados próximos'] },
-  archer: { name: 'Arqueiro', role: 'Distância • controle', hp: 100, speed: 140, damage: 15, range: 540, interval: .98, color: '#8cd9ae',
+  archer: { name: 'Arqueiro', role: 'Distância • controle', hp: 100, speed: 140, damage: 32, range: 540, interval: .98, color: '#8cd9ae',
     skills: ['Flecha Perfurante', 'Chuva de Flechas', 'Flecha Congelante'], descriptions: ['30 de dano à distância', '5 flechas: até 40 de dano', '20 de dano e lentidão por 2s'] },
-  rogue: { name: 'Ladino', role: 'Mobilidade • explosão', hp: 115, speed: 158, damage: 10, range: 84, interval: .54, color: '#c4a2f2',
+  rogue: { name: 'Ladino', role: 'Mobilidade • explosão', hp: 115, speed: 158, damage: 18, range: 84, interval: .54, color: '#c4a2f2',
     skills: ['Corte Duplo', 'Passo Sombrio', 'Lâminas Venenosas'], descriptions: ['Dois golpes de 18 de dano', 'Teleporte e +25 no próximo golpe', '24 de dano de veneno em 3s'] }
 };
 export const COSTS = [20, 30, 40];
 export const COOLDOWNS = [2, 6, 12];
+export const REVIVE = { duration: 4, range: 86, health: .4, recovery: .85, grace: .65 };
 export const BOSSES = [
-  { name: 'VARKHUL', title: 'O Rei Sem Trono', arena: 'Ruínas do Trono', hp: 5600, color: '#ed5c67', threshold: .7, finalThreshold: .3, phase: 'Coroa Sangrenta', finalPhase:'Tirano de Ferro', reward: 100, speed: 62, radius: 48 },
-  { name: 'THARAZUL', title: 'O Devorador de Raízes', arena: 'Floresta Amaldiçoada', hp: 7200, color: '#89d789', threshold: .65, finalThreshold: .3, phase: 'Fúria da Floresta', finalPhase:'Colheita Maldita', reward: 150, speed: 50, radius: 62 },
-  { name: 'AZRAKIEL', title: 'O Carrasco do Vazio', arena: 'Catedral do Fim', hp: 9200, color: '#bf8df5', threshold: .7, finalThreshold: .35, phase: 'Eclipse', finalPhase:'Apocalipse', reward: 250, speed: 70, radius: 53 }
+  { name: 'VARKHUL', title: 'O Rei Sem Trono', arena: 'Ruínas do Trono', hp: 6440, color: '#ed5c67', threshold: .7, finalThreshold: .3, phase: 'Coroa Sangrenta', finalPhase:'Tirano de Ferro', reward: 100, speed: 62, radius: 48 },
+  { name: 'THARAZUL', title: 'O Devorador de Raízes', arena: 'Floresta Amaldiçoada', hp: 8280, color: '#89d789', threshold: .65, finalThreshold: .3, phase: 'Fúria da Floresta', finalPhase:'Colheita Maldita', reward: 150, speed: 50, radius: 62 },
+  { name: 'AZRAKIEL', title: 'O Carrasco do Vazio', arena: 'Catedral do Fim', hp: 10580, color: '#bf8df5', threshold: .7, finalThreshold: .35, phase: 'Eclipse', finalPhase:'Apocalipse', reward: 250, speed: 70, radius: 53 }
 ];
 export const DODGE={cost:20,cooldown:2.4,duration:.24,distance:86};
 export const clamp = (x, lo, hi) => Math.max(lo, Math.min(hi, x));

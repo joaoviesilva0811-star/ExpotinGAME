@@ -1,0 +1,7 @@
+import {ITEM_LAYOUTS} from './item-layouts.js';
+const atlas=new Image(),cache=new Map();
+export const itemSpritesReady=new Promise(resolve=>{atlas.onerror=()=>resolve(false);atlas.onload=()=>{for(const[name,spec]of Object.entries(ITEM_LAYOUTS)){const images=spec.frames.map(([sx,sy,sw,sh])=>{const image=document.createElement('canvas');image.width=image.height=80;const c=image.getContext('2d');c.imageSmoothingEnabled=false;c.drawImage(atlas,sx,sy,sw,sh,40-sw*spec.scale/2,40-sh*spec.scale/2,sw*spec.scale,sh*spec.scale);return image;});cache.set(name,images);}resolve(true);};atlas.src=new URL('./assets/relic-items.png',import.meta.url).href;});
+export function itemFrame(kind,time=0){return cache.get(kind)?.[Math.floor(Math.max(0,time)*8)%8]||null;}
+export function drawItemSprite(c,kind,x,y,size=40,time=0){const image=itemFrame(kind,time);if(!image)return false;c.drawImage(image,x-size/2,y-size/2,size,size);return true;}
+export function paintItemIcon(canvas,kind,time=0){if(!canvas)return;const image=itemFrame(kind,time);if(!image)return;const stamp=kind+':'+Math.floor(Math.max(0,time)*8)%8;if(canvas.dataset.item===stamp)return;canvas.dataset.item=stamp;const c=canvas.getContext('2d');c.clearRect(0,0,canvas.width,canvas.height);c.imageSmoothingEnabled=false;c.drawImage(image,0,0,canvas.width,canvas.height);}
+export function itemDiagnostics(){return[...cache].map(([name,images])=>({name,count:images.length}));}

@@ -1,4 +1,21 @@
-# Validação da versão 1.6.0
+# Validação da versão 1.7.0
+
+Executada em Linux com Node 24.19.0, Chromium e Electron 44.9.0, em 20/10/2026. Os dados abaixo distinguem cenários controlados, simulações e execução do aplicativo.
+
+- `npm test`: 69 testes passaram, incluindo dano básico solicitado, custos/recargas preservados, quatro segundos de resgate, interrupção por dano, bloqueio por paredes, bots ajudando outros bots, reserva de resgates humanos, antecipação de perigo e prazos de sangramento.
+- `scripts/rescue-review.js`: 192 poses de origem em três folhas, todas distintas por vista, carregadas no cache real. Sem contato de silhuetas com a borda dos PNGs ou alfa nos dois pixels externos do cache. Trinta subquadros diferentes em meio segundo de recuperação, misturados pelo renderizador. Acervo de atores: 3.016 poses desenhadas; subquadros interpolados não são desenhos novos.
+- `scripts/balance-review.js`: quatro participantes controlados pela mesma IA e loot determinístico. Com os danos anteriores e vida anterior dos chefes: 83/85/132s; com básico 25/32/18 e chefes com 15% mais vida: 57/63/80s. Ambos completaram três vitórias e todas as três fases por chefe, sem recursos inválidos. É uma simulação de regras, não medição de habilidade de jogadores reais.
+- `scripts/couch-smoke.js`: três controles virtuais Xbox/PlayStation, três sessões autenticadas no aplicativo empacotado, movimentos/miras independentes, habilidades por pressão, dash com energia, exclusão de teclado/mouse, liderança após desconexão, reconexão, HUD e cinco ciclos de menu passaram. Uma janela nativa e no máximo uma trilha musical ativa. Não houve teste de controles físicos USB/Bluetooth.
+
+- `scripts/native-rescue-smoke.js`: cenário controlado no servidor para isolar o resgate, visto pelo aplicativo nativo empacotado. Humano com B do controle reviveu um bot em quatro segundos; um bot reviveu o humano; depois um bot contornou um pilar e reviveu outro bot. Poses de auxílio/levantar e progresso autoritativo foram conferidos, sem erros de JavaScript. O teste posiciona atores e incapacita vítimas no servidor; suas imagens são fixtures de validação, não gravação de combate espontâneo.
+- `scripts/native-keys-preview.js`, `GAMEPAD_DRIVER=1`: uma partida nativa completa com arqueiro e dois bots mortais, controlada por entradas virtuais normais; três vitórias, 2.129 pontos, combates de 55/80/168s, três chaves e Câmara da Coroa aberta. Nyx realizou um resgate durante o combate. Não houve edição de vida, dano ou relógios do servidor nem erros de JavaScript. Executada antes do último acabamento cosmético de poções/coroas; a revisão de arte e a prévia curta verificam esse acabamento à parte.
+- `scripts/item-review.js`: quatro objetos, 32 poses distintas com margens completas no cache: cura, gelo, coroa de ferro e coroa restaurada. Arte de objetos é contada separadamente das poses de atores. Os originais PNG não foram modificados.
+
+Os resgates usam apenas regras oficiais de HP, custo, duração e colisão. A IA procura janelas seguras; ela ainda pode falhar, sofrer dano e morrer. A proteção de 0,65s após reviver é uma mudança explícita, não invulnerabilidade permanente. Não há alteração dos recursos pelo cliente.
+
+A versão 1.7 preserva os caches, a adaptação de efeitos, as opções gráficas e o loop de animação da 1.6. As medições de FPS abaixo são históricas da 1.6; não devem ser apresentadas como novos resultados da 1.7 nem como garantia de 60 FPS. Novos sprites são interpolados entre poses de origem, sem gerar 60 desenhos originais por segundo. O executável Windows físico ainda não foi executado neste ambiente.
+
+## Histórico: validação da versão 1.6.0
 
 Executada em Linux com Node 24.19.0, Chromium e Electron 44.9.0, em 20/10/2026.
 
@@ -97,3 +114,10 @@ Os testes de geometria verificam distribuição pelo interior, largura das faixa
 - `scripts/effect-models-review.js`: nove modelos distintos carregados e desenhados, com 54 quadros em três atlas transparentes. A escolha semântica de todos os modelos está coberta por teste.
 
 A revisão final separa o contador de combos do painel das chaves e o oculta nas cenas da história. A prévia publicada foi regravada com esse ajuste.
+
+## Arquivos da distribuição 1.7
+
+- ZIP portátil final: 441.207.004 bytes, 272 entradas. CRC de todas as entradas íntegro; executável com cabeçalho PE x64; 175 arquivos de `public/`, `server/` e `desktop/` conferidos byte a byte contra o código desta versão. Guia do PC também idêntico.
+- 14 partes de até 32 MiB reconstruíram o mesmo ZIP. SHA-256: `043d471239213b33a6a4f84aa4542731ef8e4406014f7d74f0d60de39cafed98`.
+- Prévia curta de 68,23s: captura do aplicativo empacotado com controle virtual, chegada e combate reais. A trilha original de batalha foi mixada no vídeo; não é captura do áudio nativo. O contêiner foi codificado a 60 FPS, com cadência variável na captura de origem; isso não mede nem garante 60 FPS no jogo.
+- Dados e limites desta versão: `docs/benchmarks/v1.7.0.json`. A repetição final do teste de três controles após o acabamento dos ícones também passou.

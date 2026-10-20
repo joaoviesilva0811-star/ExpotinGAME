@@ -2,7 +2,8 @@ import {comboState,recordCombo,resetCombo,expireCombo} from './combos.js';
 import {dropBossKey,tickBossKeys} from './keys.js';
 import {updateVelocity,moveEntity} from '../public/motion.js';
 import { randomBytes, randomInt } from 'node:crypto';
-import { WORLD, CLASSES, BOSSES, COSTS, COOLDOWNS, DODGE, clamp, distance, hazardContains, ARENA_OBSTACLES, EMOTES } from '../public/shared.js';
+import { WORLD, CLASSES, BOSSES, COSTS, COOLDOWNS, DODGE, REVIVE, clamp, distance, hazardContains, ARENA_OBSTACLES, EMOTES } from '../public/shared.js';
+import { routeClear } from './rescue.js';
 import { thinkBots, BOT_NAMES } from './bots.js';
 import { planBossAttack } from './bosses.js';
 import { tickMinions } from './minions.js';
@@ -25,7 +26,7 @@ export const makePlayer = (session, name) => ({
   x: 270, y: 380, vx: 0, vy: 0, hp: 160, maxHp: 160, energy: 100, facing: 0,
   cds: [0, 0, 0], basicAt: 0, block: false, blockAt: 0, shieldUntil: 0, rootUntil: 0,
   attackAt: -10, attackFor: .45, attackSlot: -1, dodgeAt: -10, dodgeUntil: 0, dodgeReady: 0, hitSafeUntil: 0,
-  shadowBonus: 0, poisonUntil: 0, downAt: null, eliminated: false, revive: 0, reviveTarget: null,
+  shadowBonus: 0, poisonUntil: 0, downAt: null, eliminated: false, revive: 0, reviveTarget: null, reviveStartedAt: -10, aidUntil: 0, aidAt: -10, revivedAt: -10, revivedBy: null,
   input: { x: 0, y: 0, ax: 1, ay: 0, block: false, attack: false, revive: false },
   combo:comboState(), potions: [], potionReady: 0, stats: stats(), roundStats: stats(), lastSeq: -1
 });
@@ -115,7 +116,7 @@ export class Room {
       p.attackAt = -10; p.dodgeAt = -10; p.dodgeUntil = p.dodgeReady = p.hitSafeUntil = 0;
       p.energy = 100; p.cds = [0, 0, 0]; p.basicAt = 0; p.blockAt = 0; p.block = false;
       p.shieldUntil = 0; p.rootUntil = 0; p.shadowBonus = 0; p.poisonUntil = 0;
-      p.downAt = null; p.eliminated = false; p.revive = 0; p.reviveTarget = null; p.roundStats = stats();resetCombo(p);
+      p.downAt = null; p.eliminated = false; p.revive = 0; p.reviveTarget = null; p.reviveStartedAt = p.aidAt = p.revivedAt = -10; p.aidUntil = 0; p.revivedBy = null; p.roundStats = stats();resetCombo(p);
       p.input = { x: 0, y: 0, ax: 1, ay: 0, attack: false, block: false, revive: false };
     }
     this.emit('round', { round: this.round, text: info.title });
@@ -302,14 +303,19 @@ export class Room {
       this.move(p, p.vx * dt, p.vy * dt);
       if (input.ax || input.ay) p.facing = Math.atan2(input.ay, input.ax);
       if (input.attack) this.basic(p);
-      if (input.revive && !p.block && !input.attack && !moving) {
-        const down = [...this.players.values()].find(a => a.id !== p.id && a.hp <= 0 && !a.eliminated && a.downAt !== null && distance(a, p) < 86);
+      if (input.revive && !p.block && !input.attack && !moving && Math.hypot(p.vx,p.vy)<22 && this.now>=p.dodgeUntil) {
+        const solids=[...obstacles(this.round),...this.hazards.filter(h=>h.solid&&h.at<=this.now)];
+        const down = [...this.players.values()].filter(a => a.id !== p.id && a.connected && a.hp <= 0 && !a.eliminated && a.downAt !== null && this.now-a.downAt<=20 && distance(a, p) < REVIVE.range && routeClear(p,a,solids,2))
+          .sort((a,b)=>(a.id===p.reviveTarget?-100:0)-(b.id===p.reviveTarget?-100:0)||a.downAt-b.downAt)[0];
         if (down && (p.lastHurt === undefined || this.now - p.lastHurt > .1)) {
-          if (p.reviveTarget !== down.id) { p.reviveTarget = down.id; p.revive = 0; }
-          p.revive += dt;
-          if (p.revive >= 4) {
-            down.hp = down.maxHp * .4; down.downAt = null; down.eliminated = false; down.revive = 0;
-            p.stats.revives++; p.roundStats.revives++; p.revive = 0; p.reviveTarget = null;
+          if (p.reviveTarget !== down.id) { p.reviveTarget = down.id; p.revive = 0; p.reviveStartedAt=this.now; }
+          p.facing=Math.atan2(down.y-p.y,down.x-p.x);p.revive += dt;
+          if (p.revive >= REVIVE.duration) {
+            down.hp = down.maxHp * REVIVE.health; down.downAt = null; down.eliminated = false; down.revive = 0;
+            down.revivedAt=this.now;down.revivedBy=p.id;down.lastHurt=-10;down.hitSafeUntil=this.now+REVIVE.grace;
+            down.facing=Math.atan2(p.y-down.y,p.x-down.x);down.attackAt=-10;down.vx=down.vy=0;
+            p.stats.revives++; p.roundStats.revives++; p.revive = 0; p.reviveTarget = null;p.aidAt=this.now;p.aidUntil=this.now+.55;
+            this.emit('revived', {owner:down.id,rescuer:p.id,x:down.x,y:down.y,fromX:p.x,fromY:p.y});
             this.emit('heal', { owner: down.id, x: down.x, y: down.y }); this.emit('notice', { text: `${p.name} reviveu ${down.name}!` });
           }
         } else { p.reviveTarget = null; p.revive = 0; }
@@ -401,7 +407,7 @@ export class Room {
   snapshot() {
     const playerView = p => ({ emote:p.emote,emoteAt:p.emoteAt,emoteUntil:p.emoteUntil,emoteReady:p.emoteReady,id: p.id, name: p.name, classId: p.classId, isBot: !!p.isBot, ready: p.ready, connected: p.connected,
       x: p.x, y: p.y, vx: p.vx, vy: p.vy, hp: p.hp, maxHp: p.maxHp, energy: p.energy, facing: p.facing, aiming: !!p.input.attack,
-      attackAt:p.attackAt,attackFor:p.attackFor,attackSlot:p.attackSlot,lastHurt:p.lastHurt,dodgeAt:p.dodgeAt,dodgeUntil:p.dodgeUntil,dodgeReady:p.dodgeReady,
+      attackAt:p.attackAt,attackFor:p.attackFor,attackSlot:p.attackSlot,lastHurt:p.lastHurt,dodgeAt:p.dodgeAt,dodgeUntil:p.dodgeUntil,dodgeReady:p.dodgeReady,reviveStartedAt:p.reviveStartedAt,aidAt:p.aidAt,aidUntil:p.aidUntil,revivedAt:p.revivedAt,revivedBy:p.revivedBy,
       combo:p.combo,potions:p.potions,potionReady:p.potionReady,
       cds: p.cds, basicAt: p.basicAt, block: p.block, shieldUntil: p.shieldUntil, rootUntil: p.rootUntil,
       downAt: p.downAt, eliminated: p.eliminated, revive: p.revive, reviveTarget: p.reviveTarget, stats: p.stats });

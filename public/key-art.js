@@ -1,3 +1,4 @@
+import {drawItemSprite} from './item-art.js';
 import {KEYS} from './keys.js';
 import {clamp} from './shared.js';
 import {sceneImage} from './scenes.js';
@@ -36,6 +37,6 @@ export function drawSecretEnding(c,room,now){
  for(let i=0;i<3;i++){const start={x:510+i*90,y:410},end={x:508+i*94,y:52},fly=clamp((t-1.2-i*.2)/3,0,1),x=start.x+(end.x-start.x)*fly,y=start.y+(end.y-start.y)*fly;
   if(keys.some(k=>k.round===i)){light(c,x,y,65,KEYS[i].color,.22);drawMagicalKey(c,i,x,y,50*(1-fly*.4),now);}
  }
- if(t>8){const age=clamp((t-8)/3,0,1);light(c,600,197,160,'#ffe0a2',.35*age);c.save();c.translate(600,197-Math.sin(now*2)*3);c.scale(age*1.1,age*1.1);c.fillStyle='#e0b769';c.strokeStyle='#fff0bd';c.lineWidth=2;c.beginPath();c.moveTo(-30,9);c.lineTo(-35,-22);c.lineTo(-17,-9);c.lineTo(0,-34);c.lineTo(17,-9);c.lineTo(35,-22);c.lineTo(30,9);c.closePath();c.fill();c.stroke();c.fillRect(-30,10,60,9);for(let i=0;i<3;i++){c.fillStyle=KEYS[i].color;c.fillRect(-21+i*18,-1,6,7);}c.restore();}
+ if(t>8){const age=clamp((t-8)/3,0,1);light(c,600,197,160,'#ffe0a2',.35*age);c.save();c.translate(600,197-Math.sin(now*2)*3);c.scale(age*1.1,age*1.1);if(!drawItemSprite(c,'royal',0,0,108,now)){c.fillStyle='#e0b769';c.strokeStyle='#fff0bd';c.lineWidth=2;c.beginPath();c.moveTo(-30,9);c.lineTo(-35,-22);c.lineTo(-17,-9);c.lineTo(0,-34);c.lineTo(17,-9);c.lineTo(35,-22);c.lineTo(30,9);c.closePath();c.fill();c.stroke();c.fillRect(-30,10,60,9);for(let i=0;i<3;i++){c.fillStyle=KEYS[i].color;c.fillRect(-21+i*18,-1,6,7);}}c.restore();}
  if(opened)for(let i=0;i<32;i++){const a=i*2.4,r=20+(i%7)*30;c.globalAlpha=.3+Math.sin(now*2+i)*.2;c.fillStyle='#f4dca0';c.fillRect(600+Math.cos(a)*r,270+Math.sin(a)*r*.65-((now*15+i*13)%110),2,3);}c.globalAlpha=1;
 }

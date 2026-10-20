@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 const root=resolve('artifacts/native-recording-'+Date.now()),framesDir=resolve(root,'frames');await mkdir(framesDir,{recursive:true});await mkdir('artifacts',{recursive:true});
 const app=await electron.launch({executablePath:resolve('dist/IronCrown-Linux-x64/iron-crown'),args:['--no-sandbox','--ozone-platform=headless','--disable-gpu'],env:{...process.env,XDG_CONFIG_HOME:resolve(root,'config'),XDG_CACHE_HOME:resolve(root,'cache')},timeout:25000});
 try{
- await installCombatDriver(app.context());const errors=[],perf=[];
+ await installCombatDriver(app.context(),{gamepad:process.env.GAMEPAD_DRIVER==='1'});const errors=[],perf=[];
  const menu=await app.firstWindow();await menu.setViewportSize({width:1120,height:820});await menu.locator('#nickname').fill('Lyra');await menu.locator('[data-class=archer]').click();await menu.screenshot({path:'artifacts/pc-01-menu.png'});
  const next=menu.waitForURL(/^http:/);await menu.locator('#solo').click();await next;const page=menu;page.on('pageerror',e=>errors.push(e.message));await page.setViewportSize({width:1440,height:960});await page.getByRole('button',{name:'Estou pronto'}).click();await page.screenshot({path:'artifacts/pc-02-solo.png'});
  const cdp=await app.context().newCDPSession(page),frames=[],writes=[];let recording=false,clip=0;
@@ -22,11 +22,11 @@ try{
   const state=r.round+':'+r.state;if(state!==last){console.log('Native',r.round+1,r.state,Math.round(r.now),r.keys.length+' keys');last=state;}
   const inIntro=r.state==='countdown',elapsed=300-r.remaining,keyScene=r.keyDrop&&r.now<r.keySceneUntil;
   await record(inIntro||r.state==='battle'&&elapsed<17||keyScene||r.state==='round_end'&&r.now-r.outroStarted>=6||r.state==='ending');
-  if(r.state==='battle'&&elapsed>8&&!roundShots.has(r.round)){roundShots.add(r.round);await page.screenshot({path:`artifacts/16-native-arena-${r.round+1}.png`});}
-  if(r.keyDrop?.collectedAt&&!keys.has(r.round)){keys.add(r.round);await page.screenshot({path:`artifacts/16-native-key-${r.round+1}.png`});}
-  if(r.state==='ending'&&r.secretUnlocked&&r.now>r.endingAt+8.5&&!endingShot){endingShot=true;await page.screenshot({path:'artifacts/16-native-vault.png'});}
-  if(r.state==='ending'&&r.secretUnlocked&&r.now>r.endingAt+12.5&&!crownShot){crownShot=true;await page.screenshot({path:'artifacts/16-native-crown.png'});}
-  if(r.state==='finished'){await record(false);assert.equal(r.wins,3);assert.equal(r.keys.length,3);assert.equal(r.secretUnlocked,true);assert.ok(r.vaultOpenedAt);await page.screenshot({path:'artifacts/16-native-results.png'});await writeFile('artifacts/native-keys-result.json',JSON.stringify({score:r.score,wins:r.wins,keys:r.keys,secretUnlocked:r.secretUnlocked,vaultOpenedAt:r.vaultOpenedAt,results:r.results,players:r.players.map(p=>({name:p.name,isBot:p.isBot,stats:p.stats})),perf,errors},null,2));break;}
+  if(r.state==='battle'&&elapsed>8&&!roundShots.has(r.round)){roundShots.add(r.round);await page.screenshot({path:`artifacts/17-native-arena-${r.round+1}.png`});}
+  if(r.keyDrop?.collectedAt&&!keys.has(r.round)){keys.add(r.round);await page.screenshot({path:`artifacts/17-native-key-${r.round+1}.png`});}
+  if(r.state==='ending'&&r.secretUnlocked&&r.now>r.endingAt+8.5&&!endingShot){endingShot=true;await page.screenshot({path:'artifacts/17-native-vault.png'});}
+  if(r.state==='ending'&&r.secretUnlocked&&r.now>r.endingAt+12.5&&!crownShot){crownShot=true;await page.screenshot({path:'artifacts/17-native-crown.png'});}
+  if(r.state==='finished'){await record(false);assert.equal(r.wins,3);assert.equal(r.keys.length,3);assert.equal(r.secretUnlocked,true);assert.ok(r.vaultOpenedAt);await page.screenshot({path:'artifacts/17-native-results.png'});await writeFile('artifacts/native-keys-result-v1.7.json',JSON.stringify({score:r.score,wins:r.wins,keys:r.keys,secretUnlocked:r.secretUnlocked,vaultOpenedAt:r.vaultOpenedAt,results:r.results,players:r.players.map(p=>({name:p.name,isBot:p.isBot,stats:p.stats})),perf,errors},null,2));break;}
   if(r.state==='battle'&&Math.floor(elapsed)%5===0){const sample=await page.evaluate(()=>window.IRON_PERF);if(sample&&perf.at(-1)?.at!==Math.floor(r.now))perf.push({at:Math.floor(r.now),round:r.round,...sample});}
   await page.waitForTimeout(150);
  }

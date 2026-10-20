@@ -196,7 +196,7 @@ export function drawPlayer(c,p,time,{scale=1,alpha=1,attacking=false,now=time}={
   c.fillStyle='#030b1280';c.beginPath();c.ellipse(p.x,p.y+7,22*scale,9*scale,0,0,Math.PI*2);c.fill();
   c.translate(p.x,p.y);
   const motion=actorMotion(p,time,now);if(p.hp>0){c.translate(0,motion.lift);c.rotate(motion.lean);c.scale(motion.sx,motion.sy);}
-  if(p.hp<=0){c.rotate(-Math.PI/2);c.globalAlpha*=.5;}
+  if(p.hp<=0){if(!animated?.downPose)c.rotate(-Math.PI/2);c.globalAlpha*=animated?.downPose ? .78 : .5;}
   else if(p.dodgeUntil>now){c.rotate(Math.sin((now-p.dodgeAt)/.24*Math.PI)*.35);c.globalAlpha*=.75;}
   if(animated?.flip)c.scale(-1,1);
   if(animated?.bowPhase==='aim'&&Math.hypot(p.vx||0,p.vy||0)>12)c.translate(0,Math.sin(time*8)*.8);

@@ -1,3 +1,4 @@
+import {drawItemSprite} from './item-art.js';
 import {WORLD,clamp} from './shared.js';
 const images=new Map();
 for(const name of ['arena-throne','arena-forest','arena-cathedral','corridor','secret-chamber','secret-chamber-open']){const img=new Image();img.onload=()=>images.set(name,img);img.src=new URL(`./assets/${name}.png`,import.meta.url).href;}
@@ -48,9 +49,11 @@ export function drawEnding(c,room,now){
  const t=clamp((now-room.endingAt)/14,0,1),won=room.wins===3;
  c.save();c.globalCompositeOperation='screen';const g=c.createRadialGradient(600,290,5,600,360,540);g.addColorStop(0,won?'#f0c47244':'#af5cbe33');g.addColorStop(1,'transparent');c.fillStyle=g;c.globalAlpha=Math.min(1,t*3);c.fillRect(0,0,1200,760);c.restore();
  c.save();c.translate(600,340-Math.sin(t*Math.PI)*70);c.scale(1.4,1.4);c.globalAlpha=won?Math.max(0,1-Math.max(0,t-.55)*2.2):1;
+ if(!drawItemSprite(c,won?'royal':'cursed',0,-4,90,now)){
  c.fillStyle='#141b27';c.fillRect(-29,7,58,10);c.fillStyle=won?'#d9b879':'#a97d85';c.fillRect(-26,4,52,7);
  c.beginPath();c.moveTo(-26,4);c.lineTo(-29,-19);c.lineTo(-13,-8);c.lineTo(0,-30);c.lineTo(13,-8);c.lineTo(29,-19);c.lineTo(26,4);c.closePath();c.fill();c.strokeStyle=won?'#ffe2a0':'#dd9acc';c.lineWidth=2;c.stroke();
  c.fillStyle=won?'#f9e5a9':'#d0a0db';for(const x of [-19,0,19])c.fillRect(x-2,-5,4,4);
+ }
  if(won&&t>.35){c.strokeStyle='#fff4ce';c.lineWidth=3;c.beginPath();c.moveTo(-6,-19);c.lineTo(5,-8);c.lineTo(-2,1);c.lineTo(6,10);c.stroke();}c.restore();
  for(let i=0;i<45;i++){const a=i*2.399,spread=40+t*200,x=600+Math.cos(a)*spread,y=360-Math.sin(a)*spread*.45-t*(i%7)*30;c.globalAlpha=Math.sin(Math.min(1,t*1.5)*Math.PI)*.7;c.fillStyle=won?'#e8cd91':'#a47cb5';c.fillRect(x,y,2,3);}c.globalAlpha=1;
 }

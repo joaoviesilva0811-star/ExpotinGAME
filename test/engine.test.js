@@ -34,8 +34,8 @@ test('melee requires reach and aim; basic attack has a minimum interval',()=>{
   const r=battle(),p=r.players.get('a');aim(r,p);r.basic(p);r.tick(.2);assert.equal(r.boss.hp,r.boss.maxHp);
   p.x=740;p.y=380;r.now+=1;aim(r,p,-1,0,2);r.basic(p);r.tick(.2);assert.equal(r.boss.hp,r.boss.maxHp);
   r.now+=1;aim(r,p,1,0,3);r.basic(p);assert.equal(r.boss.hp,r.boss.maxHp); // Anticipation precedes contact.
-  r.tick(.2);assert.equal(r.boss.hp,r.boss.maxHp-12);
-  r.basic(p);r.tick(.2);assert.equal(r.boss.hp,r.boss.maxHp-12);
+  r.tick(.2);assert.equal(r.boss.hp,r.boss.maxHp-25);
+  r.basic(p);r.tick(.2);assert.equal(r.boss.hp,r.boss.maxHp-25);
 });
 test('archer projectiles hit by collision, miss out of range and apply slow',()=>{
   const r=battle(['archer']),p=r.players.get('a');p.x=500;p.y=380;aim(r,p);

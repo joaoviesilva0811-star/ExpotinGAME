@@ -1,4 +1,4 @@
-SHADOWS OF THE IRON CROWN — EDIÇÃO PC 1.6.0
+SHADOWS OF THE IRON CROWN — EDIÇÃO PC 1.7.0
 
 WINDOWS 10/11 DE 64 BITS
 
@@ -198,3 +198,9 @@ COMBOS
 Acertos com dano real encadeiam hits por 3,5 s. Levar dano encerra a cadeia.
 A cada 5 hits, o multiplicador de pontos sobe 0,25 até 1,75. O multiplicador
 não aumenta dano. O bônus é somado à pontuação final e aparece por jogador.
+
+ATUALIZAÇÃO 1.7 — RESGATE E BALANCEAMENTO
+Ataques básicos: cavaleiro 25, arqueiro 32, ladino 18. Recargas e consumo de energia preservados. Chefes com 15% mais vida para manter as três fases.
+192 novas poses de ajudar/levantar, partículas de cura e indicador de ajuda recebida.
+Bots revivem jogadores e outros bots, coordenam o resgatador, contornam pilares e avaliam ataques anunciados. O canal exige 4s sem dano, retorna 40% da vida e não atravessa paredes.
+Poções e coroas redesenhadas: frascos de rubi e gelo, brilho e líquido animados, coroa de ferro e coroa secreta com três gemas; 32 novas poses de objetos no chão, inventário, menus e cenas finais.

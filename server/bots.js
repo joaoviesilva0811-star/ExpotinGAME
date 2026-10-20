@@ -5,18 +5,8 @@ const BOSSES_RADIUS=room=>room.boss.radius||60;
 export const BOT_NAMES = { knight: 'Aldric', archer: 'Lyra', rogue: 'Nyx' };
 function direction(x,y) { const d=Math.hypot(x,y)||1;return {x:x/d,y:y/d}; }
 const unsafe=(pos,h,padding=23)=>!h.warningOnly&&hazardContains(pos,h,padding);
-export function routeClear(a,b,solids,padding=0){const dx=b.x-a.x,dy=b.y-a.y,l=dx*dx+dy*dy;return !solids.some(o=>{const t=l?clamp(((o.x-a.x)*dx+(o.y-a.y)*dy)/l,0,1):0;return Math.hypot(o.x-a.x-t*dx,o.y-a.y-t*dy)<o.r+padding;});}
-export function rescueAssignments(players,threats,now){
- const live=players.filter(p=>p.connected&&p.hp>0&&!p.eliminated),assigned=new Map();
- for(const down of players.filter(p=>p.hp<=0&&!p.eliminated&&p.downAt!==null&&now-p.downAt<19.7)){
-  const current=live.find(p=>!p.isBot&&p.reviveTarget===down.id);if(current){assigned.set(down.id,current.id);continue;}
-  if(threats.some(h=>unsafe(down,h)&&h.at<now+1.2))continue;
-  const candidates=live.filter(p=>p.isBot&&![...assigned.values()].includes(p.id)&&!threats.some(h=>unsafe(p,h)&&h.at<now+.4)).sort((a,b)=>distance(a,down)+(a.hp/a.maxHp<.3?180:0)-distance(b,down)-(b.hp/b.maxHp<.3?180:0));
-  if(candidates[0])assigned.set(down.id,candidates[0].id);
- }
- return assigned;
-}
-
+export {routeClear,rescueAssignments} from './rescue.js';
+import {routeClear,rescueAssignments,rescueApproach} from './rescue.js';
 
 // Companions use exactly the same input, skill, collision, energy and damage
 // paths as humans. They never set HP, damage, cooldowns or battle outcomes.
@@ -25,23 +15,31 @@ export function thinkBots(room,staticObstacles) {
   const mainBoss=room.boss;
   const solids=[...staticObstacles,...room.hazards.filter(h=>h.solid&&h.at<=room.now)];
   const threats=room.hazards.filter(h=>!h.solid&&h.end>room.now&&h.at<room.now+1.6);
-  const members=[...room.players.values()],enemyProjectiles=room.projectiles.filter(q=>q.enemy),minions=room.minions.filter(m=>m.hp>0&&room.now>=m.activeAt),assignments=rescueAssignments(members,threats,room.now),targetLoads=new Map();
+  const members=[...room.players.values()],enemyProjectiles=room.projectiles.filter(q=>q.enemy),minions=room.minions.filter(m=>m.hp>0&&room.now>=m.activeAt),targetLoads=new Map();
+  const rescueThreats=room.hazards.filter(h=>!h.solid&&h.end>room.now),context={solids,boss:mainBoss,projectiles:enemyProjectiles};
+  if(!room.rescuePlan||room.now>=room.rescuePlanAt){room.rescuePlan=rescueAssignments(members,rescueThreats,room.now,context);room.rescuePlanAt=room.now+.15;}
+  const assignments=room.rescuePlan,protectedAllies=members.filter(a=>assignments.has(a.id)||[...assignments.values()].includes(a.id));
   for(const p of room.players.values()) {
     if(!p.isBot||!room.active(p)||room.now<(p.thinkAt||0))continue;
     p.thinkAt=room.now+.15;
     if(p.potions[0]==='heal'&&p.hp<p.maxHp*.55||p.potions[0]==='ice'&&room.boss.state==='chase')usePotion(room,p);
-    const nearest=[...minions].sort((a,b)=>(distance(p,a)+(targetLoads.get(a.id)||0)*130)-(distance(p,b)+(targetLoads.get(b.id)||0)*130))[0];
+    const endangered=minions.filter(m=>protectedAllies.some(a=>distance(m,a)<230));
+    const nearest=[...(endangered.length?endangered:minions)].sort((a,b)=>(distance(p,a)+(targetLoads.get(a.id)||0)*130)-(distance(p,b)+(targetLoads.get(b.id)||0)*130))[0];
     const boss=nearest&&distance(p,nearest)<(p.classId==='archer'?480:230)?nearest:mainBoss;
     targetLoads.set(boss.id,(targetLoads.get(boss.id)||0)+1);
-    const aim=direction(boss.x-p.x,boss.y-p.y),dist=distance(p,boss);
+    let aim=direction(boss.x-p.x,boss.y-p.y);const dist=distance(p,boss);
     const desired=p.classId==='archer'?290:boss===mainBoss?96:67;
     const danger=threats.some(h=>unsafe(p,h));
-    const down=members.find(a=>assignments.get(a.id)===p.id);
-    const reviving=down&&distance(p,down)<73&&!danger;
+    const assigned=members.find(a=>a.hp<=0&&!a.eliminated&&assignments.get(a.id)===p.id);
+    const approach=assigned?rescueApproach(p,assigned,rescueThreats,room.now,context):null,down=approach?assigned:null;
+    const reviving=down&&distance(p,down)<81&&distance(p,approach.point)<8&&!danger;
+    if(down)aim=direction(down.x-p.x,down.y-p.y);
+    if(p.classId==='knight'&&p.energy>=40&&p.cds[2]<=room.now&&p.shieldUntil<=room.now&&(down||protectedAllies.some(a=>distance(a,p)<175)))room.skill(p,2);
     let mx=0,my=0;
-    const goal=down&&!danger?down:boss,goalRange=goal===down?48:desired;
+    const goal=down&&!danger?approach.waypoint:boss,goalRange=down&&!danger?0:desired;
     if(!reviving) {
-      if(dist>desired+18){mx=aim.x;my=aim.y;}else if(dist<desired-22){mx=-aim.x;my=-aim.y;}
+      const toward=direction(goal.x-p.x,goal.y-p.y),goalDistance=distance(p,goal);
+      if(goalDistance>goalRange+18){mx=toward.x;my=toward.y;}else if(goalDistance<goalRange-22){mx=-toward.x;my=-toward.y;}
       // Evaluate directions at normal running distance. Include pillars and
       // telegraphs so companions can leave poison and move around solid roots.
       let best=-Infinity;
@@ -56,8 +54,9 @@ export function thinkBots(room,staticObstacles) {
         for(const q of enemyProjectiles){const t=.55,near={x:q.x+q.vx*t,y:q.y+q.vy*t};if(distance(next,near)<45)score-=900;}
         for(const o of solids)if(distance(next,o)<o.r+30)score-=1300;
         if(!routeClear(p,next,solids,17))score-=900;
+        if(down&&goal!==boss)score-=distance(next,goal)*.15;
         score+=(x*mx+y*my)*3;
-        if(!danger&&i===24&&distance(p,goal)>=goalRange-22&&distance(p,goal)<=goalRange+18)score+=8;
+        if(!danger&&i===24&&distance(p,goal)>=goalRange-22&&distance(p,goal)<=goalRange+(down?7:18))score+=8;
         if(score>best){best=score;mx=x;my=y;}
       }
     }

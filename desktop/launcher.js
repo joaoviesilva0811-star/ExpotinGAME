@@ -1,5 +1,7 @@
+import {paintItemIcon} from '../public/item-art.js';
 import {GamepadHub,padMenu} from '../public/gamepads.js';
 import {AudioEngine} from '../public/audio.js';
+const crownIcons=[...document.querySelectorAll('.relic-crown')];
 const audio=new AudioEngine();try{const settings=JSON.parse(localStorage.getItem('iron-presentation')||'{}');audio.configure(settings);}catch{}
 const gamepads=new GamepadHub();let padAudio=false;
 window.ironPreferences?.get().then(settings=>audio.configure(settings)).catch(()=>{});
@@ -9,7 +11,7 @@ document.addEventListener('pointerdown',e=>{if(!e.target.closest('#sound-toggle'
 $('sound-toggle').onclick=async()=>{const on=await audio.toggle();$('sound-toggle').textContent=on?'♪ SOM':'♫ MUDO';};
 document.addEventListener('click',e=>{if(e.target.closest('button'))audio.fx('ui');});
 const fxCanvas=$('menu-embers'),fx=fxCanvas.getContext('2d');
-function animate(time){for(const frame of gamepads.poll(navigator.getGamepads?.()||[])){if(!padAudio){padAudio=true;audio.enable();}if(frame.slot===0&&!busy){padMenu(frame,document.querySelector('main'));if(frame.pressed.has(1))$('join-form').hidden=true;}}const w=innerWidth,h=innerHeight;if(fxCanvas.width!==w||fxCanvas.height!==h){fxCanvas.width=w;fxCanvas.height=h;}fx.clearRect(0,0,w,h);const t=time/1000;for(let i=0;i<42;i++){const x=(i*137.3+Math.sin(t*.3+i)*24)%w,y=h-((t*(8+i%5)+i*83)%h);fx.globalAlpha=.2+Math.sin(t+i)*.14;fx.fillStyle=i%3?'#e7b06c':'#b9d5d9';fx.fillRect(x,y,i%7?1:2,i%7?2:3);}audio.music(t,0,false);requestAnimationFrame(animate);}requestAnimationFrame(animate);
+function animate(time){for(const canvas of crownIcons)paintItemIcon(canvas,'cursed',time/1000);for(const frame of gamepads.poll(navigator.getGamepads?.()||[])){if(!padAudio){padAudio=true;audio.enable();}if(frame.slot===0&&!busy){padMenu(frame,document.querySelector('main'));if(frame.pressed.has(1))$('join-form').hidden=true;}}const w=innerWidth,h=innerHeight;if(fxCanvas.width!==w||fxCanvas.height!==h){fxCanvas.width=w;fxCanvas.height=h;}fx.clearRect(0,0,w,h);const t=time/1000;for(let i=0;i<42;i++){const x=(i*137.3+Math.sin(t*.3+i)*24)%w,y=h-((t*(8+i%5)+i*83)%h);fx.globalAlpha=.2+Math.sin(t+i)*.14;fx.fillStyle=i%3?'#e7b06c':'#b9d5d9';fx.fillRect(x,y,i%7?1:2,i%7?2:3);}audio.music(t,0,false);requestAnimationFrame(animate);}requestAnimationFrame(animate);
 const companions={knight:'Lyra, a arqueira + Nyx, o ladino',archer:'Aldric, o cavaleiro + Nyx, o ladino',rogue:'Aldric, o cavaleiro + Lyra, a arqueira'};
 try{$('nickname').value=localStorage.getItem('desktop-name')||'Viajante';}catch{}
 for(const button of document.querySelectorAll('[data-class]'))button.onclick=()=>{classId=button.dataset.class;for(const b of document.querySelectorAll('[data-class]'))b.classList.toggle('selected',b===button);$('companions').textContent=companions[classId];};

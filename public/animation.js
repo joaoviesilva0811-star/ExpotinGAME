@@ -1,3 +1,4 @@
+import {rescueFrame} from './rescue-sprites.js';
 import {heroStrike,bossStrike,minionStrike} from './strike-timing.js';
 import {strikeFrame} from './strike-sprites.js';
 import {hitFlash} from './frame-tint.js';
@@ -14,7 +15,7 @@ export {facingRow} from './animation-state.js';
 let metadata={};fetch(new URL('./assets/animation-frames.json',import.meta.url)).then(r=>r.json()).then(data=>{metadata=data;cache.clear();});
 const sheets=new Map(),cache=new Map(),gaits=new Map(),bossGaits=new Map();
 export function resetAnimationState(){gaits.clear();bossGaits.clear();resetHurtReactions();}
-export const BASE_ANIMATION_FRAMES=732,ANIMATION_FRAMES=2824;
+export const BASE_ANIMATION_FRAMES=732,ANIMATION_FRAMES=3016;
 for(const name of ['knight','archer','rogue','varkhul','tharazul','azrakiel','minions',...['knight','archer','rogue'].map(n=>'emote-'+n),...['knight','archer','rogue','varkhul','tharazul','azrakiel','revenant','thornling','acolyte'].map(n=>'direction-'+n)]){
   const image=new Image();image.onload=()=>{sheets.set(name,image);};image.src=new URL(`./assets/${name.startsWith('emote-')||name.startsWith('direction-')?name:'animation-'+name}.png`,import.meta.url).href;
 }
@@ -44,6 +45,7 @@ export function characterFrame(p,time,now){
   const moving=Math.hypot(p.vx||0,p.vy||0)>12,a=moving?Math.atan2(p.vy,p.vx):p.facing||0;
   row=Math.abs(Math.cos(a))>.65?(Math.cos(a)>0?3:2):(Math.sin(a)>0?0:1);
   if(moving)col=Math.floor(gait.step/14)%6;
+  const rescue=rescueFrame(p,now);if(rescue)return rescue;
   if(p.emoteUntil>now){const row=['step','cross','spin','victory'].indexOf(p.emote),col=Math.floor((now-p.emoteAt)*7)%6;const image=frame('emote-'+p.classId,Math.max(0,row),col);if(image)return {image,flip:false,angle:p.emote==='spin'?[1.57,.5,-.6,-1.57,3.14,2.4][col]:1.57};}
   const strike=strikeFrame(heroStrike(p,now));if(strike)return{...strike,angle:p.facing};
   if(moving&&!p.block){const walk=strikeFrame({clip:p.classId+'-walk',direction:facingRow(p.aiming?p.facing:a),progress:gait.step/84%1,loop:true});if(walk&&!p.aiming)return{...walk,angle:a};}
