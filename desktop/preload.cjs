@@ -1,2 +1,7 @@
 const {contextBridge,ipcRenderer}=require('electron');
-contextBridge.exposeInMainWorld('ironDesktop',{launch:request=>ipcRenderer.invoke('iron:launch',request)});
+contextBridge.exposeInMainWorld('ironDesktop',{launch:request=>ipcRenderer.invoke('iron:launch',request),returnToMenu:()=>ipcRenderer.invoke('iron:return-menu')});
+
+contextBridge.exposeInMainWorld('ironPreferences',{
+ get:()=>ipcRenderer.invoke('iron:preferences:get'),
+ save:value=>ipcRenderer.invoke('iron:preferences:save',value)
+});

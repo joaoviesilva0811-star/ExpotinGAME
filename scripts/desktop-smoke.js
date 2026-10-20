@@ -20,7 +20,7 @@ async function launch(id){
   return{app,page};
 }
 async function gameWindow(instance,action){
-  const next=instance.app.waitForEvent('window',{timeout:20000});await action();const game=await next;
+  const next=instance.page.waitForURL(/^http:/,{timeout:20000});await action();await next;const game=instance.page;
   game.on('pageerror',e=>errors.push(e.message));await game.setViewportSize({width:1440,height:960});await game.locator('.class-card').first().waitFor({timeout:20000});return game;
 }
 try{
@@ -50,7 +50,7 @@ try{
   await solo.screenshot({path:'artifacts/pc-03-bots.png'});
   await solo.keyboard.up('KeyJ');
   // Record a smooth preview separately with scripts/record-preview.js.
-  await solo.close();await host.page.waitForTimeout(500);
+  await solo.evaluate(()=>{window.ironDesktop.returnToMenu().catch(()=>{});});await host.page.waitForURL(/^file:/);await host.page.locator('#nickname').fill('Aldric PC');
   const a=await gameWindow(host,()=>host.page.locator('#host').click());
   assert.ok(await a.locator('.lan-info').isVisible());const code=await a.locator('.room-code-box strong').textContent();
   const peer=await launch('peer');await peer.page.locator('#nickname').fill('Lyra PC');await peer.page.locator('[data-class="archer"]').click();await peer.page.locator('#join').click();

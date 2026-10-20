@@ -128,8 +128,9 @@ export function createGameServer(options = {}) {
           if (rooms.size >= 100) throw new Error('Servidor cheio. Tente novamente mais tarde.');
           let code; do { code = makeCode(); } while (rooms.has(code));
           const roomName = typeof msg.name === 'string' ? msg.name.trim().slice(0, 32) : `Expedição de ${ws.session.name}`;
-          const solo=msg.mode==='solo';
+          const solo=msg.mode==='solo',couch=msg.mode==='couch';
           const r = new Room(code, ws.session.id, roomName || 'Expedição', !solo && msg.public === true, solo);
+          r.couch=couch;if(couch)r.botsEnabled=true;
           r.add(ws.session.id, ws.session.name);
           if(msg.classId)r.select(ws.session.id,msg.classId);
           rooms.set(code, r); ws.room = r; return send(ws, 'joined', { room: r.snapshot() });

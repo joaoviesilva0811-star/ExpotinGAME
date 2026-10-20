@@ -1,10 +1,10 @@
 # Shadows of the Iron Crown
 
-Jogo 2D cooperativo para PC Windows, para 1 a 4 jogadores, com servidor local incluído, três classes e três arenas. Jogue solo com companheiros ou com amigos na mesma rede, sem hospedagem paga. Há também um cliente web opcional para desenvolvimento.
+Jogo 2D cooperativo para PC Windows, com até 3 controles no mesmo PC ou até 4 jogadores na rede local, com servidor local incluído, três classes e três arenas. Jogue solo com companheiros ou com amigos na mesma rede, sem hospedagem paga. Há também um cliente web opcional para desenvolvimento.
 
 ## Baixar o jogo pelo GitHub
 
-**[Baixar a versão Windows portátil](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/download/v1.5.0/IronCrown-Windows-x64.zip)** · **[Página da release](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/tag/v1.5.0)**
+**[Baixar a versão Windows portátil](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/download/v1.6.0/IronCrown-Windows-x64.zip)** · **[Página da release](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/tag/v1.6.0)**
 
 Extraia o ZIP completo e abra **Shadows of the Iron Crown.exe**. Não precisa instalar Node.js. A release é publicada pela automação do GitHub após a tag; o andamento aparece na aba **Actions**.
 
@@ -12,14 +12,15 @@ Extraia o ZIP completo e abra **Shadows of the Iron Crown.exe**. Não precisa in
 
 O pacote pronto excede o limite de 100 MB por arquivo do GitHub. Por isso, o repositório guarda partes de até 32 MiB; o ZIP íntegro é anexado à release. Desenvolvedores também podem reconstruí-lo com `python3 scripts/restore-windows.py`.
 
-[Assistir à prévia do aplicativo](preview/previa-pc.mp4) · [Passagem pela masmorra](preview/corredor-2.png) · [Cutscene final](preview/pc-10-final.png)
+[Prévia do aplicativo com controle](preview/previa-pc.mp4) · [Passagem pela masmorra](preview/corredor-2.png) · [Cutscene final](preview/pc-10-final.png)
 
-![Combate real no aplicativo de PC, com os companheiros IA](preview/pc-03-bots.png)
+![Coop no mesmo PC com três controles e HUD individual](preview/16-couch-battle.png)
 
 ## Jogar no PC sem pagar hospedagem
 
 A edição PC portátil está em `dist/IronCrown-Windows-x64.zip`, para **Windows 10/11 de 64 bits**. Extraia tudo e abra **Shadows of the Iron Crown.exe**. Não é necessário instalar Node.js, ter uma hospedagem ou manter acesso à Internet.
 
+- **Coop no mesmo PC:** até três controles Xbox/PlayStation, jogadores com sessões próprias, câmera compartilhada e HUD individual. Pressione um botão em cada controle na preparação; use ←/→ para classe, A/× para pronto e START/OPTIONS do líder para começar. As classes ausentes podem ser preenchidas por IA.
 - **Solo com companheiros:** escolha uma classe; os dois bots usam as classes restantes. Se você é cavaleiro, recebe arqueiro e ladino. Os bots são identificados como IA, lutam com recursos normais, tentam esquivar, usam poções e podem reviver aliados. Podem cair, morrer e perder a rodada.
 - **Hospedar na rede local:** um PC inicia o servidor automaticamente. Ele mostra IPv4 e código da sala. Precisa permanecer aberto durante a partida.
 - **Entrar no PC de um amigo:** abra o executável no outro PC, informe o IPv4 do anfitrião e o código. Sem código, a lista mostra salas públicas daquele PC. Até quatro personagens; bots opcionais no lobby LAN.
@@ -70,6 +71,39 @@ No celular: joystick, ataque, escudo, reviver e habilidades na tela; mira autom�
 
 [Prévia em vídeo](preview/previa-pc.mp4) · [A Câmara da Coroa](preview/15-native-vault.png) · [Animações novas](preview/15-walk-contact.png)
 
+## Controles Xbox / PlayStation
+
+| Controle | Ação |
+| --- | --- |
+| Analógico esquerdo / direito | Movimento gradual / mira |
+| X / □ segurado | Ataque básico |
+| A / × | Dash, 20 de energia |
+| Y / △ | Habilidade 1 |
+| RB / R1 | Habilidade 2 |
+| RT / R2 | Habilidade 3 |
+| LB / L1 ou LT / L2 | Defender segurado |
+| B / ○ segurado | Reviver aliado próximo |
+| D-pad ↑ / ↓ | Poção / alternar emotes |
+| START / OPTIONS | Abrir/fechar menu |
+
+Quando um controle está ativo, teclado e mouse deixam de comandar o combate. Esc abre/fecha o menu, onde o mouse funciona. Desconectar todos os controles devolve o controle do J1 ao teclado. A configuração usa a disposição standard da Gamepad API do Chromium incluído no aplicativo; reconhecimento de modelos físicos específicos depende do Windows. A validação usou dispositivos virtuais dessa API.
+
+[Coop com três jogadores](preview/16-couch-battle.png) · [Preparação com controles](preview/16-couch-lobby.png)
+
+## Atualização 1.6 — Aço em Movimento
+
+1.464 novas poses desenhadas em 24 folhas de ataques, mais 376 poses de caminhada em seis folhas, somando 2.824 quadros de atores. Cavaleiro, arqueiro e ladino têm uma sequência para o básico e outra para cada habilidade; cada chefe tem três famílias de golpes e cada lacaio tem sua própria sequência. As oito direções acompanham a mira. As folhas têm seis a oito poses por direção; imagens interpoladas não entram na contagem de sprites.
+
+O aplicativo mantém uma única janela ao navegar entre menu e partida. A música é parada ao sair de uma página e preservada ao abrir/fechar caixas de menu, sem trilhas sobrepostas. As quatro trilhas foram recompostas com motivos mais presentes e percussão reforçada; música e efeitos têm volumes separados na engrenagem.
+
+Chefes continuam caminhando sob hits repetidos, com reação aditiva de corpo e brilho. Chaves maiores recebem apresentação de pelo menos 8,5 segundos, com destaque após a coleta. Combos contam acertos reais, expiram após 3,5 segundos e quebram ao sofrer dano; o multiplicador de pontos cresce a cada cinco hits, até ×1,75. O bônus é somado no resultado final.
+
+O renderizador mistura poses alinhadas aos pés a cada quadro, mantendo preparação, liberação e recuperação ligadas ao tempo oficial do servidor. Armas e magia usam caches com margem. Caminhadas compartilham subposes em um cache limitado a 32 MiB, evitando redesenhar cópias iguais por lacaio a cada quadro. Partículas semelhantes são desenhadas em lote, fissuras são guardadas em caminhos reutilizáveis e os volumes usam texturas no tamanho necessário.
+
+Na engrenagem, **Ajustar efeitos para priorizar 60 FPS** reduz gradualmente a densidade de fumaça, fragmentos e volumes quando o tempo de quadro sobe. O jogador, HUD e os contornos das áreas de perigo permanecem completos. A opção pode ser desligada. O alvo é 60 FPS; não há garantia para todo computador nem para os cenários extremos. Veja medições e limites em [Validação](docs/VALIDACAO.md).
+
+[Novos ataques dos heróis](preview/16-strikes-heroes.png) · [Ataques dos chefes](preview/16-strikes-bosses.png) · [Lacaios](preview/16-strikes-minions.png)
+
 ## Atualização 1.5 — As Três Chaves
 
 Cada chefe vencido deixa uma chave mágica personalizada. O grupo a recolhe automaticamente para destrancar a passagem seguinte. Conquiste as três para ver Aldric, Lyra e Nyx abrindo a Câmara da Coroa em um novo cenário com porta animada.
@@ -101,7 +135,7 @@ São 252 quadros adicionais de caminhada dos chefes e reação a dano, 984 quadr
 ## Atualização 1.2 — Combate e direção artística
 
 - Caminhada 35–37% mais lenta, ataques básicos com antecipação e câmera próxima (155%), suave e ajustável até 200%.
-- 984 quadros nos atlas dos personagens: caminhada, reação a dano, golpes, invocação e quatro emotes. Ataques de heróis, chefes e lacaios escolhem oito direções; onde necessário, uma direção usa espelhamento de uma pose compatível.
+- 2.824 quadros nos atlas dos personagens: caminhada, reação a dano, golpes, invocação e quatro emotes. Ataques de heróis, chefes e lacaios escolhem oito direções; onde necessário, uma direção usa espelhamento de uma pose compatível.
 - Oito padrões por chefe, três fases, projéteis hostis, investidas, ondas com centro seguro, cruzes e ataques em sequência. Vida base para quatro jogadores: 5.600 / 7.200 / 9.200, ajustada ao grupo.
 - Lacaios mortais com preparação visível, colisões, invocação limitada e drops. Primeiro abate sempre derruba poção; depois há chance de 46%. Três espaços de inventário; coleta por proximidade. Cura +45 ou gelo em raio de 230 com lentidão de 4s; tecla 4 usa a primeira guardada.
 - Dash no E: custa 20, recarga de 2,4s e proteção de 0,24s. Reviver passa para R. Tab abre quatro danças próprias; interrompidas ao mover, atacar ou sofrer dano.
@@ -184,7 +218,7 @@ dist/          Pacotes gerados por npm run build
 
 ## Limites desta entrega
 
-Esta versão tem balanceamento inicial reforçado por simulações de equipe, mas ainda não houve teste de carga em larga escala nem avaliação com jogadores externos. Os atlas têm 984 quadros desenhados: 108 novas poses de caminhada dos chefes e 144 reações direcionais de dano, somadas à base de 732: 216 de movimentos/reações, 288 de ataques direcionais dos heróis/chefes, 72 de emotes e 156 de lacaios. O acólito reutiliza uma direção espelhada para completar os oito sentidos. Não há interpolação por esqueleto: são sequências de quadros e pequenas transformações de impacto no Canvas. Trilha e efeitos são composição e síntese próprias renderizadas em Ogg, sem gravações orquestrais ou músicas do TikTok.
+Esta versão tem balanceamento inicial reforçado por simulações de equipe, mas ainda não houve teste de carga em larga escala nem avaliação com jogadores externos. A base até a versão 1.5 tem 984 quadros desenhados: 108 novas poses de caminhada dos chefes e 144 reações direcionais de dano, somadas à base de 732: 216 de movimentos/reações, 288 de ataques direcionais dos heróis/chefes, 72 de emotes e 156 de lacaios. O acólito reutiliza uma direção espelhada para completar os oito sentidos. A versão 1.6 acrescenta 1.464 poses de ataque e 376 de caminhada, totalizando 2.824. Não há animação por esqueleto: o Canvas mistura poses completas alinhadas e acrescenta transformações de impacto. Trilha e efeitos são composição e síntese próprias renderizadas em Ogg, sem gravações orquestrais ou músicas do TikTok.
 
 O servidor opera como uma instância única. Não há coordenação multi-instância, chat, matchmaking automático, cadastro por e-mail ou restauração de partidas após reinício. O ranking agrupa a formação por seus nomes de exibição ordenados; não é um sistema competitivo com identidade verificada. HTTPS, domínio, disco persistente e publicação dependem da hospedagem escolhida e não são fornecidos pelo código. Para a edição PC/LAN, a hospedagem não é necessária. O Dockerfile é uma opção de empacotamento e exige validação na hospedagem de destino.
 

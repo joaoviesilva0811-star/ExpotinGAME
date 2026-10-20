@@ -1,9 +1,13 @@
+import {groundMesh} from './ground-mesh.js';
+import {particleMaterial,paintParticles} from './particle-painter.js';
 import {QUALITY} from './presentation.js';
 import {createVolumes,drawVolume,drawVolumeGlow,drawSmoke,drawMissileVolume} from './volumes.js';
 import {impactAreaPoints,traceImpactArea,impactStyle} from './impact-geometry.js';
 // Bounded layered effects: tapered weapon trails, airborne sparks and ground debris.
-let smokeCount=0,budget=QUALITY.high;const pool=[];
-export function setEffectsQuality(name){budget=QUALITY[name]||QUALITY.high;}
+let renderBounds=null;export function setRenderBounds(bounds){renderBounds=bounds;}
+let smokeCount=0,baseBudget=QUALITY.high,budget=QUALITY.high;
+export function setEffectsDensity(scale){const s=Math.max(.12,Math.min(1,scale));budget=s>.99?baseBudget:{particles:Math.max(120,Math.round(baseBudget.particles*Math.sqrt(s))),smoke:Math.max(4,Math.round(baseBudget.smoke*s)),volumes:Math.max(6,Math.round(baseBudget.volumes*s)),detail:Math.max(.3,baseBudget.detail*Math.sqrt(s))};}const pool=[];
+export function setEffectsQuality(name){baseBudget=budget=QUALITY[name]||QUALITY.high;}
 export function effectsStats(){return{particles:particles.length,pooled:pool.length,smoke:smokeCount,fields:fields.length,budget:{...budget}};}
 const particles=[],decals=[],slashes=[],launches=[],fields=[],projectileTraces=new Map();
 export function resetFX(){particles.length=decals.length=slashes.length=launches.length=fields.length=0;projectileTraces.clear();smokeCount=0;}
@@ -12,7 +16,7 @@ function spawn(x,y,colors,count,type,speed,angle=null,kind='red'){
  for(let i=0,n=Math.min(Math.ceil(count*budget.detail),budget.particles-particles.length);i<n;i++){
   if(type==='smoke'&&smokeCount>=budget.smoke)break;if(type==='smoke')smokeCount++;
   const a=angle===null?Math.random()*Math.PI*2:angle+(Math.random()-.5)*1.2,s=speed*(.25+Math.random()*.75),life=type==='smoke'?1.1+Math.random()*.7:type==='dust'?.65+Math.random()*.55:.25+Math.random()*.6;
-  const p=pool.pop()||{};Object.assign(p,{x,y,z:type==='dust'?2:12,vx:Math.cos(a)*s,vy:Math.sin(a)*s*.65,vz:type==='smoke'?15+Math.random()*18:type==='dust'?10:35+Math.random()*90,life,total:life,type,kind,color:colors[i%colors.length],size:type==='smoke'?48+Math.random()*38:type==='dust'?7+Math.random()*13:1.2+Math.random()*2.2,rotation:Math.random()*7});particles.push(p);
+  const p=pool.pop()||{};Object.assign(p,{x,y,z:type==='dust'?2:12,vx:Math.cos(a)*s,vy:Math.sin(a)*s*.65,vz:type==='smoke'?15+Math.random()*18:type==='dust'?10:35+Math.random()*90,life,total:life,type,kind,color:colors[i%colors.length],size:type==='smoke'?48+Math.random()*38:type==='dust'?7+Math.random()*13:1.2+Math.random()*2.2,rotation:Math.random()*7});p.paint=particleMaterial(type,p.color,p.size);particles.push(p);
  }
 }
 export function impactFX(x,y,kind='gold',heavy=false){
@@ -39,7 +43,7 @@ export function stepFX(dt){
 }
 export function drawGroundFX(c){
  for(const field of fields)drawAreaImpact(c,field);
- c.save();for(const d of decals){c.globalAlpha=Math.min(.5,d.life/5);c.strokeStyle='#141c23';c.lineWidth=1.8;for(let i=0;i<5;i++){const a=d.seed+i*1.256;c.beginPath();c.moveTo(d.x,d.y);c.lineTo(d.x+Math.cos(a)*d.r*.45,d.y+Math.sin(a)*d.r*.3);c.lineTo(d.x+Math.cos(a+.2)*d.r,d.y+Math.sin(a+.2)*d.r*.65);c.stroke();}}c.restore();
+ c.save();c.globalAlpha=.5;c.strokeStyle='#141c23';c.lineWidth=1.8;const all=new Path2D();for(const d of decals){d.path??=(()=>{const path=new Path2D();for(let i=0;i<5;i++){const a=d.seed+i*1.256;path.moveTo(d.x,d.y);path.lineTo(d.x+Math.cos(a)*d.r*.45,d.y+Math.sin(a)*d.r*.3);path.lineTo(d.x+Math.cos(a+.2)*d.r,d.y+Math.sin(a+.2)*d.r*.65);}return path;})();all.addPath(d.path);}c.stroke(all);c.restore();
 }
 
 function drawAreaImpact(c,f){
@@ -50,18 +54,11 @@ function drawAreaImpact(c,f){
  const extent=h.shape==='line'?h.length+h.width:h.r*2;c.fillRect(h.x-extent,h.y-extent,extent*2,extent*2);
  c.globalCompositeOperation='source-over';
  if(!h.inner)drawVolumeGlow(c,f.kind,h.x,h.y,h.r||h.width,fade*.45);
- for(let i=0;i<f.points.length;i+=budget.detail<.6?3:budget.detail<1?2:1){const p=f.points[i];
-  const a=p.angle,reach=p.reach,lift=Math.sin(Math.min(1,t*3)*Math.PI)*8;
-  c.save();c.translate(p.x,p.y);c.rotate(a);c.globalAlpha=fade*.65;c.strokeStyle='#090e16';c.lineWidth=3;
-  c.beginPath();c.moveTo(-reach,0);c.lineTo(-3,-3);c.lineTo(2,2);c.lineTo(reach,-2);c.moveTo(2,2);c.lineTo(5,9);c.stroke();
-  c.strokeStyle=colors[1];c.lineWidth=1;c.globalAlpha=fade*.6;c.stroke();
-  if(f.kind==='green'&&f.model!=='poisonCloud'){
-   c.rotate(-a);c.strokeStyle='#92b76b';c.lineWidth=2;c.beginPath();c.moveTo(-6,4);c.quadraticCurveTo(-8,-8-lift,2,-14-lift);c.moveTo(2,-14-lift);c.lineTo(-2,-20-lift);c.moveTo(2,-14-lift);c.lineTo(8,-19-lift);c.stroke();
-  }else if(f.kind==='violet'){
-   c.rotate(-a+t);c.fillStyle=colors[1];c.globalAlpha=fade*.45;c.beginPath();c.moveTo(0,-10-lift);c.lineTo(4,-2-lift);c.lineTo(0,6-lift);c.lineTo(-4,-2-lift);c.closePath();c.fill();
-  }else{c.fillStyle='#a79278';c.globalAlpha=fade*.7;c.fillRect(-4,-lift,5,3);c.fillStyle=colors[0];c.globalAlpha=fade*.65;c.fillRect(5,-2-lift,2,2);}
-  c.restore();
- }
+ const mesh=groundMesh(f,budget.detail<.6?3:budget.detail<1?2:1);
+ c.globalAlpha=fade*.65;c.strokeStyle='#090e16';c.lineWidth=3;c.stroke(mesh.cracks);c.globalAlpha=fade*.6;c.strokeStyle=colors[1];c.lineWidth=1;c.stroke(mesh.cracks);
+ if(f.kind==='green'&&f.model!=='poisonCloud'){c.globalAlpha=fade*.65;c.strokeStyle='#92b76b';c.lineWidth=2;c.stroke(mesh.detail);}
+ else if(f.kind==='violet'){c.globalAlpha=fade*.45;c.fillStyle=colors[1];c.fill(mesh.detail);}
+ else{c.fillStyle='#a79278';c.globalAlpha=fade*.7;c.fill(mesh.chips);c.fillStyle=colors[0];c.globalAlpha=fade*.65;c.fill(mesh.glints);}
  // Moving pressure fronts are clipped to the footprint and cannot cross a safe hole.
  c.globalCompositeOperation='screen';c.strokeStyle=colors[0];c.lineWidth=2;c.globalAlpha=fade*.55;
  for(let i=0;i<2;i++){
@@ -86,11 +83,7 @@ function bladeTrail(c,s,t,offset=0){
  const x=Math.cos(sweep)*r,y=Math.sin(sweep)*r*.72;c.globalAlpha=Math.sin(t*Math.PI)*.8;c.strokeStyle='#fff5dc';c.lineWidth=1;c.beginPath();c.moveTo(x-5,y);c.lineTo(x+5,y);c.moveTo(x,y-5);c.lineTo(x,y+5);c.stroke();c.restore();
 }
 export function drawFX(c){
- c.save();for(const p of particles){c.globalAlpha=Math.min(1,p.life/.2)*(p.type==='dust'?.18:.9);c.fillStyle=p.color;c.strokeStyle=p.color;
-  if(p.type==='smoke'){c.globalCompositeOperation='source-over';drawSmoke(c,p);}
-  else if(p.type==='spark'){c.globalCompositeOperation='lighter';c.lineWidth=p.size;c.beginPath();c.moveTo(p.x-p.vx*.022,p.y-p.z-p.vy*.022);c.lineTo(p.x,p.y-p.z);c.stroke();}
-  else if(p.type==='dust'){c.globalCompositeOperation='source-over';c.beginPath();c.ellipse(p.x,p.y-p.z,p.size*(1.4-p.life/p.total),p.size*.45,0,0,7);c.fill();}
-  else{c.globalCompositeOperation=p.type==='mote'?'lighter':'source-over';c.save();c.translate(p.x,p.y-p.z);c.rotate(p.rotation);if(p.type==='mote'){c.globalAlpha*=.7;c.beginPath();c.moveTo(0,-p.size*1.5);c.lineTo(p.size*.6,0);c.lineTo(0,p.size*1.5);c.lineTo(-p.size*.6,0);c.closePath();c.fill();}else c.fillRect(-p.size/2,-p.size/2,p.size,p.size);c.restore();}}
+ c.save();paintParticles(c,particles,drawSmoke,renderBounds);
  c.globalCompositeOperation='source-over';c.globalAlpha=1;
  let drawn=0;
  for(const f of fields){

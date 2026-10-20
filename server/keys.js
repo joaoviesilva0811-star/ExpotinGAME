@@ -2,7 +2,7 @@ import {KEYS} from '../public/keys.js';
 import {clamp} from '../public/shared.js';
 export function dropBossKey(room){
  if(room.keys.some(k=>k.round===room.round))return;
- const info=KEYS[room.round];room.keyDrop={...info,round:room.round,x:room.boss.x,y:room.boss.y,spawned:room.now,collectedAt:null,carrier:null};room.keySceneUntil=room.now+4;room.gateUnlocked=false;
+ const info=KEYS[room.round];room.keyDrop={...info,round:room.round,x:room.boss.x,y:room.boss.y,spawned:room.now,collectedAt:null,carrier:null};room.keySceneUntil=room.now+8.5;room.gateUnlocked=false;
  for(const p of room.players.values()){p.input={x:0,y:0};p.vx=p.vy=0;}
  room.emit('keyDrop',{round:room.round,x:room.boss.x,y:room.boss.y,name:info.name,color:info.color});
 }
@@ -21,13 +21,13 @@ export function tickBossKeys(room,dt,solids){
    }
    // The magical key is attracted to its approaching bearer; ownership still
    // requires actual server-side proximity, never a client pickup command.
-   if(room.now-key.spawned>.8){const dx=carrier.x-key.x,dy=carrier.y-key.y,d=Math.hypot(dx,dy),step=Math.min(d,dt*210);if(d){key.x=clamp(key.x+dx/d*step,55,1145);key.y=clamp(key.y+dy/d*step,55,705);}}
-   if(Math.hypot(carrier.x-key.x,carrier.y-key.y)<=44){key.collectedAt=room.now;key.carrier=carrier.id;if(!room.keys.some(k=>k.round===key.round))room.keys.push({round:key.round,id:key.id,name:key.name,color:key.color,carrier:carrier.id,at:room.now});room.gateUnlocked=true;
+   if(room.now-key.spawned>2.5){const dx=carrier.x-key.x,dy=carrier.y-key.y,d=Math.hypot(dx,dy),step=Math.min(d,dt*210);if(d){key.x=clamp(key.x+dx/d*step,55,1145);key.y=clamp(key.y+dy/d*step,55,705);}}
+   if(room.now-key.spawned>=2.5&&Math.hypot(carrier.x-key.x,carrier.y-key.y)<=44){key.collectedAt=room.now;key.carrier=carrier.id;if(!room.keys.some(k=>k.round===key.round))room.keys.push({round:key.round,id:key.id,name:key.name,color:key.color,carrier:carrier.id,at:room.now});room.gateUnlocked=true;
     for(const p of room.players.values())p.vx=p.vy=0;
     room.secretUnlocked=room.wins===3&&[0,1,2].every(round=>room.keys.some(k=>k.round===round));
-    room.keySceneUntil=Math.max(room.keySceneUntil,room.now+1.8);
-    if(room.state==='ending'&&room.now>room.endingAt){room.endingAt=room.now+1.8;room.transitionAt=room.endingAt+(room.secretUnlocked?18:14);}
-    if(room.state==='round_end'){room.outroStarted=Math.max(room.outroStarted,room.now-2.2);room.transitionAt=Math.max(room.transitionAt,room.outroStarted+11);}
+    room.keySceneUntil=Math.max(room.keySceneUntil,room.now+4.5);
+    if(room.state==='ending'){room.endingAt=Math.max(room.endingAt,room.keySceneUntil);room.transitionAt=room.endingAt+(room.secretUnlocked?18:14);}
+    if(room.state==='round_end'){room.outroStarted=Math.max(room.outroStarted,room.keySceneUntil-6);room.transitionAt=Math.max(room.transitionAt,room.outroStarted+11);}
     room.emit('keyPickup',{round:key.round,owner:carrier.id,name:key.name,color:key.color,x:key.x,y:key.y});
    }
   }

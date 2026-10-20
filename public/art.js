@@ -1,6 +1,7 @@
+import {hitFlash} from './frame-tint.js';
 import {drawCastShadow} from './lighting.js';
 import {actorMotion} from './animation-timing.js';
-import {drawAnimatedFrame,drawActorFrame} from './animation-layout.js';
+import {drawAnimatedFrame,drawActorFrame,drawPose} from './animation-layout.js';
 import { sceneImage } from './scenes.js';
 import { characterFrame, bossFrame } from './animation.js';
 import { WORLD, CLASSES, BOSSES } from './shared.js';
@@ -199,18 +200,18 @@ export function drawPlayer(c,p,time,{scale=1,alpha=1,attacking=false,now=time}={
   else if(p.dodgeUntil>now){c.rotate(Math.sin((now-p.dodgeAt)/.24*Math.PI)*.35);c.globalAlpha*=.75;}
   if(animated?.flip)c.scale(-1,1);
   if(animated?.bowPhase==='aim'&&Math.hypot(p.vx||0,p.vy||0)>12)c.translate(0,Math.sin(time*8)*.8);
-  const hurt=now-(p.lastHurt??-10);if(hurt>=0&&hurt<.16){c.translate(Math.cos(a)*-3,0);c.filter='brightness(1.7)';}
-  const iw=img.ironFrame?.width||img.width,ih=img.ironFrame?.height||img.height;drawActorFrame(c,p.id||p.classId,img,-iw/2*scale,(-ih+15)*scale,iw*scale,ih*scale,time);c.restore();
+  const hurt=now-(p.lastHurt??-10);if(hurt>=0&&hurt<.16){c.translate(Math.cos(a)*-3,0);}
+  const iw=img.ironFrame?.width||img.width,ih=img.ironFrame?.height||img.height;drawPose(c,p.id||p.classId,animated?.next?{...animated,image:hurt>=0&&hurt<.16?hitFlash(img):img,next:hurt>=0&&hurt<.16?hitFlash(animated.next):animated.next}:{image:hurt>=0&&hurt<.16?hitFlash(img):img},-iw/2*scale,(-ih+15)*scale,iw*scale,ih*scale,time);c.restore();
 }
 export function drawBoss(c,b,round,time,now=time){
   const animation=bossFrame(b,round,time,now),img=animation||bossSprite(round,['windup','execute'].includes(b.state)?1:0),sc=round===1?1.1:1;
   c.save();drawCastShadow(c,img,b,animation?210:206,animation?210:206,23);c.fillStyle='#030510a0';c.beginPath();c.ellipse(b.x,b.y+8,68,25,0,0,Math.PI*2);c.fill();
   if(b.hp<=0)c.globalAlpha=.35;
   if(b.state==='transition'){c.shadowColor=BOSSES[round].color;c.shadowBlur=22;}
-  if(now-b.hurtAt<.055)c.filter='brightness(1.4)';
+
   let w=animation?210:206,h=animation?210:206;if(b.state==='fallen'){h*=.45;w*=1.1;}if(b.state==='dormant'){h*=round===1?.6:.77;w*=round===2?.77:1;c.filter='brightness(.5) saturate(.6)';}
   const bob=b.state==='chase'?Math.sin(time*6)*1.3:0;
-  const motion=actorMotion(b,time,now,true);c.translate(b.x,b.y+23+bob+motion.lift);c.rotate(motion.lean);c.scale(motion.sx*(b.walkFlip?-1:1),motion.sy);drawActorFrame(c,'boss-'+round,img,-w*sc/2,-h*sc,w*sc,h*sc,time);c.restore();
+  const motion=actorMotion(b,time,now,true);c.translate(b.x,b.y+23+bob+motion.lift);c.rotate(motion.lean);c.scale(motion.sx*(b.walkFlip?-1:1),motion.sy);drawPose(c,'boss-'+round,b.strikePose?{...b.strikePose,image:now-b.hurtAt<.055?hitFlash(img):img,next:now-b.hurtAt<.055?hitFlash(b.strikePose.next):b.strikePose.next}:{image:now-b.hurtAt<.055?hitFlash(img):img},-w*sc/2,-h*sc,w*sc,h*sc,time);c.restore();
 }
 
 const terrains=new Map();

@@ -7,3 +7,5 @@ artifacts/
 release/
 Jogo-PC/
 /IronCrown-PC.zip
+
+__pycache__/

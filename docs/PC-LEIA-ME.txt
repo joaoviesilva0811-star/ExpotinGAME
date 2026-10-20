@@ -1,4 +1,4 @@
-SHADOWS OF THE IRON CROWN — EDIÇÃO PC 1.5.0
+SHADOWS OF THE IRON CROWN — EDIÇÃO PC 1.6.0
 
 WINDOWS 10/11 DE 64 BITS
 
@@ -36,7 +36,7 @@ Nos outros computadores:
 4. Sem código, a lista mostra as salas públicas desse anfitrião.
 5. Todos escolhem classe e marcam pronto; o líder inicia a partida.
 
-O anfitrião precisa manter o jogo aberto. Fechar a janela da partida no
+O anfitrião precisa manter o jogo aberto. Fechar o aplicativo ou voltar ao menu do PC no
 anfitrião encerra o servidor e desconecta os amigos. Não há migração de
 servidor entre PCs. Fechar uma janela de cliente não encerra o anfitrião.
 
@@ -147,3 +147,54 @@ No botão de engrenagem: efeitos baixo/médio/alto, força da câmera (zero
 desativa o tremor), acompanhamento da mira, destaque do jogador, luzes
 dinâmicas e medidor de FPS/P95/CPU. As opções ficam salvas no computador.
 Os avisos de perigo continuam completos em qualquer qualidade.
+
+NOVIDADES 1.6 — AÇO EM MOVIMENTO
+
+1.464 novas poses de ataques, 24 sequências em oito direções, transições
+interpoladas e caches que preservam espadas, arcos e magia inteiros.
+
+Na engrenagem, "Ajustar efeitos para priorizar 60 FPS" adapta a densidade
+de partículas e volumes ao tempo de quadro. Vida, energia, combate e áreas
+de perigo não mudam. Você pode desligar essa adaptação e escolher baixo,
+médio ou alto manualmente. Ative o contador de FPS para medir no seu PC.
+60 FPS é a meta de renderização; máquinas e combates muito pesados variam.
+
+COOP NO MESMO PC — ATÉ 3 CONTROLES
+
+Escolha "Coop no mesmo PC" no menu inicial. Conecte até três controles
+Xbox ou PlayStation reconhecidos pelo Windows e pressione um botão em
+cada um. O primeiro assume o Jogador 1; os outros ganham sessões próprias.
+Na preparação: D-pad esquerda/direita escolhe a classe; A / X (cruz)
+marca pronto. START / OPTIONS do líder inicia quando todos estão prontos.
+As classes ausentes podem ser completadas por companheiros IA.
+
+Durante a batalha:
+- Analógico esquerdo: movimento gradual. Analógico direito: mira.
+- X (Xbox) / quadrado (PS), segurado: ataque básico.
+- A / cruz: dash, custa 20 de energia.
+- Y / triângulo: habilidade 1. RB / R1: habilidade 2. RT / R2: habilidade 3.
+- LB / L1 ou LT / L2 segurado: defender; consome energia.
+- B / círculo segurado perto do aliado: reviver.
+- D-pad para cima: poção. Para baixo: emote, alternando as danças.
+- START / OPTIONS: menu. Esc também abre/fecha; o mouse funciona no menu.
+O primeiro controle ativo bloqueia teclado e mouse para combater.
+Ao desconectar todos os controles, teclado e mouse voltam para o J1.
+Um controle desconectado para seu personagem e pode ser reconectado.
+A câmera enquadra os jogadores locais e cada um tem vida, energia e recargas.
+Os comandos seguem a disposição standard da Gamepad API. O suporte físico
+a modelos USB/Bluetooth específicos depende de eles serem reconhecidos
+pelo Windows/Chromium. Controles virtuais foram usados na verificação.
+
+MENU, ÁUDIO E CHAVES
+
+O aplicativo usa uma única janela: feche a caixa com Esc ou X para retomar;
+"Voltar ao menu do PC" encerra a expedição local e retorna sem abrir abas.
+No menu de pausa, "Gráficos e áudio" ajusta qualidade, tremor e volumes
+separados de música e efeitos. O menu não pausa batalhas online.
+As chaves têm apresentação de pelo menos 8,5 s e destaque após a coleta.
+
+COMBOS
+
+Acertos com dano real encadeiam hits por 3,5 s. Levar dano encerra a cadeia.
+A cada 5 hits, o multiplicador de pontos sobe 0,25 até 1,75. O multiplicador
+não aumenta dano. O bônus é somado à pontuação final e aparece por jogador.

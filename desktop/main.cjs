@@ -47,7 +47,7 @@ app.whenReady().then(()=>{
   const preferencesPath=join(app.getPath('userData'),'presentation.json');
   const trustedGame=event=>{try{return game&&!game.isDestroyed()&&event.sender===game.webContents&&event.senderFrame===game.webContents.mainFrame&&new URL(event.senderFrame.url).origin===gameOrigin;}catch{return false;}};
   ipcMain.handle('iron:preferences:get',async event=>{
-    if(!trustedGame(event))throw new Error('Origem não autorizada.');
+    if(!trustedGame(event)&&!trusted(event))throw new Error('Origem não autorizada.');
     await preferencesWrite.catch(()=>{});const {cleanSettings}=await import('../public/presentation.js');
     try{return cleanSettings(JSON.parse(await readFile(preferencesPath,'utf8')));}catch{return cleanSettings();}
   });
@@ -56,15 +56,21 @@ app.whenReady().then(()=>{
     const {cleanSettings}=await import('../public/presentation.js');const settings=cleanSettings(value&&typeof value==='object'?value:{});
     preferencesWrite=preferencesWrite.catch(()=>{}).then(()=>writeFile(preferencesPath,JSON.stringify(settings)));await preferencesWrite;return settings;
   });
-  launcher=new BrowserWindow({width:1120,height:820,minWidth:920,minHeight:700,backgroundColor:'#101415',title:'Shadows of the Iron Crown',autoHideMenuBar:true,webPreferences:{preload:join(__dirname,'preload.cjs'),nodeIntegration:false,contextIsolation:true,sandbox:true}});
-  restrictWindow(launcher,url=>url===launcherUrl);launcher.loadFile(join(__dirname,'launcher.html'));
-  launcher.on('close',()=>{quitting=true;stopServer();if(game&&!game.isDestroyed())game.destroy();});
+  launcher=new BrowserWindow({width:1120,height:820,minWidth:920,minHeight:700,backgroundColor:'#101415',title:'Shadows of the Iron Crown',autoHideMenuBar:true,webPreferences:{preload:join(__dirname,'preload.cjs'),nodeIntegration:false,contextIsolation:true,sandbox:true,autoplayPolicy:'no-user-gesture-required'}});
+  restrictWindow(launcher,url=>url===launcherUrl||!!gameOrigin&&url.startsWith(gameOrigin+'/'));launcher.loadFile(join(__dirname,'launcher.html'));
+  launcher.on('close',()=>{quitting=true;stopServer();});
+  ipcMain.handle('iron:return-menu',async event=>{
+    if(!trustedGame(event))throw new Error('Origem não autorizada.');
+    game=null;gameOrigin=null;await stopServer();
+    launcher.setTitle('Shadows of the Iron Crown');launcher.setSize(1120,820);
+    await launcher.loadFile(join(__dirname,'launcher.html'));return{ok:true};
+  });
   ipcMain.handle('iron:launch',async(event,request)=>{
     if(!trusted(event))throw new Error('Origem não autorizada.');
     if(launching||game&&!game.isDestroyed())return{ok:false,error:'Uma expedição já está aberta.'};
     launching=true;
     try{
-      const mode=request?.mode;if(!['solo','host','join'].includes(mode))throw new Error('Escolha um modo de jogo.');
+      const mode=request?.mode;if(!['solo','couch','host','join'].includes(mode))throw new Error('Escolha um modo de jogo.');
       const name=typeof request.name==='string'?request.name.trim().normalize('NFC'):'';
       if(name.length<2||name.length>20||/[\p{C}<>]/u.test(name))throw new Error('Use um nome de 2 a 20 caracteres.');
       const classId=['knight','archer','rogue'].includes(request.classId)?request.classId:'knight';
@@ -79,11 +85,10 @@ app.whenReady().then(()=>{
       if(info?.lan?.length)target.searchParams.set('lan',info.lan.join(','));
       if(typeof request.code==='string'&&request.code.trim())target.searchParams.set('code',request.code.trim().toUpperCase());
       gameOrigin=base;
-      game=new BrowserWindow({width:1440,height:960,minWidth:960,minHeight:650,backgroundColor:'#101415',title:'Shadows of the Iron Crown — '+(mode==='solo'?'Solo com companheiros':'Rede local'),autoHideMenuBar:true,webPreferences:{preload:join(__dirname,'game-preload.cjs'),nodeIntegration:false,contextIsolation:true,sandbox:true}});
-      restrictWindow(game,url=>{try{return new URL(url).origin===base;}catch{return false;}});
-      game.on('closed',()=>{game=null;stopServer();if(!quitting&&!launcher.isDestroyed())launcher.show();});
-      await game.loadURL(target.href);launcher.hide();return{ok:true};
-    }catch(error){if(game&&!game.isDestroyed())game.destroy();stopServer();return{ok:false,error:error.message?.includes('fetch')?'Não foi possível alcançar o anfitrião. Confira o IP, a mesma rede e a liberação do jogo no firewall do anfitrião.':error.message};}
+      game=launcher;
+      game.setTitle('Shadows of the Iron Crown — '+(mode==='solo'?'Solo com companheiros':mode==='couch'?'Coop no mesmo PC':'Rede local'));
+      game.setSize(1440,960);await game.loadURL(target.href);return{ok:true};
+    }catch(error){game=null;gameOrigin=null;await stopServer();await launcher.loadFile(join(__dirname,'launcher.html'));return{ok:false,error:error.message?.includes('fetch')?'Não foi possível alcançar o anfitrião. Confira o IP, a mesma rede e a liberação do jogo no firewall do anfitrião.':error.message};}
     finally{launching=false;}
   });
 });

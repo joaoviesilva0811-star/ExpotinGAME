@@ -1,10 +1,20 @@
 export class AudioEngine {
-  constructor(){this.enabled=false;this.ctx=null;this.volume=.17;this.lastMusic=0;this.beat=0;this.track=null;this.trackName=null;this.samples=new Map();this.noiseBuffers=new Map();this.lastSample=new Map();this.musicVolume=.36;}
-  async toggle(){
-    if(!this.ctx){const AudioContext=window.AudioContext||window.webkitAudioContext;if(!AudioContext)return false;this.ctx=new AudioContext();this.master=this.ctx.createGain();this.master.gain.value=this.volume;this.master.connect(this.ctx.destination);}
-    await this.ctx.resume();this.enabled=!this.enabled;this.master.gain.setTargetAtTime(this.enabled?this.volume:0,this.ctx.currentTime,.1);if(this.track)this.track.volume=this.enabled?this.musicVolume:0;return this.enabled;
+  constructor(){this.enabled=false;this.ctx=null;this.volume=.184;this.lastMusic=0;this.beat=0;this.track=null;this.trackName=null;this.samples=new Map();this.noiseBuffers=new Map();this.lastSample=new Map();this.musicVolume=.68;this.disposed=false;this.starting=null;this.userMuted=false;
+    document.addEventListener('visibilitychange',()=>this.syncVisibility());
+    addEventListener('pagehide',()=>this.dispose(),{once:true});
   }
-  async enable(){if(!this.enabled)await this.toggle();for(const name of ['slash','arrow','hit','block','dash','roar-0','roar-1','roar-2'])if(!this.samples.has(name)){this.samples.set(name,'loading');fetch(new URL(`./assets/audio/${name}.ogg`,import.meta.url)).then(r=>r.arrayBuffer()).then(b=>this.ctx.decodeAudioData(b)).then(b=>this.samples.set(name,b)).catch(()=>this.samples.delete(name));}return this.enabled;}
+  syncVisibility(){if(this.track){this.track.volume=this.enabled&&!document.hidden?this.musicVolume:0;if(document.hidden||!this.enabled)this.track.pause();}if(this.master)this.master.gain.setTargetAtTime(this.enabled&&!document.hidden?this.volume:0,this.ctx.currentTime,.05);}
+  configure(settings){this.musicVolume=Math.max(0,Math.min(1,settings.musicVolume??.68));this.volume=.23*Math.max(0,Math.min(1,settings.effectsVolume??.8));this.syncVisibility();}
+  dispose(){this.disposed=true;this.enabled=false;if(this.track){this.track.pause();this.track.src='';}this.ctx?.close().catch(()=>{});}
+  async context(){
+    if(this.disposed)return false;
+    if(!this.ctx){const AudioContext=window.AudioContext||window.webkitAudioContext;if(!AudioContext)return false;this.ctx=new AudioContext();this.master=this.ctx.createGain();this.master.gain.value=0;this.master.connect(this.ctx.destination);}
+    if(!this.starting)this.starting=this.ctx.resume().finally(()=>{this.starting=null;});await this.starting;this.syncVisibility();return true;
+  }
+  async toggle(){
+    this.enabled=!this.enabled;this.userMuted=!this.enabled;await this.context();this.syncVisibility();return this.enabled;
+  }
+  async enable(){if(this.disposed||this.userMuted)return false;this.enabled=true;if(!await this.context())return false;for(const name of ['slash','arrow','hit','block','dash','roar-0','roar-1','roar-2'])if(!this.samples.has(name)){this.samples.set(name,'loading');fetch(new URL(`./assets/audio/${name}.ogg`,import.meta.url)).then(r=>r.arrayBuffer()).then(b=>this.ctx.decodeAudioData(b)).then(b=>this.samples.set(name,b)).catch(()=>this.samples.delete(name));}return this.enabled;}
   sample(name,gain=.55){
     if(!this.enabled||!this.ctx)return;const time=this.ctx.currentTime;if(time-(this.lastSample.get(name)||-10)<(name.startsWith('roar')?1.4:.07))return;this.lastSample.set(name,time);
     let buffer=this.samples.get(name);if(!buffer){this.samples.set(name,'loading');fetch(new URL(`./assets/audio/${name}.ogg`,import.meta.url)).then(r=>r.arrayBuffer()).then(b=>this.ctx.decodeAudioData(b)).then(b=>this.samples.set(name,b)).catch(()=>this.samples.delete(name));return;}
@@ -42,6 +52,7 @@ export class AudioEngine {
     if(kind==='ui')this.tone(550,.06,'sine',.15);
   }
   music(time,round,battle){
+    if(this.disposed)return;
     const name=battle?['battle-throne','battle-forest','battle-void'][round||0]:'menu';
     if(this.trackName!==name){
       if(this.track){this.track.pause();this.track.src='';}

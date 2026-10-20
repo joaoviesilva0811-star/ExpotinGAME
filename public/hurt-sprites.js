@@ -7,7 +7,7 @@ export const hurtSpritesReady=fetch(new URL('./assets/hurt-frames.json',import.m
 })))).then(r=>r.every(Boolean)).catch(()=>false);
 export function hurtFrame(p,name,now){
  const stamp=p.lastHurt??p.hurtAt??-10,key=p.id||name;let state=reactions.get(key);if(!state){state={seen:-10,played:-10};reactions.set(key,state);}
- if(stamp>state.seen){state.seen=stamp;if(stamp-state.played>.28)state.played=stamp;}
+ if(stamp>state.seen){state.seen=stamp;if(stamp-state.played>.65)state.played=stamp;}
  const age=now-state.played;if(age<0||age>=.34||p.hp<=0)return null;
  const a=p.facing||0,x=Math.cos(a),y=Math.sin(a),row=Math.abs(x)>.65?(x>0?1:3):(y<0?2:0),col=Math.min(3,Math.floor(age/.34*4));return clips.get(name)?.[row*4+col]||null;
 }

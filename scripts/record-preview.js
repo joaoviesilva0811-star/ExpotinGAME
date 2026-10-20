@@ -9,7 +9,7 @@ const app=await electron.launch({executablePath:resolve('dist/IronCrown-Linux-x6
 try{
  await app.context().addInitScript(()=>{const Native=window.WebSocket;window.WebSocket=class extends Native{constructor(...a){super(...a);this.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.room)window.__room=m.room;});}};});
  const menu=await app.firstWindow();await menu.setViewportSize({width:1120,height:820});await menu.waitForTimeout(800);await menu.screenshot({path:'artifacts/pc-01-menu.png'});await menu.locator('#nickname').fill('Lyra');await menu.locator('[data-class=archer]').click();
- const next=app.waitForEvent('window');await menu.locator('#solo').click();const page=await next;await page.setViewportSize({width:1440,height:960});await page.getByRole('button',{name:'Estou pronto'}).click();
+ const next=menu.waitForURL(/^http:/);await menu.locator('#solo').click();await next;const page=menu;await page.setViewportSize({width:1440,height:960});await page.getByRole('button',{name:'Estou pronto'}).click();
  await page.screenshot({path:'artifacts/pc-02-solo.png'});
  const cdp=await app.context().newCDPSession(page);const frames=[],writes=[];
  cdp.on('Page.screencastFrame',event=>{cdp.send('Page.screencastFrameAck',{sessionId:event.sessionId}).catch(()=>{});if(frames.length>3000)return;const file=resolve(framesDir,String(frames.length).padStart(5,'0')+'.jpg');frames.push({file,time:event.metadata.timestamp});writes.push(writeFile(file,Buffer.from(event.data,'base64')));});

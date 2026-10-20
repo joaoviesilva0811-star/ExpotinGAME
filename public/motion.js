@@ -1,7 +1,7 @@
 import {WORLD,CLASSES,clamp} from './shared.js';
 export function updateVelocity(p,intent,speed,dt){
  const length=Math.hypot(intent.x||0,intent.y||0),rate=length?22:30,t=1-Math.exp(-Math.max(0,dt)*rate);
- p.vx+=((length?(intent.x||0)/length*speed:0)-p.vx)*t;p.vy+=((length?(intent.y||0)/length*speed:0)-p.vy)*t;
+ p.vx+=((length?(intent.x||0)/Math.max(1,length)*speed:0)-p.vx)*t;p.vy+=((length?(intent.y||0)/Math.max(1,length)*speed:0)-p.vy)*t;
 }
 export function moveEntity(p,dx,dy,solids=[],boss=null){
  p.x=clamp(p.x+dx,WORLD.margin,WORLD.w-WORLD.margin);p.y=clamp(p.y+dy,WORLD.margin,WORLD.h-WORLD.margin);

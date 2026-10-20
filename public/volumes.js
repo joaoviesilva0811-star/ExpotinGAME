@@ -45,6 +45,13 @@ export function createVolumes(h,points,model){
  if(!h.inner&&h.shape!=='line')out.push({x:h.x,y:h.y,width:Math.min(300,Math.max(185,h.r*1.35)),delay:0,flip:false});
  return out.sort((a,b)=>a.y-b.y);
 }
+function rasterFrame(asset,f,width){
+ // Keep the full frame and its pivot; only cache a smaller render texture.
+ const bucket=[64,96,144,192,256,384].find(n=>n>=width);
+ if(!bucket)return{image:f.image,ratio:1};
+ f.scaled??=new Map();let out=f.scaled.get(bucket);if(out)return out;
+ const ratio=bucket/asset.span,image=document.createElement('canvas');image.width=Math.ceil(f.image.width*ratio)+4;image.height=Math.ceil(f.image.height*ratio)+4;const c=image.getContext('2d');c.imageSmoothingEnabled=false;c.drawImage(f.image,0,0,f.image.width*ratio,f.image.height*ratio);out={image,ratio};f.scaled.set(bucket,out);return out;
+}
 export function drawVolume(c,kind,x,y,width,progress,opacity=1,flip=false,model=original(kind),angle=0){
  const asset=models[model];if(!asset||progress<0||progress>=1)return false;
  const f=asset.frames[Math.min(5,Math.floor(progress*6))],scale=width/asset.span,sweep=model==='steelSweep'||model==='voidSweep',ground=model==='stoneWave';
@@ -53,10 +60,10 @@ export function drawVolume(c,kind,x,y,width,progress,opacity=1,flip=false,model=
  // Flat impacts pivot around their visible center; upright plumes remain
  // registered to the same ground point throughout the full animation.
  const pivotY=sweep||ground?f.centerY:f.pivotY,pivotX=sweep||ground?f.centerX:f.pivotX;
- c.scale(flip?-scale:scale,scale);c.drawImage(f.image,-pivotX,-pivotY);c.restore();return true;
+ const raster=rasterFrame(asset,f,width),r=scale/raster.ratio;c.scale(flip?-r:r,r);c.drawImage(raster.image,-pivotX*raster.ratio,-pivotY*raster.ratio);c.restore();return true;
 }
 export function drawVolumeGlow(c,kind,x,y,r,alpha){c.save();c.globalCompositeOperation='screen';c.globalAlpha*=alpha;c.drawImage(glows[rowOf(kind)],x-r,y-r*.65,r*2,r*1.3);c.restore();}
-function drawCentered(c,model,index,width){const asset=models[model];if(!asset)return false;const f=asset.frames[index],scale=width/asset.span;c.save();c.scale(scale,scale);c.drawImage(f.image,-f.centerX,-f.centerY);c.restore();return true;}
+function drawCentered(c,model,index,width){const asset=models[model];if(!asset)return false;const f=asset.frames[index],scale=width/asset.span;c.save();const raster=rasterFrame(asset,f,width),r=scale/raster.ratio;c.scale(r,r);c.drawImage(raster.image,-f.centerX*raster.ratio,-f.centerY*raster.ratio);c.restore();return true;}
 export function drawSmoke(c,p){
  c.save();c.globalAlpha*=.32;c.translate(p.x,p.y-p.z);c.rotate(p.rotation*.08);const drawn=drawCentered(c,p.kind==='green'?'poisonCloud':p.kind==='violet'?'voidRift':'stoneWave',p.life/p.total>.5?4:5,p.size*(2.2-p.life/p.total*.5));c.restore();return drawn;
 }

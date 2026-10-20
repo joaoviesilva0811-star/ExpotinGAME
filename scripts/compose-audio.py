@@ -15,6 +15,8 @@ def voice(midi,duration,instrument):
   wave=sum(np.sin(2*np.pi*f*k*t)*np.exp(-t*(2+k*.6))/k for k in range(1,6));attack=.006;release=.08
  elif instrument=='strings':
   wave=sum((np.sin(2*np.pi*f*k*t+.008*np.sin(t*26))+np.sin(2*np.pi*f*k*1.002*t))/(k*4) for k in range(1,6));attack=.18;release=.4
+ elif instrument=='horn':
+  wave=sum(np.sin(2*np.pi*f*k*t+.018*np.sin(t*19))/k for k in range(1,8))*np.exp(-t*.24);attack=.035;release=.18
  elif instrument=='choir':
   wave=(np.sin(2*np.pi*f*t)*.7+np.sin(2*np.pi*f*2*t)*.2+np.sin(2*np.pi*f*3*t)*.12)*(1+np.sin(t*4)*.04);attack=.35;release=.5
  elif instrument=='bell':
@@ -28,7 +30,7 @@ def write(name,sound):
  sound=np.tanh(sound*.85);peak=np.max(np.abs(sound));sound*=.82/max(.82,peak)
  raw=Path('/tmp/iron-'+name+'.wav')
  with wave.open(str(raw),'wb') as w:w.setnchannels(2);w.setsampwidth(2);w.setframerate(SR);w.writeframes((sound*32767).astype('<i2').tobytes())
- subprocess.run(['ffmpeg','-y','-loglevel','error','-i',str(raw),'-c:a','libvorbis','-q:a','4',str(OUT/(name+'.ogg'))],check=True)
+ subprocess.run(['ffmpeg','-y','-loglevel','error','-i',str(raw),*(['-af','loudnorm=I=-16:TP=-1.5:LRA=9'] if name.startswith('battle-') or name=='menu' else []),'-c:a','libvorbis','-q:a','4',str(OUT/(name+'.ogg'))],check=True)
  raw.unlink()
 
 def compose(name,bpm,root,battle=False,variation=0):
@@ -37,7 +39,7 @@ def compose(name,bpm,root,battle=False,variation=0):
   offset=int(start*SR);indexes=(np.arange(len(signal))+offset)%n
   mix[indexes,0]+=signal*volume*(1-pan)*.7;mix[indexes,1]+=signal*volume*(1+pan)*.7
  progression=[0,-5,-2,-7,0,3,-5,-2]
- melody=[12,15,19,17,15,14,12,7,12,14,15,19,22,19,17,14]
+ melody=([12,19,15,14,12,7,10,12,15,19,22,19,17,15,14,12] if not battle else [[0,7,12,10,7,3,2,0,0,7,15,14,12,10,7,0],[12,15,17,19,17,15,12,10,12,19,22,19,17,15,14,12],[0,1,7,12,13,12,7,6,0,7,13,19,18,13,12,7]][variation])
  for bar in range(bars):
   chord=root+progression[bar%8];start=bar*4*beat
   for interval in [0,7,12,15]:put(voice(chord+interval,beat*4+.6,'choir' if not battle else 'strings'),start,.12 if not battle else .1,(interval-7)/28)
@@ -52,10 +54,19 @@ def compose(name,bpm,root,battle=False,variation=0):
     noise=rng.normal(0,1,int(.1*SR));noise=np.diff(noise,prepend=0)*np.exp(-np.arange(len(noise))/SR*45)
     put(noise,start+(b+.5)*beat,.035,.35)
     if b in [1,3]:put(noise,start+b*beat,.1,-.2)
-  if bar>=4:
+  if bar>=0:
    for k in range(2 if battle else 1):
     note=root+melody[(bar*2+k+variation*3)%len(melody)]
-    put(voice(note,beat*(1.7 if battle else 3.3),'strings' if battle else 'bell'),start+k*2*beat,.14 if battle else .105,-.15)
+    put(voice(note,beat*(1.7 if battle else 3.3),('horn' if variation==0 else 'lute' if variation==1 else 'choir') if battle else 'bell'),start+k*2*beat,.22 if battle else .18,-.15)
+ # Signature low drums / bells make the main motif recognizable immediately.
+ for bar in range(0,bars,4):
+  start=bar*4*beat
+  put(voice(root+(0 if battle else 24),beat*3,'horn' if battle else 'bell'),start,.18 if battle else .12,.1)
+  if battle:
+   for off in [0,.75,1.5,2.5,3.5]:
+    t=np.arange(int(.55*SR))/SR
+    drum=np.sin(2*np.pi*(43*t+1.2*(1-np.exp(-t*24))))*np.exp(-t*9)
+    put(drum,start+off*beat,.42)
  # Stereo room reflections wrap seamlessly around the loop boundary.
  dry=mix.copy()
  for delay,gain in [(.17,.14),(.29,.11),(.43,.08),(.71,.06)]:mix+=np.roll(dry,int(delay*SR),axis=0)[:,::-1]*gain

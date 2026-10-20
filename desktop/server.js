@@ -1,7 +1,7 @@
 import { networkInterfaces } from 'node:os';
 import { createGameServer } from '../server/index.js';
 
-const solo=process.env.IRON_DESKTOP_MODE==='solo';
+const solo=['solo','couch'].includes(process.env.IRON_DESKTOP_MODE);
 const application=createGameServer({localDesktop:true,dataDir:process.env.IRON_DATA_DIR});
 const lan=Object.values(networkInterfaces()).flat().filter(n=>n&&n.family==='IPv4'&&!n.internal).map(n=>n.address);
 let stopping=false;

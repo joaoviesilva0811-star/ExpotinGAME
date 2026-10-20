@@ -1,3 +1,4 @@
+import {comboState,recordCombo,resetCombo,expireCombo} from './combos.js';
 import {dropBossKey,tickBossKeys} from './keys.js';
 import {updateVelocity,moveEntity} from '../public/motion.js';
 import { randomBytes, randomInt } from 'node:crypto';
@@ -8,7 +9,7 @@ import { tickMinions } from './minions.js';
 import { dropPotion, tickLoot, usePotion, roundDialogue } from './loot.js';
 
 const uid = () => randomBytes(6).toString('hex');
-const stats = () => ({ damage: 0, taken: 0, avoided: 0, revives: 0, skills: 0 });
+const stats = () => ({ damage: 0, taken: 0, avoided: 0, revives: 0, skills: 0, comboPoints:0, maxCombo:0 });
 export const normalize = (x, y) => { const d = Math.hypot(x, y); return d > 0 ? { x: x / d, y: y / d } : { x: 1, y: 0 }; };
 export function aimDirection(p) {
   const {ax,ay}=p.input;
@@ -26,7 +27,7 @@ export const makePlayer = (session, name) => ({
   attackAt: -10, attackFor: .45, attackSlot: -1, dodgeAt: -10, dodgeUntil: 0, dodgeReady: 0, hitSafeUntil: 0,
   shadowBonus: 0, poisonUntil: 0, downAt: null, eliminated: false, revive: 0, reviveTarget: null,
   input: { x: 0, y: 0, ax: 1, ay: 0, block: false, attack: false, revive: false },
-  potions: [], potionReady: 0, stats: stats(), roundStats: stats(), lastSeq: -1
+  combo:comboState(), potions: [], potionReady: 0, stats: stats(), roundStats: stats(), lastSeq: -1
 });
 export const obstacles=round=>ARENA_OBSTACLES[round]||ARENA_OBSTACLES[0];
 export class Room {
@@ -114,7 +115,7 @@ export class Room {
       p.attackAt = -10; p.dodgeAt = -10; p.dodgeUntil = p.dodgeReady = p.hitSafeUntil = 0;
       p.energy = 100; p.cds = [0, 0, 0]; p.basicAt = 0; p.blockAt = 0; p.block = false;
       p.shieldUntil = 0; p.rootUntil = 0; p.shadowBonus = 0; p.poisonUntil = 0;
-      p.downAt = null; p.eliminated = false; p.revive = 0; p.reviveTarget = null; p.roundStats = stats();
+      p.downAt = null; p.eliminated = false; p.revive = 0; p.reviveTarget = null; p.roundStats = stats();resetCombo(p);
       p.input = { x: 0, y: 0, ax: 1, ay: 0, attack: false, block: false, revive: false };
     }
     this.emit('round', { round: this.round, text: info.title });
@@ -140,7 +141,7 @@ export class Room {
     if (this.state !== 'battle' || !this.boss || this.boss.hp <= 0 || this.now < this.boss.immuneUntil) return 0;
     if (this.boss.guarding && this.boss.state === 'windup') amount *= .65;
     const actual = Math.min(Math.round(amount * 10) / 10, this.boss.hp); this.boss.hp -= actual; this.boss.hurtAt = this.now;
-    p.stats.damage += actual; p.roundStats.damage += actual;
+    p.stats.damage += actual; p.roundStats.damage += actual;recordCombo(p,actual,this.now);
     this.emit('hit', { x: this.boss.x, y: this.boss.y - 40, amount: actual, owner: p.id, target: 'boss' });
     if (this.boss.hp <= 0) this.endRound(true);
     return actual;
@@ -148,7 +149,7 @@ export class Room {
   hitMinion(p, m, amount) {
     if (m.hp <= 0 || this.now < m.activeAt || this.state !== 'battle') return 0;
     const actual = Math.min(m.hp, amount); m.hp -= actual; m.hurtAt = this.now;
-    p.stats.damage += actual; p.roundStats.damage += actual;
+    p.stats.damage += actual; p.roundStats.damage += actual;recordCombo(p,actual,this.now);
     this.emit('hit', { x:m.x, y:m.y-20, amount:actual, owner:p.id, target:m.id, minion:true });
     if (m.hp <= 0) { dropPotion(this,m); this.emit('minionDeath', {x:m.x,y:m.y,kind:m.kind}); p.energy = Math.min(100,p.energy+8); }
     return actual;
@@ -241,7 +242,7 @@ export class Room {
     const taken = Math.min(p.hp, final), avoided = amount - final;
     p.hp = Math.max(0, p.hp - final); p.stats.taken += taken; p.roundStats.taken += taken;
     p.stats.avoided += avoided; p.roundStats.avoided += avoided;
-    p.emoteUntil=0;p.reviveTarget = null; p.revive = 0; p.lastHurt = this.now;
+    if(taken>0)resetCombo(p);p.emoteUntil=0;p.reviveTarget = null; p.revive = 0; p.lastHurt = this.now;
     if (breaks && p.block) { p.block = false; p.blockAt = this.now + .8; this.emit('notice', { text: `${p.name}: defesa quebrada!` }); }
     const origin=source||this.boss||{x:p.x-1,y:p.y};
     this.emit('hurt', {angle:Math.atan2(p.y-origin.y,p.x-origin.x), owner: p.id, x: p.x, y: p.y, amount: final, blocked: factor < 1 });
@@ -256,7 +257,7 @@ export class Room {
     if (this.state === 'ending') {
       this.endingAt=this.now+(won?4:0);this.transitionAt=this.endingAt+(this.wins===3&&this.keys.length===2?18:14);this.boss.state=won?'fallen':'awakening';this.boss.startedAt=this.now;
       if (this.wins === 3) this.score += 150;
-      this.score += [...this.players.values()].reduce((s, p) => s + Math.floor(p.stats.damage / 30 + p.stats.avoided / 8 + p.stats.revives * 30), 0);
+      this.score += [...this.players.values()].reduce((s, p) => s + Math.floor(p.stats.damage / 30 + p.stats.avoided / 8 + p.stats.revives * 30 + (p.stats.comboPoints||0)), 0);
     }
     this.projectiles = []; this.hazards = []; this.effects = []; this.minions = [];
     if(won){this.boss.state='fallen';this.boss.startedAt=this.now;dropBossKey(this);if(this.round===2)for(const p of this.players.values()){p.hp=Math.max(p.hp,p.maxHp*.4);p.downAt=null;p.eliminated=false;}}
@@ -264,7 +265,7 @@ export class Room {
   }
   planAttack(kind) { planBossAttack(this,kind); }
   tick(dt) {
-    this.now += dt;
+    this.now += dt;for(const p of this.players.values())expireCombo(p,this.now);
     for (const p of this.players.values()) if (!p.connected && p.disconnectedAt !== null && this.now - p.disconnectedAt > 60) this.remove(p.id);
     if(['round_end','ending'].includes(this.state)){tickBossKeys(this,dt,obstacles(this.round));if(this.keyDrop&&!this.keyDrop.collectedAt&&this.now>=this.transitionAt){this.transitionAt=this.now+.5;return;}}
     if(this.state==='ending'&&this.now>=this.transitionAt){this.state='finished';return;}
@@ -401,10 +402,10 @@ export class Room {
     const playerView = p => ({ emote:p.emote,emoteAt:p.emoteAt,emoteUntil:p.emoteUntil,emoteReady:p.emoteReady,id: p.id, name: p.name, classId: p.classId, isBot: !!p.isBot, ready: p.ready, connected: p.connected,
       x: p.x, y: p.y, vx: p.vx, vy: p.vy, hp: p.hp, maxHp: p.maxHp, energy: p.energy, facing: p.facing, aiming: !!p.input.attack,
       attackAt:p.attackAt,attackFor:p.attackFor,attackSlot:p.attackSlot,lastHurt:p.lastHurt,dodgeAt:p.dodgeAt,dodgeUntil:p.dodgeUntil,dodgeReady:p.dodgeReady,
-      potions:p.potions,potionReady:p.potionReady,
+      combo:p.combo,potions:p.potions,potionReady:p.potionReady,
       cds: p.cds, basicAt: p.basicAt, block: p.block, shieldUntil: p.shieldUntil, rootUntil: p.rootUntil,
       downAt: p.downAt, eliminated: p.eliminated, revive: p.revive, reviveTarget: p.reviveTarget, stats: p.stats });
-    return { code: this.code, name: this.name, owner: this.owner, public: this.public, solo: this.solo, botsEnabled: this.botsEnabled, state: this.state, round: this.round,
+    return { code: this.code, name: this.name, owner: this.owner, public: this.public, solo: this.solo, couch:!!this.couch, botsEnabled: this.botsEnabled, state: this.state, round: this.round,
       keys:this.keys,keyDrop:this.keyDrop,keySceneUntil:this.keySceneUntil,gateUnlocked:this.gateUnlocked,secretUnlocked:this.secretUnlocked,vaultOpenedAt:this.vaultOpenedAt,endingAt:this.endingAt,intro:this.intro,outroStarted:this.outroStarted,now: this.now, transitionAt: this.transitionAt, remaining: this.remaining, boss: this.boss,
       players: [...this.players.values()].map(playerView), minions:this.minions,drops:this.drops,dialogue:this.dialogue, projectiles: this.projectiles, hazards: this.hazards,
       score: this.score, bestScore: this.bestScore || 0, wins: this.wins, results: this.results, events: this.events };

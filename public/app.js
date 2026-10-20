@@ -1,4 +1,7 @@
-import {drawKeyReward,drawKeyRing,drawKeyPassage,drawSecretEnding,epilogueCast} from './key-art.js';
+import {GamepadHub,padLabels,padMenu} from './gamepads.js';
+import {LocalSeats} from './local-seats.js';
+import {AdaptiveEffects} from './effect-budget.js';
+import {drawMagicalKey,drawKeyReward,drawKeyRing,drawKeyPassage,drawSecretEnding,epilogueCast} from './key-art.js';
 import {sceneImage} from './scenes.js';
 import {configureLighting,stepLighting,drawGroundLighting,drawLightSpill,emitLight,resetLighting,lightingStats} from './lighting.js';
 import {LocalMotion,PositionTrack,cameraFocus} from './motion.js';
@@ -12,7 +15,7 @@ import { cinematicPlayer,drawGate,drawAwakening,drawCorridor,drawEnding } from '
 import { hudIcon } from './hud-art.js';
 import { drawTelegraph,drawTelegraphEdge } from './telegraphs.js';
 import { drawMinion,resetAnimationState } from './animation.js';
-import { impactFX,hazardImpact,magicFX,footFX,slashFX,bowFX,drawProjectile,stepFX,drawGroundFX,drawFX,resetFX,setEffectsQuality,effectsStats,effectsOcclude } from './vfx.js';
+import { impactFX,hazardImpact,magicFX,footFX,slashFX,bowFX,drawProjectile,stepFX,drawGroundFX,drawFX,resetFX,setEffectsQuality,effectsStats,effectsOcclude,setRenderBounds,setEffectsDensity } from './vfx.js';
 import { AudioEngine } from './audio.js';
 
 const $ = id => document.getElementById(id);
@@ -20,7 +23,7 @@ const esc = text => String(text ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;'
 const desktopParams=new URLSearchParams(location.search);
 const nativeDesktop=desktopParams.get('desktop')==='1';
 const apiBase = (window.IRON_CONFIG?.serverUrl || '').replace(/\/$/,'');
-const canvas=$('game'), ctx=canvas.getContext('2d');canvas.width=WORLD.w;canvas.height=WORLD.h;ctx.imageSmoothingEnabled=false;
+const canvas=$('game'), ctx=canvas.getContext('2d',{alpha:false});canvas.width=WORLD.w;canvas.height=WORLD.h;ctx.imageSmoothingEnabled=false;
 const audio=new AudioEngine();
 const enableAudio=()=>audio.enable().then(()=>{$('audio-toggle').textContent='♪';$('audio-toggle').title='Desativar áudio';});
 document.addEventListener('pointerdown',e=>{if(e.target.closest('#audio-toggle'))return;enableAudio();},{once:true});
@@ -35,8 +38,9 @@ let joystick={x:0,y:0},touchBlock=false,touchAttack=false,touchRevive=false;
 let cameraFraction=.5,zoom=1.55,viewX=600,viewY=380,viewZoom=1.55;
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const footPositions=new Map();
+const gamepads=new GamepadHub(),localSeats=new LocalSeats({room:()=>room,session:()=>session,send:(type,data)=>send(type,{...data,seq:++seq}),notify:toast});let controllerSignature='';const seatMotion=new Map(),seatVisual=new Map();
 let settings;try{settings=cleanSettings(JSON.parse(storageGet('iron-presentation')||'{}'));}catch{settings=cleanSettings();}
-setEffectsQuality(settings.quality);configureLighting(settings.lighting,settings.quality);const localMotion=new LocalMotion(),tracks=new Map(),monitor=new FrameMonitor(),hurtCamera=new HurtCamera();let perfLast=0,lastHud=0,teamMarkup='',solidsNow=[],localVisual=null;
+setEffectsQuality(settings.quality);configureLighting(settings.lighting,settings.quality);const localMotion=new LocalMotion(),tracks=new Map(),monitor=new FrameMonitor(),hurtCamera=new HurtCamera();const effectsSurface=new AdaptiveEffects();effectsSurface.configure(settings.quality,settings.autoEffects);audio.configure(settings);let perfLast=0,lastHud=0,teamMarkup='',solidsNow=[],localVisual=null;
 function setZoom(value){zoom=clamp(value,1,2);$('zoom-value').textContent=Math.round(zoom*100)+'%';}
 $('zoom-in').onclick=()=>setZoom(zoom+.12);$('zoom-out').onclick=()=>setZoom(zoom-.12);
 const portraitCamera=()=>screen==='battle'&&matchMedia('(max-width:720px) and (orientation:portrait)').matches;
@@ -80,7 +84,7 @@ function connect(){
       }
       if(msg.type==='joined'){lastEvent=0;positions.clear();lobbySignature='';resultsSignature='';acceptSnapshot(msg.room,true);}
       if(msg.type==='snapshot')acceptSnapshot(msg.room);
-      if(msg.type==='left'){room=null;positions.clear();showScreen('home');$('footer-state').textContent='A escuridão espera por você.';}
+      if(msg.type==='left'){localSeats.clear();room=null;positions.clear();showScreen('home');$('footer-state').textContent='A escuridão espera por você.';}
       if(msg.type==='error')toast(msg.error,true);
       if(msg.type==='pong')latency=Math.round(performance.now()-msg.time);
     });
@@ -96,10 +100,10 @@ function connect(){
 }
 function acceptSnapshot(value,initial=false){
   const oldState=room?.state,oldRound=room?.round;room=value;snapshotAt=performance.now();
-  if(initial||oldRound!==value.round||oldState!==value.state){tracks.clear();localMotion.reset();resetAnimationState();resetPoseMixes();hurtCamera.reset();}
+  if(initial||oldRound!==value.round||oldState!==value.state){tracks.clear();localMotion.reset();resetAnimationState();resetPoseMixes();hurtCamera.reset();for(const m of seatMotion.values())m.reset();seatVisual.clear();}
   solidsNow=[...ARENA_OBSTACLES[value.round||0],...value.hazards.filter(h=>h.solid&&h.at<=value.now)];
   for(const [id,entity]of [...value.players.map(p=>[p.id,p]),...value.minions.map(p=>[p.id,p]),...(value.boss?[['boss',value.boss]]:[])]){let track=tracks.get(id);if(!track){track=new PositionTrack();tracks.set(id,track);}track.push(entity,value.now);}
-  const own=value.players.find(p=>p.id===session?.id);if(own)localMotion.accept(own,snapshotAt/1000,latency/1000);
+  const own=value.players.find(p=>p.id===session?.id);if(own)localMotion.accept(own,snapshotAt/1000,latency/1000);for(const {slot,player}of localSeats.players())if(slot){if(!seatMotion.has(player.id))seatMotion.set(player.id,new LocalMotion());seatMotion.get(player.id).accept(player,snapshotAt/1000,latency/1000);}
   const liveIds=new Set([...value.players,...value.minions].map(p=>p.id));liveIds.add('boss');for(const id of tracks.keys())if(!liveIds.has(id)){tracks.delete(id);positions.delete(id);}
 
   if(initial)lastEvent=value.events.at(-1)?.id||0;
@@ -118,14 +122,16 @@ function acceptSnapshot(value,initial=false){
   $('footer-state').textContent=`${room.code} · ${room.players.length}/4 jogadores · ${connected?latency+' ms':'reconectando'}`;
 }
 const me=()=>room?.players.find(p=>p.id===session?.id);
+const localOwnerSlot=()=>localSeats.players().find(s=>s.player.id===room?.owner)?.slot;
+function sendAsLeader(type,data={}){const slot=localOwnerSlot();if(slot!==undefined)localSeats.send(slot,type,data);}
 function renderLobby(){
   const p=me();if(!p)return;
-  const signature=JSON.stringify([room.owner,room.code,room.botsEnabled,room.players.map(p=>[p.id,p.name,p.classId,p.ready,p.connected])]);
+  const signature=JSON.stringify([room.owner,room.code,room.botsEnabled,controllerSignature,room.players.map(p=>[p.id,p.name,p.classId,p.ready,p.connected])]);
   if(lobbySignature===signature)return;lobbySignature=signature;
-  const leader=room.owner===session.id,allReady=room.players.every(p=>p.ready&&p.connected);
-  $('lobby').innerHTML=`<div class="lobby-heading"><div><span class="eyebrow">PREPARAÇÃO · ${room.public?'SALA PÚBLICA':room.solo?'SOLO + COMPANHEIROS':'SALA PRIVADA'}</span><h2>Escolha sua lenda.</h2><p class="muted">Três destinos. Uma equipe. A coroa espera.</p></div><div class="room-code-box"><div><small>CÓDIGO DA EXPEDIÇÃO</small><strong>${esc(room.code)}</strong></div><button class="icon-btn" data-action="copy" title="Copiar código" aria-label="Copiar código">⧉</button></div></div>
+  const leader=localOwnerSlot()!==undefined,allReady=room.players.every(p=>p.ready&&p.connected);
+  $('lobby').innerHTML=`<div class="lobby-heading"><div><span class="eyebrow">PREPARAÇÃO · ${room.public?'SALA PÚBLICA':room.solo?'SOLO + COMPANHEIROS':'SALA PRIVADA'}</span><h2>Escolha sua lenda.</h2>${room.couch?'<p class="controller-help">COOP NO MESMO PC · Até 3 controles. Pressione um botão em cada controle para entrar. ← / → escolhem classe · A / × pronto · START / OPTIONS inicia.</p>':''}<p class="muted">Três destinos. Uma equipe. A coroa espera.</p></div><div class="room-code-box"><div><small>CÓDIGO DA EXPEDIÇÃO</small><strong>${esc(room.code)}</strong></div><button class="icon-btn" data-action="copy" title="Copiar código" aria-label="Copiar código">⧉</button></div></div>
     <div class="lobby-grid"><div><div class="class-grid">${Object.entries(CLASSES).map(([id,c])=>`<button class="class-card ${p.classId===id?'selected':''}" data-class="${id}"><span class="selected-mark">${p.classId===id?'◈ SELECIONADO':''}</span><canvas width="190" height="150" data-portrait="${id}"></canvas><div class="class-text"><h3>${c.name}</h3><p>${c.role}</p><p>${id==='knight'?'Resista à escuridão. Proteja seus aliados.':id==='archer'?'Encontre a distância. Acerte o ponto fraco.':'Ataque nas sombras. Desapareça antes do golpe.'}</p><div class="class-meta"><span>♥ ${c.hp} VIDA</span><span>⚡ 100 ENERGIA</span></div></div></button>`).join('')}</div>
-    <div class="skill-preview">${CLASSES[p.classId].skills.map((name,i)=>`<div><strong><kbd>${i+1}</kbd> ${name}</strong>${CLASSES[p.classId].descriptions[i]}<br><span>${COSTS[i]} energia · ${COOLDOWNS[i]}s</span></div>`).join('')}</div></div>
+    <div class="skill-preview">${CLASSES[p.classId].skills.map((name,i)=>`<div><strong><kbd>${gamepads.locked?[padLabels(gamepads.seats[0]?.kind).skill1,padLabels(gamepads.seats[0]?.kind).skill2,padLabels(gamepads.seats[0]?.kind).skill3][i]:i+1}</kbd> ${name}</strong>${CLASSES[p.classId].descriptions[i]}<br><span>${COSTS[i]} energia · ${COOLDOWNS[i]}s</span></div>`).join('')}</div></div>
     <aside class="panel team-lobby"><h3>SEU GRUPO <span class="muted">${room.players.length}/4</span></h3>${room.players.map(a=>`<div class="member"><span class="member-avatar" style="color:${CLASSES[a.classId].color}">${a.classId==='knight'?'♜':a.classId==='archer'?'➶':'◈'}</span><div class="member-text"><strong>${esc(a.name)} ${a.id===room.owner?'♛':''}</strong><small>${CLASSES[a.classId].name} · ${a.isBot?'COMPANHEIRO IA':a.connected?'conectado':'desconectado'}</small></div><span class="badge" style="color:${a.ready?'#8ccfa2':'#7d8880'}">${a.ready?'PRONTO':'…'}</span></div>`).join('')}${Array.from({length:4-room.players.length},()=>'<div class="empty-slot">+ Aguardando um aliado</div>').join('')}<p class="fine">${room.solo?'Companheiros das outras duas classes lutam e podem reviver você. Troque sua classe para atualizar a equipe.':'Compartilhe o código. Seus amigos entram pelo mesmo servidor. Você pode completar as classes ausentes com bots.'}</p></aside></div>
     ${nativeDesktop&&desktopParams.get('mode')==='host'?`<div class="lan-info">REDE LOCAL · IP DO ANFITRIÃO: <strong>${esc(desktopParams.get('lan')||'127.0.0.1')}</strong> · porta 48230 · compartilhe também o código da sala.</div>`:''}${leader&&!room.solo?`<label class="check bot-option"><input type="checkbox" id="bot-toggle" ${room.botsEnabled?'checked':''}> Completar as classes ausentes com companheiros IA</label>`:''}<div class="lobby-actions"><button class="text-link" data-action="leave">← Sair da sala</button><p>${leader?'Marque pronto e inicie quando todos estiverem preparados.':'Aguardando o líder iniciar a expedição.'}</p><div><button class="${p.ready?'secondary':'primary'}" data-action="ready">${p.ready?'✓ Pronto · cancelar':'Estou pronto'}</button>${leader?`<button class="primary" data-action="start" ${!allReady?'disabled':''}>Iniciar expedição →</button>`:''}</div></div><p class="lobby-controls"><kbd>WASD</kbd> mover &nbsp; <kbd>Mouse</kbd> mirar e atacar &nbsp; <kbd>1 2 3</kbd> habilidades &nbsp; <kbd>Espaço</kbd> defender &nbsp; <kbd>E</kbd> dash &nbsp; <kbd>4</kbd> poção &nbsp; <kbd>R</kbd> reviver &nbsp; <kbd>Tab</kbd> emotes</p>`;
   for(const el of $('lobby').querySelectorAll('[data-portrait]')){
@@ -134,29 +140,29 @@ function renderLobby(){
     drawPlayer(c,{x:95,y:126,id:'portrait-'+cls,facing:1.4,classId:cls,hp:100},0,{scale:1.7});
   }
 }
-$('lobby').addEventListener('change',event=>{if(event.target.id==='bot-toggle')send('bots',{enabled:event.target.checked});});
+$('lobby').addEventListener('change',event=>{if(event.target.id==='bot-toggle')sendAsLeader('bots',{enabled:event.target.checked});});
 $('lobby').addEventListener('click',event=>{
   const btn=event.target.closest('button');if(!btn)return;audio.fx('ui');
   if(btn.dataset.class)send('class',{classId:btn.dataset.class});
   const action=btn.dataset.action;
-  if(action==='copy')copyCode();if(action==='ready')send('ready',{ready:!me().ready});if(action==='start')send('start');if(action==='leave')send('leave');
+  if(action==='copy')copyCode();if(action==='ready')send('ready',{ready:!me().ready});if(action==='start')sendAsLeader('start');if(action==='leave')send('leave');
 });
 async function copyCode(){try{await navigator.clipboard.writeText(room.code);toast('Código copiado: '+room.code);}catch{openModal(`<span class="eyebrow">COMPARTILHE COM OS ALIADOS</span><h2>${esc(room.code)}</h2><p>Selecione e copie o código acima.</p>`);}}
 function buildAbilities(){
   const p=me();if(!p)return;const c=CLASSES[p.classId];
-  $('abilities').innerHTML=c.skills.map((name,i)=>`<button class="ability" data-slot="${i}" aria-label="${name}" title="${name}: ${c.descriptions[i]} · ${COSTS[i]} energia · ${COOLDOWNS[i]}s"><canvas class="skill-art" width="64" height="64" data-icon-slot="${i}"></canvas><span class="skill-symbol">${symbols[p.classId][i]}</span><kbd>${i+1}</kbd><span class="cost">${COSTS[i]} ⚡</span><span class="cooldown-cover"></span><span class="cd-number"></span></button>`).join('');
+  $('abilities').innerHTML=c.skills.map((name,i)=>`<button class="ability" data-slot="${i}" aria-label="${name}" title="${name}: ${c.descriptions[i]} · ${COSTS[i]} energia · ${COOLDOWNS[i]}s"><canvas class="skill-art" width="64" height="64" data-icon-slot="${i}"></canvas><span class="skill-symbol">${symbols[p.classId][i]}</span><kbd>${gamepads.locked?[padLabels(gamepads.seats[0]?.kind).skill1,padLabels(gamepads.seats[0]?.kind).skill2,padLabels(gamepads.seats[0]?.kind).skill3][i]:i+1}</kbd><span class="cost">${COSTS[i]} ⚡</span><span class="cooldown-cover"></span><span class="cd-number"></span></button>`).join('');
   const offset=p.classId==='knight'?0:p.classId==='archer'?3:6;for(const el of $('abilities').querySelectorAll('[data-icon-slot]'))hudIcon(el,offset+Number(el.dataset.iconSlot));hudIcon($('dash-icon'),11);
   const cctx=$('portrait').getContext('2d');cctx.clearRect(0,0,64,64);cctx.imageSmoothingEnabled=false;drawPlayer(cctx,{id:'hudportrait',x:32,y:61,facing:1.57,classId:p.classId,hp:100},0,{scale:.9});
 }
 $('abilities').addEventListener('pointerdown',e=>{const btn=e.target.closest('[data-slot]');if(btn){e.preventDefault();useSkill(Number(btn.dataset.slot));}});
-function useSkill(slot){
+function useSkill(slot){if(gamepads.locked)return;
   if(screen!=='battle'||$('modal').open)return;const p=me();if(!p||p.hp<=0||p.eliminated)return;
   if(p.block||input.block){toast('Solte a defesa para usar uma habilidade.');return;}
   if(p.energy<COSTS[slot]){toast('Energia insuficiente.');return;}
   if(p.cds[slot]>room.now)return;
   sendInput();send('skill',{slot,seq:++seq});
 }
-function updateHud(){
+function updateHud(){updateLocalHUD();
   if(!room)return;const p=me(),b=room.boss,info=BOSSES[room.round];if(!p||!b)return;
   $('boss-round').textContent=`RODADA 0${room.round+1} / 03`;$('boss-name').textContent=info.name;
   $('boss-health-fill').style.width=(b.hp/b.maxHp*100)+'%';$('boss-health-fill').style.background=`linear-gradient(90deg,${info.color}77,${info.color})`;
@@ -182,20 +188,20 @@ function renderResults(){
   const last=room.results.at(-1),finished=room.state==='finished',won=finished?room.wins===3:last.won;
   const data=finished?room.players.map(p=>({name:p.name,...p.stats})):last.players;
   data.sort((a,b)=>(b.damage+b.revives*100)-(a.damage+a.revives*100));
-  $('results').innerHTML=`<div class="panel result-panel"><span class="eyebrow">${finished?'A EXPEDIÇÃO CHEGOU AO FIM':`RODADA ${room.round+1} CONCLUÍDA`}</span><h2>${finished?(won?'A coroa caiu. Sua lenda vive.':'A escuridão venceu esta vez.'):(won?'O inimigo encontrou seu fim.':'Reúnam suas forças.')}</h2><p class="muted">${finished?`${room.wins} de 3 chefes derrotados. ${won?'Bônus de expedição perfeita: +150 pontos.':'Uma nova expedição espera por sua equipe.'}`:won?`${BOSSES[room.round].name} foi derrotado. Os sobreviventes recuperam 50% da vida perdida.`:esc(last.reason)}</p><div class="round-pips">${[0,1,2].map(i=>`<span class="${room.results[i]?(room.results[i].won?'win':'loss'):''}"></span>`).join('')}</div><div class="score-summary"><div><strong>${room.score}</strong><span>PONTOS DA EQUIPE</span></div><div><strong>${formatTime(last.remaining)}</strong><span>TEMPO RESTANTE</span></div><div><strong>${finished?room.wins+'/3':'+'+last.reward}</strong><span>${finished?'CHEFES DERROTADOS':'PONTOS DA RODADA'}</span></div></div><table><thead><tr><th>JOGADOR</th><th>DANO CAUSADO</th><th>RECEBIDO</th><th>EVITADO</th><th>REVIVES</th><th>HABILIDADES</th></tr></thead><tbody>${data.map((p,i)=>`<tr><td>${i+1}. ${esc(p.name)}</td><td>${Math.round(p.damage)}</td><td>${Math.round(p.taken)}</td><td>${Math.round(p.avoided)}</td><td>${p.revives}</td><td>${p.skills}</td></tr>`).join('')}</tbody></table>${finished?`<p class="muted">Recorde desta formação: ${room.bestScore || room.score} pontos. Resultado registrado no Quadro de Lendas.</p><div class="result-actions">${room.owner===session.id?'<button class="primary" data-action="restart">Jogar novamente →</button>':'<span class="muted">Aguardando o líder voltar à preparação.</span>'}<button class="secondary" data-action="ranking">Quadro de lendas</button><button class="secondary" data-action="leave">Sair da sala</button></div>`:'<p class="muted" id="next-round">A próxima arena está sendo preparada…</p>'}</div>`;
+  $('results').innerHTML=`<div class="panel result-panel"><span class="eyebrow">${finished?'A EXPEDIÇÃO CHEGOU AO FIM':`RODADA ${room.round+1} CONCLUÍDA`}</span><h2>${finished?(won?'A coroa caiu. Sua lenda vive.':'A escuridão venceu esta vez.'):(won?'O inimigo encontrou seu fim.':'Reúnam suas forças.')}</h2><p class="muted">${finished?`${room.wins} de 3 chefes derrotados. ${won?'Bônus de expedição perfeita: +150 pontos.':'Uma nova expedição espera por sua equipe.'}`:won?`${BOSSES[room.round].name} foi derrotado. Os sobreviventes recuperam 50% da vida perdida.`:esc(last.reason)}</p><div class="round-pips">${[0,1,2].map(i=>`<span class="${room.results[i]?(room.results[i].won?'win':'loss'):''}"></span>`).join('')}</div><div class="score-summary"><div><strong>${room.score}</strong><span>PONTOS DA EQUIPE</span></div><div><strong>${formatTime(last.remaining)}</strong><span>TEMPO RESTANTE</span></div><div><strong>${finished?room.wins+'/3':'+'+last.reward}</strong><span>${finished?'CHEFES DERROTADOS':'PONTOS DA RODADA'}</span></div></div><table><thead><tr><th>JOGADOR</th><th>DANO CAUSADO</th><th>RECEBIDO</th><th>EVITADO</th><th>REVIVES</th><th>HABILIDADES</th><th>MAIOR COMBO</th><th>BÔNUS COMBO</th></tr></thead><tbody>${data.map((p,i)=>`<tr><td>${i+1}. ${esc(p.name)}</td><td>${Math.round(p.damage)}</td><td>${Math.round(p.taken)}</td><td>${Math.round(p.avoided)}</td><td>${p.revives}</td><td>${p.skills}</td><td>${p.maxCombo||0} hits</td><td>+${Math.floor(p.comboPoints||0)}</td></tr>`).join('')}</tbody></table>${finished?`<p class="muted">Recorde desta formação: ${room.bestScore || room.score} pontos. Resultado registrado no Quadro de Lendas.</p><div class="result-actions">${localOwnerSlot()!==undefined?'<button class="primary" data-action="restart">Jogar novamente →</button>':'<span class="muted">Aguardando o líder voltar à preparação.</span>'}<button class="secondary" data-action="ranking">Quadro de lendas</button><button class="secondary" data-action="leave">Sair da sala</button></div>`:'<p class="muted" id="next-round">A próxima arena está sendo preparada…</p>'}</div>`;
 }
-$('results').addEventListener('click',e=>{const action=e.target.closest('[data-action]')?.dataset.action;if(action==='restart'){resultsSignature='';lobbySignature='';send('restart');}if(action==='leave')send('leave');if(action==='ranking')showRanking();});
+$('results').addEventListener('click',e=>{const action=e.target.closest('[data-action]')?.dataset.action;if(action==='restart'){resultsSignature='';lobbySignature='';sendAsLeader('restart');}if(action==='leave')send('leave');if(action==='ranking')showRanking();});
 function formatTime(seconds){const s=Math.max(0,Math.ceil(seconds));return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;}
 
-function openModal(html){$('modal-content').innerHTML=html;if(!$('modal').open)$('modal').showModal();resetInput();}
-function closeModal(){$('modal').close();resetInput();}
+function openModal(html){document.body.classList.add('menu-open');$('modal-content').innerHTML=html;if(!$('modal').open)$('modal').showModal();resetInput();}
+function closeModal(){document.body.classList.remove('menu-open');$('modal').close();resetInput();}
 $('close-modal').onclick=closeModal;$('modal').addEventListener('click',e=>{if(e.target===$('modal')){const rect=$('modal').getBoundingClientRect();if(e.clientX<rect.left||e.clientX>rect.right||e.clientY<rect.top||e.clientY>rect.bottom)closeModal();}});
-$('modal').addEventListener('close',resetInput);
-function help(){openModal(`<span class="eyebrow">GUIA DA EXPEDIÇÃO</span><h2>O trono não cai sozinho.</h2><p>Derrote três chefes em até cinco minutos por arena. As áreas marcadas avisam onde o próximo golpe vai atingir. Ataque durante a recuperação do chefe.</p><div class="help-grid"><span><kbd>WASD</kbd> movimentação</span><span><kbd>Mouse</kbd> mirar · segurar para atacar</span><span><kbd>1 / 2 / 3</kbd> habilidades</span><span><kbd>Espaço</kbd> defender</span><span><kbd>R</kbd> segurar 4s para reviver</span><span><kbd>E</kbd> dash · 20 de energia</span><span><kbd>4</kbd> poção coletada</span><span><kbd>Esc</kbd> menu local</span></div><p>A defesa reduz 60% do dano e drena 15 de energia por segundo. Energia regenera 12/s. Golpes indicados com “rompe defesa” exigem esquiva. Use E para esquivar: custa 20 de energia, tem 2,4s de recarga e protege brevemente durante o avanço. Colete poções dos lacaios passando por elas e use a próxima com 4 (até três guardadas). Reviva um aliado antes de 20s, ficando parado e sem receber dano.</p><p>No celular, use o controle à esquerda e os botões à direita. A mira acompanha o chefe. O menu não pausa a partida online.</p>${room?'<button class="secondary" id="modal-leave">Sair da sala</button>':''}`);$('modal-leave')?.addEventListener('click',()=>{send('leave');closeModal();});}
+$('modal').addEventListener('close',()=>{document.body.classList.remove('menu-open');resetInput();});$('modal').addEventListener('cancel',e=>{e.preventDefault();closeModal();});
+function help(){openModal(`<span class="eyebrow">GUIA DA EXPEDIÇÃO</span><h2>O trono não cai sozinho.</h2><p>Derrote três chefes em até cinco minutos por arena. As áreas marcadas avisam onde o próximo golpe vai atingir. Ataque durante a recuperação do chefe.</p><button type="button" class="primary" id="resume-battle">Retomar partida</button><button type="button" class="secondary" id="menu-settings">Gráficos e áudio</button><div class="help-grid"><span><kbd>WASD</kbd> movimentação</span><span><kbd>Mouse</kbd> mirar · segurar para atacar</span><span><kbd>1 / 2 / 3</kbd> habilidades</span><span><kbd>Espaço</kbd> defender</span><span><kbd>R</kbd> segurar 4s para reviver</span><span><kbd>E</kbd> dash · 20 de energia</span><span><kbd>4</kbd> poção coletada</span><span><kbd>Esc</kbd> menu local</span></div><p>A defesa reduz 60% do dano e drena 15 de energia por segundo. Energia regenera 12/s. Golpes indicados com “rompe defesa” exigem esquiva. Use E para esquivar: custa 20 de energia, tem 2,4s de recarga e protege brevemente durante o avanço. Colete poções dos lacaios passando por elas e use a próxima com 4 (até três guardadas). Reviva um aliado antes de 20s, ficando parado e sem receber dano.</p><p>Controle Xbox / PlayStation: analógico esquerdo move, direito mira; X / □ ataca; A / × dash; Y / △ habilidade 1; RB / R1 habilidade 2; RT / R2 habilidade 3; LB / L1 defende; B / ○ segurado revive; ↑ usa poção; ↓ emote; START / OPTIONS abre o menu. Durante uso do controle, teclado e mouse não comandam a batalha. Esc e mouse ficam disponíveis nos menus. O menu não pausa a partida online.</p>${room?'<button class="secondary" id="modal-leave">Sair da sala</button>':''}${nativeDesktop?'<button type="button" class="secondary" id="return-pc-menu">Voltar ao menu do PC</button>':''}`);$('resume-battle')?.addEventListener('click',closeModal);$('menu-settings')?.addEventListener('click',presentationSettings);$('modal-leave')?.addEventListener('click',()=>{localSeats.clear();send('leave');closeModal();});$('return-pc-menu')?.addEventListener('click',()=>{localSeats.clear();audio.dispose();window.ironDesktop.returnToMenu().catch(()=>{});});}
 $('help').onclick=help;$('battle-menu').onclick=help;
-function presentationSettings(){openModal(`<span class="eyebrow">CONFORTO E DESEMPENHO</span><h2>Ajustes da expedição</h2><form id="presentation-form" class="presentation-form"><label>Efeitos visuais<select id="fx-quality"><option value="low">Baixo</option><option value="medium">Médio</option><option value="high">Alto · efeitos completos</option></select></label><label>Impacto da câmera <output id="shake-value"></output><input id="shake-strength" type="range" min="0" max="100" step="5"></label><label class="check"><input id="auto-camera" type="checkbox"> Câmera acompanha a mira e ataques grandes</label><label class="check"><input id="player-outline" type="checkbox"> Destacar meu personagem atrás dos efeitos</label><label class="check"><input id="dynamic-lights" type="checkbox"> Iluminação dinâmica e sombras</label><label class="check"><input id="show-perf" type="checkbox"> Mostrar FPS e tempo de quadro</label><p>Os avisos de perigo permanecem completos em todas as qualidades. O menu não pausa a partida.</p><button class="primary" type="submit">Salvar e voltar</button></form>`);
- $('fx-quality').value=settings.quality;$('shake-strength').value=settings.shake*100;$('shake-value').textContent=Math.round(settings.shake*100)+'%';$('auto-camera').checked=settings.autoCamera;$('player-outline').checked=settings.outline;$('show-perf').checked=settings.showPerf;$('dynamic-lights').checked=settings.lighting;
- const apply=()=>{settings=cleanSettings({quality:$('fx-quality').value,shake:Number($('shake-strength').value)/100,autoCamera:$('auto-camera').checked,outline:$('player-outline').checked,showPerf:$('show-perf').checked,lighting:$('dynamic-lights').checked});setEffectsQuality(settings.quality);configureLighting(settings.lighting,settings.quality);storageSet('iron-presentation',JSON.stringify(settings));if(nativeDesktop&&window.ironPreferences)window.ironPreferences.save(settings).catch(()=>toast('Não foi possível salvar os ajustes no perfil do PC.'));$('shake-value').textContent=Math.round(settings.shake*100)+'%';};
+function presentationSettings(){openModal(`<span class="eyebrow">CONFORTO E DESEMPENHO</span><h2>Ajustes da expedição</h2><form id="presentation-form" class="presentation-form"><label>Efeitos visuais<select id="fx-quality"><option value="low">Baixo</option><option value="medium">Médio</option><option value="high">Alto · efeitos completos</option></select></label><label>Volume da música<input id="music-volume" type="range" min="0" max="100" step="1"></label><label>Volume dos efeitos<input id="effects-volume" type="range" min="0" max="100" step="1"></label><label>Impacto da câmera <output id="shake-value"></output><input id="shake-strength" type="range" min="0" max="100" step="5"></label><label class="check"><input id="auto-camera" type="checkbox"> Câmera acompanha a mira e ataques grandes</label><label class="check"><input id="player-outline" type="checkbox"> Destacar meu personagem atrás dos efeitos</label><label class="check"><input id="dynamic-lights" type="checkbox"> Iluminação dinâmica e sombras</label><label class="check"><input id="auto-effects" type="checkbox"> Ajustar efeitos para priorizar 60 FPS</label><label class="check"><input id="show-perf" type="checkbox"> Mostrar FPS e tempo de quadro</label><p>Os avisos de perigo permanecem completos em todas as qualidades. O menu não pausa a partida.</p><button class="primary" type="submit">Salvar e voltar</button></form>`);
+ $('fx-quality').value=settings.quality;$('music-volume').value=settings.musicVolume*100;$('effects-volume').value=settings.effectsVolume*100;$('shake-strength').value=settings.shake*100;$('shake-value').textContent=Math.round(settings.shake*100)+'%';$('auto-camera').checked=settings.autoCamera;$('player-outline').checked=settings.outline;$('show-perf').checked=settings.showPerf;$('dynamic-lights').checked=settings.lighting;$('auto-effects').checked=settings.autoEffects;
+ const apply=()=>{settings=cleanSettings({quality:$('fx-quality').value,musicVolume:Number($('music-volume').value)/100,effectsVolume:Number($('effects-volume').value)/100,shake:Number($('shake-strength').value)/100,autoCamera:$('auto-camera').checked,outline:$('player-outline').checked,showPerf:$('show-perf').checked,lighting:$('dynamic-lights').checked,autoEffects:$('auto-effects').checked});setEffectsQuality(settings.quality);configureLighting(settings.lighting,settings.quality);effectsSurface.configure(settings.quality,settings.autoEffects);audio.configure(settings);storageSet('iron-presentation',JSON.stringify(settings));if(nativeDesktop&&window.ironPreferences)window.ironPreferences.save(settings).catch(()=>toast('Não foi possível salvar os ajustes no perfil do PC.'));$('shake-value').textContent=Math.round(settings.shake*100)+'%';};
  $('presentation-form').oninput=apply;$('presentation-form').onsubmit=e=>{e.preventDefault();apply();closeModal();};}
  $('settings').onclick=presentationSettings;
 
@@ -216,6 +222,8 @@ $('public-rooms').onclick=async()=>{openModal('<span class="eyebrow">EXPEDIÇÕE
 
 function resetInput(){keys.clear();attacking=false;touchAttack=false;touchBlock=false;touchRevive=false;joystick={x:0,y:0};input.x=0;input.y=0;input.attack=false;input.block=false;input.revive=false;const thumb=$('joystick').firstElementChild;thumb.style.transform='';if(screen==='battle')sendInput();}
 addEventListener('keydown',e=>{
+  if(e.code==='Escape'&&$('modal').open){e.preventDefault();closeModal();return;}
+  if(gamepads.locked&&e.code!=='Escape'&&screen==='battle'){e.preventDefault();return;}
   if(e.code==='Tab'&&screen==='battle'&&!$('modal').open){e.preventDefault();$('emote-wheel').hidden=!$('emote-wheel').hidden;resetInput();return;}
   if(!$('emote-wheel').hidden&&['Digit1','Digit2','Digit3','Digit4'].includes(e.code)){e.preventDefault();playEmote(Object.keys(EMOTES)[Number(e.code.at(-1))-1]);return;}
   if(e.code==='Escape'&&!$('emote-wheel').hidden){e.preventDefault();$('emote-wheel').hidden=true;return;}
@@ -226,8 +234,8 @@ addEventListener('keydown',e=>{
 });
 addEventListener('keyup',e=>{keys.delete(e.code);if(['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))sendInput();});addEventListener('blur',resetInput);document.addEventListener('visibilitychange',()=>{if(document.hidden)resetInput();});
 function worldPointer(e){const rect=canvas.getBoundingClientRect(),cover=portraitCamera(),s=(cover?Math.max:Math.min)(rect.width/WORLD.w,rect.height/WORLD.h),ox=(rect.width-WORLD.w*s)*(cover?cameraFraction:.5),oy=(rect.height-WORLD.h*s)/2;return{x:((e.clientX-rect.left-ox)/s-600)/viewZoom+viewX,y:((e.clientY-rect.top-oy)/s-380)/viewZoom+viewY};}
-canvas.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'){pointerClient={clientX:e.clientX,clientY:e.clientY};pointer=worldPointer(pointerClient);}});
-canvas.addEventListener('pointerdown',e=>{if(e.button===0&&e.pointerType==='mouse'&&screen==='battle'&&!$('modal').open){attacking=true;pointerClient={clientX:e.clientX,clientY:e.clientY};pointer=worldPointer(pointerClient);e.preventDefault();canvas.setPointerCapture(e.pointerId);}});
+canvas.addEventListener('pointermove',e=>{if(!gamepads.locked&&e.pointerType==='mouse'){pointerClient={clientX:e.clientX,clientY:e.clientY};pointer=worldPointer(pointerClient);}});
+canvas.addEventListener('pointerdown',e=>{if(!gamepads.locked&&e.button===0&&e.pointerType==='mouse'&&screen==='battle'&&!$('modal').open){attacking=true;pointerClient={clientX:e.clientX,clientY:e.clientY};pointer=worldPointer(pointerClient);e.preventDefault();canvas.setPointerCapture(e.pointerId);}});
 addEventListener('pointerup',()=>{attacking=false;});canvas.addEventListener('contextmenu',e=>e.preventDefault());
 for(const [id,set] of [['touch-block',v=>touchBlock=v],['touch-attack',v=>touchAttack=v],['touch-revive',v=>touchRevive=v]]){
   const el=$(id);el.addEventListener('pointerdown',e=>{e.preventDefault();el.setPointerCapture(e.pointerId);set(true);});for(const event of ['pointerup','pointercancel','lostpointercapture'])el.addEventListener(event,()=>set(false));
@@ -239,6 +247,7 @@ $('joystick').addEventListener('pointermove',e=>{if(e.pointerId===stickId)update
 for(const event of ['pointerup','pointercancel','lostpointercapture'])$('joystick').addEventListener(event,()=>{stickId=null;joystick={x:0,y:0};$('joystick').firstElementChild.style.transform='';});
 function sampleIntent(){
   const modal=$('modal').open||document.hidden||!$('emote-wheel').hidden;
+  if(gamepads.locked){Object.assign(input,gamepads.intent(0,modal));return input;}
   input.x=modal?0:(keys.has('KeyD')||keys.has('ArrowRight')?1:0)-(keys.has('KeyA')||keys.has('ArrowLeft')?1:0)+joystick.x;
   input.y=modal?0:(keys.has('KeyS')||keys.has('ArrowDown')?1:0)-(keys.has('KeyW')||keys.has('ArrowUp')?1:0)+joystick.y;
   input.block=!modal&&(keys.has('Space')||touchBlock);input.attack=!modal&&(attacking||touchAttack||keys.has('KeyJ'));input.revive=!modal&&(keys.has('KeyR')||touchRevive);
@@ -247,6 +256,7 @@ function sampleIntent(){
 function sendInput(){
   if(screen!=='battle'||!connected||!room)return;const p=me();if(!p)return;
   sampleIntent();
+  if(gamepads.locked){for(const seat of gamepads.seats)localSeats.send(seat.slot,'input',gamepads.intent(seat.slot,$('modal').open||document.hidden||!$('emote-wheel').hidden));return;}
   if(pointerClient)pointer=worldPointer(pointerClient);
   const target=pointer||room.boss||{x:p.x+1,y:p.y},dx=target.x-(localVisual?.x??p.x),dy=target.y-(localVisual?.y??p.y),len=Math.hypot(dx,dy)||1;
   send('input',{...input,ax:dx/len,ay:dy/len,seq:++seq});
@@ -255,10 +265,10 @@ function playEmote(kind){$('emote-wheel').hidden=true;resetInput();send('emote',
 for(const button of $('emote-wheel').querySelectorAll('[data-emote]'))button.onclick=()=>playEmote(button.dataset.emote);
 $('emote-open').onclick=()=>{$('emote-wheel').hidden=!$('emote-wheel').hidden;resetInput();};
 $('emote-close').onclick=()=>{$('emote-wheel').hidden=true;};
-function useDash(){if(screen!=='battle'||$('modal').open)return;sendInput();send('dodge',{seq:++seq});}
-function useItem(){if(screen!=='battle'||$('modal').open)return;sendInput();send('potion',{seq:++seq});}
+function useDash(){if(gamepads.locked)return;if(screen!=='battle'||$('modal').open)return;sendInput();send('dodge',{seq:++seq});}
+function useItem(){if(gamepads.locked)return;if(screen!=='battle'||$('modal').open)return;sendInput();send('potion',{seq:++seq});}
 $('dash-slot').onclick=useDash;$('potion-slot').onclick=useItem;$('touch-dash').onclick=useDash;
-canvas.addEventListener('wheel',e=>{if(screen==='battle'){e.preventDefault();setZoom(zoom-Math.sign(e.deltaY)*.08);}},{passive:false});
+canvas.addEventListener('wheel',e=>{if(!gamepads.locked&&screen==='battle'){e.preventDefault();setZoom(zoom-Math.sign(e.deltaY)*.08);}},{passive:false});
 setInterval(sendInput,50);setInterval(()=>{if(connected)send('ping',{time:performance.now()});},2500);
 
 function burst(x,y,color,count=15,speed=90){
@@ -282,7 +292,7 @@ function eventEffect(e){
   if(e.type==='shot'){emitLight(e.x,e.y,e.color==='ice'?'#a7e5ff':'#e0d294',95,.18,.3);}if(e.type==='shot')bowFX(e.x,e.y,Math.atan2(e.vy,e.vx),e.color==='ice'?'ice':e.color==='pierce'?'gold':'green',0);
   if(e.type==='hurt'){emitLight(e.x,e.y,e.blocked?'#b3dce9':'#ea6472',90,.2,.35);
     impactFX(e.x,e.y-12,e.blocked?'gold':'red');
-    burst(e.x,e.y-20,e.blocked?'#a8cee4':'#d96973',e.blocked?12:19);floats.push({x:e.x,y:e.y-65,text:'−'+Math.round(e.amount),color:e.blocked?'#a4d6e3':'#f2a19e',life:1});audio.fx(e.blocked?'block':'hit');if(e.owner===session.id){hurtCamera.hit(e.angle||0,e.amount,e.blocked);flash=e.blocked?0:.06*settings.shake;}
+    burst(e.x,e.y-20,e.blocked?'#a8cee4':'#d96973',e.blocked?12:19);floats.push({x:e.x,y:e.y-65,text:'−'+Math.round(e.amount),color:e.blocked?'#a4d6e3':'#f2a19e',life:1});audio.fx(e.blocked?'block':'hit');if(localSeats.players().some(s=>s.player.id===e.owner)){const slot=localSeats.players().find(s=>s.player.id===e.owner).slot;gamepads.rumble(slot,e.amount,e.blocked);shake=Math.max(shake,e.blocked?1.5:Math.min(7,2+e.amount*.12));hurtCamera.hit(e.angle||0,e.amount,e.blocked);flash=e.blocked?0:.06*settings.shake;}
   }
   if(e.type==='emote'){magicFX(e.x,e.y,'gold',8);audio.fx('ui');}
   if(e.type==='dodge'){footFX(e.x,e.y);audio.fx('dash');}
@@ -305,6 +315,7 @@ function eventEffect(e){
 }
 function warning(text,seconds){$('danger').textContent=text;warningUntil=frameTime+seconds;$('danger').classList.add('visible');}
 function smoothPosition(id,target,dt,now){
+ if(seatVisual.has(id))return{...target,...seatVisual.get(id)};
  if(id===session?.id&&localVisual){positions.set(id,{x:localVisual.x,y:localVisual.y});return{...target,...localVisual};}
  const p=tracks.get(id)?.sample(now-.065,target)||target;positions.set(id,{x:p.x,y:p.y});return p;
 }
@@ -324,14 +335,19 @@ function drawDrop(d,time){
 function drawProjectiles(projectiles){for(const p of projectiles)drawProjectile(ctx,p,frameTime);}
 
 function render(time){
-  const cpuStart=performance.now(),frameInterval=time-previousFrame;const dt=Math.min(.05,frameInterval/1000);previousFrame=time;frameTime=time/1000;
+  const cpuStart=performance.now(),frameInterval=time-previousFrame;const dt=Math.min(.05,frameInterval/1000);previousFrame=time;frameTime=time/1000;updateControllers();
   ctx.clearRect(0,0,WORLD.w,WORLD.h);ctx.save();
   if(shake>.1&&!reducedMotion){ctx.translate((Math.random()-.5)*shake*settings.shake,(Math.random()-.5)*shake*settings.shake);}shake*=Math.exp(-dt*12);const hurtView=hurtCamera.step(dt,reducedMotion?0:settings.shake);ctx.translate(hurtView.x,hurtView.y);
   const gameplay=room&&room.state!=='lobby',round=gameplay?room.round:0,now=room?room.now+(time-snapshotAt)/1000:0;
   const own=me();localVisual=room?.state==='battle'&&own?localMotion.step(sampleIntent(),time/1000,dt,now,solidsNow,room.boss):null;
-  const keyScene=gameplay&&room.keyDrop&&now<room.keySceneUntil;const ending=gameplay&&room.state==='ending'&&!keyScene;
+  seatVisual.clear();if(room?.state==='battle')for(const {slot,player}of localSeats.players())if(slot&&seatMotion.has(player.id)){const p=seatMotion.get(player.id).step(gamepads.intent(slot,$('modal').open),time/1000,dt,now,solidsNow,room.boss);if(p)seatVisual.set(player.id,p);}
+  if(gamepads.locked&&own){const a=gamepads.seats[0]?.aim||{x:1,y:0},p=localVisual||own;pointer={x:p.x+a.x*160,y:p.y+a.y*160};}
+  const localParty=localSeats.players().map(s=>seatVisual.get(s.player.id)||s.player).filter(p=>p.hp>0),sharedCamera=localParty.length>1;
+  const partyCenter=sharedCamera?{x:(Math.min(...localParty.map(p=>p.x))+Math.max(...localParty.map(p=>p.x)))/2,y:(Math.min(...localParty.map(p=>p.y))+Math.max(...localParty.map(p=>p.y)))/2}:null;
+  const sharedZoom=sharedCamera?Math.max(1,Math.min(zoom,1000/(Math.max(...localParty.map(p=>p.x))-Math.min(...localParty.map(p=>p.x))+200),540/(Math.max(...localParty.map(p=>p.y))-Math.min(...localParty.map(p=>p.y))+180))):zoom;
+  const keyScene=gameplay&&room.keyDrop&&now<room.keySceneUntil;const keyBanner=$('key-announcement');keyBanner.hidden=!keyScene;if(keyScene){keyBanner.style.setProperty('--key-color',room.keyDrop.color);$('reward-name').textContent=room.keyDrop.name;$('reward-caption').textContent=room.keyDrop.collectedAt?'CHAVE CONQUISTADA · PASSAGEM LIBERADA':'UM SELO MÁGICO FOI REVELADO';const kc=$('reward-key').getContext('2d');kc.clearRect(0,0,128,128);drawMagicalKey(kc,round,64,64+Math.sin(now*3)*3,104,now);}const ending=gameplay&&room.state==='ending'&&!keyScene;
   const corridor=gameplay&&room.state==='round_end'&&now-room.outroStarted>=6&&!keyScene,awakening=room?.state==='countdown'&&now>=room.intro?.awakeningAt&&now<room.intro.awakeningAt+4.4;
-  const broadCast=settings.autoCamera&&room?.boss?.state==='windup'&&room.hazards.some(h=>h.r>220||h.length>400);viewZoom+=((ending?(room.secretUnlocked?1:1.1):keyScene?Math.min(zoom,1.3):corridor?1:awakening?Math.min(zoom,1.25):broadCast?Math.max(1.1,zoom-.14):zoom)-viewZoom)*(1-Math.exp(-dt*4));
+  const broadCast=settings.autoCamera&&room?.boss?.state==='windup'&&room.hazards.some(h=>h.r>220||h.length>400);viewZoom+=((ending?(room.secretUnlocked?1:1.1):keyScene?Math.min(zoom,1.3):corridor?1:awakening?Math.min(zoom,1.25):sharedCamera?sharedZoom:broadCast?Math.max(1.1,zoom-.14):zoom)-viewZoom)*(1-Math.exp(-dt*4));
   $('results').classList.toggle('corridor',!!corridor);document.body.classList.toggle('in-cinematic',!!(ending||keyScene||corridor||room?.state==='countdown'&&room.transitionAt-now>3));
   document.body.classList.toggle('secret-ending',!!(ending&&room.secretUnlocked));const story=$('story-card');let tale=null;if(ending&&now-room.endingAt>(room.secretUnlocked?11:2.5))tale=endingStory(room.wins);else if(corridor){const bridge=BRIDGES[round];tale={chapter:'ENTRE AS SOMBRAS',title:bridge[0],text:bridge[1]};}else if(room?.state==='countdown'&&now-room.intro.started<3.5)tale=STORY[round];story.hidden=!tale;if(tale){$('story-chapter').textContent=tale.chapter;$('story-title').textContent=tale.title;$('story-text').textContent=tale.text;}
   let fade=0;if(room?.state==='countdown')fade=clamp(1-(now-room.intro.started)/.8,0,1);if(room?.state==='round_end')fade=clamp((now-room.transitionAt+.65)/.65,0,1);$('scene-fade').style.opacity=fade;
@@ -339,9 +355,10 @@ function render(time){
   const cover=portraitCamera(),rect=canvas.getBoundingClientRect();canvas.style.objectFit=cover?'cover':'contain';canvas.style.objectPosition='50% 50%';cameraFraction=.5;
   const screenScale=cover?Math.max(rect.width/WORLD.w,rect.height/WORLD.h):Math.min(rect.width/WORLD.w,rect.height/WORLD.h);
   const visibleW=(cover?rect.width/screenScale:WORLD.w)/viewZoom,visibleH=(cover?rect.height/screenScale:WORLD.h)/viewZoom;
-  if(gameplay){const raw=localVisual||me()||room.players[0],hero=room.state==='countdown'||ending?cinematicPlayer(room,raw,room.players.indexOf(raw),now):raw,p=ending||corridor?{x:600,y:380}:awakening?room.boss:keyScene?room.keyDrop:cameraFocus(hero,pointer,settings.autoCamera&&!reducedMotion),t=1-Math.exp(-dt*5);const tx=clamp(p?.x||600,visibleW/2,WORLD.w-visibleW/2),ty=clamp(p?.y||380,visibleH/2,WORLD.h-visibleH/2);viewX+=(tx-viewX)*t;viewY+=(ty-viewY)*t;ctx.translate(600,380);ctx.scale(viewZoom,viewZoom);ctx.translate(-viewX,-viewY);}
+  if(gameplay){const raw=localVisual||me()||room.players[0],hero=room.state==='countdown'||ending?cinematicPlayer(room,raw,room.players.indexOf(raw),now):raw,p=ending||corridor?{x:600,y:380}:awakening?room.boss:keyScene?room.keyDrop:sharedCamera?partyCenter:cameraFocus(hero,pointer,settings.autoCamera&&!reducedMotion),t=1-Math.exp(-dt*5);const tx=clamp(p?.x||600,visibleW/2,WORLD.w-visibleW/2),ty=clamp(p?.y||380,visibleH/2,WORLD.h-visibleH/2);viewX+=(tx-viewX)*t;viewY+=(ty-viewY)*t;ctx.translate(600,380);ctx.scale(viewZoom,viewZoom);ctx.translate(-viewX,-viewY);}
   else{viewX=600;viewY=380;}
   const cameraLeft=viewX-visibleW/2,cameraWidth=visibleW;
+  setRenderBounds(gameplay?{left:viewX-WORLD.w/viewZoom/2,right:viewX+WORLD.w/viewZoom/2,top:viewY-WORLD.h/viewZoom/2,bottom:viewY+WORLD.h/viewZoom/2}:null);
   stepFX(dt);stepLighting(dt,round,frameTime,room?.projectiles||[]);
   if(corridor)drawCorridor(ctx,frameTime);else ctx.drawImage(ending&&room.secretUnlocked&&sceneImage('secret-chamber')||terrain(round),0,0,WORLD.w,WORLD.h);if(!corridor){drawGroundLighting(ctx,round);drawGroundFX(ctx);}
   if(gameplay&&!corridor){for(const h of room.hazards)drawHazard(h,now,frameTime);}
@@ -359,12 +376,12 @@ function render(time){
   for(const [index,raw]of list.entries()){
     const p=gameplay?(ending||corridor||room.state==='countdown'?cinematicPlayer(room,raw,index,now):smoothPosition(raw.id,raw,dt,now)):raw;
     objects.push({y:p.y,draw:()=>{
-      if(gameplay&&p.id===session?.id){ctx.strokeStyle='#dcc28766';ctx.lineWidth=1;ctx.beginPath();ctx.ellipse(p.x,p.y+8,23,10,0,0,Math.PI*2);ctx.stroke();}
+      if(gameplay&&localSeats.players().some(s=>s.player.id===p.id)){ctx.strokeStyle='#dcc28766';ctx.lineWidth=1;ctx.beginPath();ctx.ellipse(p.x,p.y+8,23,10,0,0,Math.PI*2);ctx.stroke();}
       drawPlayer(ctx,p,frameTime,{alpha:p.connected===false?.4:1,attacking:attackUntil.get(p.id)>frameTime,now});
       if(gameplay){
         drawShield(p,frameTime);
         if(p.rootUntil>now){ctx.strokeStyle='#a0bb67';ctx.lineWidth=3;for(let i=0;i<3;i++){ctx.beginPath();ctx.ellipse(p.x,p.y-6-i*6,20,7,0,0,Math.PI*2);ctx.stroke();}}
-        ctx.textAlign='center';ctx.font='10px Arial';ctx.fillStyle=p.id===session?.id?'#ebd3a4':'#c6d2c0';ctx.shadowColor='#000';ctx.shadowBlur=4;ctx.fillText(p.name+(p.isBot?' · IA':''),p.x,p.y-69);ctx.shadowBlur=0;
+        ctx.textAlign='center';ctx.font='10px Arial';ctx.fillStyle=p.id===session?.id?'#ebd3a4':'#c6d2c0';ctx.shadowColor='#000';ctx.shadowBlur=4;ctx.fillText(p.name+(p.isBot?' · IA':room.couch?' · J'+((localSeats.players().find(s=>s.player.id===p.id)?.slot??0)+1):''),p.x,p.y-69);ctx.shadowBlur=0;
         if(p.hp<=0&&!p.eliminated){ctx.fillStyle='#e1b1a2';ctx.font='bold 17px Arial';ctx.fillText('+',p.x,p.y-35);}
         if(p.revive>0){ctx.strokeStyle='#a3ddb4';ctx.lineWidth=3;ctx.beginPath();ctx.arc(p.x,p.y-25,31,-Math.PI/2,-Math.PI/2+p.revive/4*Math.PI*2);ctx.stroke();}
       }
@@ -377,8 +394,8 @@ function render(time){
   for(const [x,y] of [[85,105],[1115,105],[85,665],[1115,665]])torch(ctx,x,y,frameTime,round===1?'#afd28b':round===2?'#ba99ed':'#f1b37c');
   for(let i=rings.length-1;i>=0;i--){const p=rings[i];p.life-=dt;if(p.life<=0){rings.splice(i,1);continue;}const progress=1-p.life/p.total;ctx.globalAlpha=p.life/p.total;ctx.strokeStyle=p.color;ctx.lineWidth=p.slash?5:2;ctx.beginPath();if(p.slash)ctx.arc(p.x,p.y-17,p.r*(.5+progress*.5),p.angle-1.2+progress,p.angle+1.2+progress);else ctx.ellipse(p.x,p.y,p.r*(.3+progress*.7),p.r*(.3+progress*.7)*.6,0,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;}
   for(let i=particles.length-1;i>=0;i--){const p=particles[i];p.life-=dt;if(p.life<=0){particles.splice(i,1);continue;}p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=45*dt;ctx.globalAlpha=clamp(p.life/.3,0,1);ctx.fillStyle=p.color;ctx.fillRect(Math.round(p.x),Math.round(p.y),p.size,p.size);}ctx.globalAlpha=1;
-  drawLightSpill(ctx);drawFX(ctx);
-  if(room?.state==='battle'&&settings.outline&&own?.hp>0){const p=localVisual||own;if(effectsOcclude(p)||boss&&p.y<boss.y&&Math.hypot(p.x-boss.x,p.y-boss.y)<140)drawPlayerHighlight(ctx,p,frameTime,now);}
+  drawLightSpill(ctx);effectsSurface.record(frameInterval/1000,effectsStats().fields>0);setEffectsDensity(effectsSurface.scale);drawFX(ctx);
+  if(room?.state==='battle'&&settings.outline)for(const {player}of localSeats.players()){const p=player.id===session?.id?(localVisual||player):(seatVisual.get(player.id)||player);if(p.hp>0&&(effectsOcclude(p)||boss&&p.y<boss.y&&Math.hypot(p.x-boss.x,p.y-boss.y)<140))drawPlayerHighlight(ctx,p,frameTime,now);}
   if(gameplay&&!corridor&&!ending){
     for(const h of room.hazards)drawTelegraphEdge(ctx,h,now);
     const p=me();if(p&&p.hp>0){const pos=positions.get(p.id)||p;ctx.strokeStyle='#fce6b9bb';ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(pos.x-7,pos.y+15);ctx.lineTo(pos.x,pos.y+19);ctx.lineTo(pos.x+7,pos.y+15);ctx.stroke();}
@@ -409,22 +426,50 @@ function render(time){
   }
   if(screen==='results'&&room?.state==='round_end'&&$('next-round'))$('next-round').textContent=`Próxima arena em ${Math.max(0,Math.ceil(room.transitionAt-now))} segundos · ${BOSSES[Math.min(2,room.round+1)].arena}`;
   if(screen==='battle'&&room?.state==='battle'&&frameTime-lastStep>.43){const p=me();if(p&&p.hp>0&&Math.hypot(p.vx,p.vy)>25){audio.fx('step');footFX(p.x,p.y+3);lastStep=frameTime;}}
-  audio.music(frameTime,round,screen==='battle'&&room?.state==='battle');const perf=monitor.record(frameInterval,performance.now()-cpuStart);if(time-perfLast>500){perfLast=time;const el=$('performance');el.hidden=!settings.showPerf;if(settings.showPerf){const fx=effectsStats();el.textContent=Math.round(perf.fps)+' FPS · P95 '+perf.p95.toFixed(1)+'ms · CPU '+perf.cpu.toFixed(1)+'ms · '+fx.particles+' partículas';}window.IRON_PERF={...perf,...effectsStats(),quality:settings.quality,lights:lightingStats()};}requestAnimationFrame(render);
+  audio.music(frameTime,round,screen==='battle'&&room?.state==='battle');const perf=monitor.record(frameInterval,performance.now()-cpuStart);if(time-perfLast>500){perfLast=time;const el=$('performance');el.hidden=!settings.showPerf;if(settings.showPerf){const fx=effectsStats();el.textContent=Math.round(perf.fps)+' FPS · P95 '+perf.p95.toFixed(1)+'ms · CPU '+perf.cpu.toFixed(1)+'ms · '+fx.particles+' partículas';}window.IRON_PERF={...perf,...effectsStats(),...effectsSurface.stats(),quality:settings.quality,lights:lightingStats()};}requestAnimationFrame(render);
 }
 window.IRON_ART={exportAtlas,bossSprite,playerSprite};
 requestAnimationFrame(render);
 $('player-name').value=storageGet('iron-name')||'';
 async function boot(){
-  if(nativeDesktop&&window.ironPreferences){try{settings=cleanSettings(await window.ironPreferences.get());setEffectsQuality(settings.quality);configureLighting(settings.lighting,settings.quality);}catch{}}
+  if(nativeDesktop&&window.ironPreferences){try{settings=cleanSettings(await window.ironPreferences.get());setEffectsQuality(settings.quality);configureLighting(settings.lighting,settings.quality);effectsSurface.configure(settings.quality,settings.autoEffects);audio.configure(settings);}catch{}}
   try{await api('health');setStatus(nativeDesktop?'PC · SEM HOSPEDAGEM':'SERVIDOR DISPONÍVEL','online');
     if(nativeDesktop){
       const name=(desktopParams.get('name')||'Viajante').slice(0,20);let reused=false;
       if(token){try{const result=await api('session');if(result.session.name===name){setSession(result.session);await connect();reused=true;}}catch{token=null;storageSet('iron-session',null);}}
       if(!reused)await authenticate('guest',{name});
-      if(!room){const mode=desktopParams.get('mode');if(mode==='solo'||mode==='host')send('create',{mode:mode==='solo'?'solo':'lan',public:mode==='host',classId:desktopParams.get('class')||'knight'});else if(desktopParams.get('code'))send('join',{code:desktopParams.get('code'),classId:desktopParams.get('class')||'knight'});else $('public-rooms').click();}
+      if(!room){const mode=desktopParams.get('mode');if(mode==='solo'||mode==='couch'||mode==='host')send('create',{mode:mode==='solo'?'solo':mode==='couch'?'couch':'lan',public:mode==='host',classId:desktopParams.get('class')||'knight'});else if(desktopParams.get('code'))send('join',{code:desktopParams.get('code'),classId:desktopParams.get('class')||'knight'});else $('public-rooms').click();}
       return;
     }
     if(token){const result=await api('session');setSession(result.session);await connect();}}
   catch(error){if(token&&error.message.includes('Sessão')){token=null;storageSet('iron-session',null);setSession(null);setStatus('SERVIDOR DISPONÍVEL','online');}else{setStatus('SERVIDOR OFFLINE','offline');toast(error.message,true);}}
 }
 boot();
+
+function updateControllers(){
+ let frames=[];try{frames=gamepads.poll(navigator.getGamepads?.()||[]);}catch{}
+ const signature=gamepads.seats.map(s=>s.slot+':'+s.connected+':'+s.kind).join();
+ if(signature!==controllerSignature){const was=controllerSignature;controllerSignature=signature;document.body.classList.toggle('controller-mode',gamepads.locked);pointerClient=pointer=null;keys.clear();attacking=false;lobbySignature='';if(gamepads.locked)audio.enable();if(screen==='battle')buildAbilities();if(was)resetInput();}
+ for(const frame of frames){
+  if(frame.slot&&room?.couch&&room.state==='lobby')localSeats.ensure(frame.slot);
+  if(frame.pressed.has(9)){if($('modal').open){closeModal();continue;}if(room?.state==='lobby'){if(room.owner===localSeats.id(frame.slot)&&room.players.every(p=>p.ready&&p.connected))localSeats.send(frame.slot,'start');continue;}if(screen==='battle'){help();continue;}}
+  if($('modal').open){if(frame.pressed.has(1))closeModal();else padMenu(frame,$('modal'));continue;}
+  if(screen==='lobby'&&room){const id=localSeats.id(frame.slot),p=room.players.find(p=>p.id===id);if(!p)continue;const classes=Object.keys(CLASSES);if(frame.pressed.has(14)||frame.pressed.has(15)){const d=frame.pressed.has(14)?-1:1;localSeats.send(frame.slot,'class',{classId:classes[(classes.indexOf(p.classId)+d+classes.length)%classes.length]});}if(frame.pressed.has(0))localSeats.send(frame.slot,'ready',{ready:!p.ready});if(frame.pressed.has(1))localSeats.send(frame.slot,'ready',{ready:false});continue;}
+  if(screen==='results'){if(frame.slot===0)padMenu(frame,$('results'));continue;}
+  if(screen!=='battle'||room?.state!=='battle')continue;
+  if([0,3,5,7,12].some(b=>frame.pressed.has(b)))localSeats.send(frame.slot,'input',gamepads.intent(frame.slot));
+  if(frame.pressed.has(0))localSeats.send(frame.slot,'dodge');
+  for(const [button,slot]of [[3,0],[5,1],[7,2]])if(frame.pressed.has(button))localSeats.send(frame.slot,'skill',{slot});
+  if(frame.pressed.has(12))localSeats.send(frame.slot,'potion');
+  if(frame.pressed.has(13)){const seat=gamepads.seats[frame.slot];localSeats.send(frame.slot,'emote',{emote:Object.keys(EMOTES)[(seat.emoteIndex||0)%4]});seat.emoteIndex=(seat.emoteIndex||0)+1;}
+ }
+}
+function updateLocalHUD(){
+ if(!room)return;const seats=localSeats.players(),party=seats.length>1;document.body.classList.toggle('couch-active',party);$('couch-hud').hidden=!party;
+ const p=me(),combo=p?.combo;$('combo-meter').hidden=!combo?.count||party;if(combo?.count){$('combo-meter').innerHTML=`<strong>${combo.count} HITS</strong><span>×${combo.multiplier.toFixed(2)} · +${Math.floor(p.stats.comboPoints||0)} pontos</span><i style="width:${Math.max(0,(combo.until-room.now)/3.5*100)}%"></i>`;}
+ const labels=gamepads.locked?padLabels(gamepads.seats[0]?.kind):null;if(labels){$('dash-slot').querySelector('kbd').textContent=labels.dash;$('potion-slot').querySelector('kbd').textContent='↑';document.querySelector('.battle-tips').innerHTML=`<span>${labels.attack} atacar</span><span>${labels.block} defender</span><span>${labels.revive} segurar para reviver</span>`;}else{$('dash-slot').querySelector('kbd').textContent='E';$('potion-slot').querySelector('kbd').textContent='4';document.querySelector('.battle-tips').innerHTML='<span>R segurar para reviver</span><span>Mouse ataque básico</span><span>Espaço defender</span>';}
+ if(!party)return;
+ $('couch-hud').innerHTML=seats.map(({slot,player:p})=>{const pad=gamepads.seats[slot],l=padLabels(pad?.kind),c=p.combo;return `<section class="couch-player" style="--seat:${['#dfbd7d','#89cba0','#bfa5e8'][slot]}"><header><strong>J${slot+1} · ${esc(p.name)}</strong><small>${p.hp<=0?'CAÍDO':!pad?.connected?'CONTROLE DESCONECTADO':CLASSES[p.classId].name}</small></header><div class="couch-resource health"><i style="width:${p.hp/p.maxHp*100}%"></i><span>♥ ${Math.ceil(p.hp)} / ${p.maxHp}</span></div><div class="couch-resource energy"><i style="width:${p.energy}%"></i><span>⚡ ${Math.floor(p.energy)}</span></div><div class="couch-skills">${[0,1,2].map((n)=>`<span class="${p.cds[n]>room.now||p.energy<COSTS[n]?'unavailable':''}">${[l.skill1,l.skill2,l.skill3][n]} ${p.cds[n]>room.now?(p.cds[n]-room.now).toFixed(1)+'s':COSTS[n]+'⚡'}</span>`).join('')}<span>${l.dash} ${p.dodgeReady>room.now?(p.dodgeReady-room.now).toFixed(1)+'s':'DASH'}</span><span>↑ ${p.potions?.length||0} POÇ.</span></div><footer>${c?.count?c.count+' HITS · ×'+c.multiplier.toFixed(2)+' · ':''}+${Math.floor(p.stats.comboPoints||0)} BÔNUS COMBO</footer></section>`;}).join('');
+}
+document.addEventListener('pointerdown',e=>{if(gamepads.locked&&screen==='battle'&&!$('modal').open&&e.pointerType==='mouse'){e.preventDefault();e.stopImmediatePropagation();}},{capture:true});
+addEventListener('pagehide',()=>localSeats.clear(),{once:true});

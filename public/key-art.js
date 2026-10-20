@@ -8,9 +8,9 @@ export function drawMagicalKey(c,round,x,y,height=65,time=0){
 }
 export function drawKeyReward(c,room,now){
  const k=room.keyDrop;if(!k)return;const t=now-k.spawned;if(now>room.keySceneUntil)return;
- if(!k.collectedAt){light(c,k.x,k.y,140,k.color,.24);c.save();c.strokeStyle=k.color;c.globalAlpha=.6;c.lineWidth=1.2;c.beginPath();c.ellipse(k.x,k.y+8,30+Math.sin(t*3)*3,12,0,0,Math.PI*2);c.stroke();c.restore();drawMagicalKey(c,k.round,k.x,k.y-46+Math.sin(t*4)*4,72,now);
+ if(!k.collectedAt){light(c,k.x,k.y-30,210,k.color,.34);c.save();c.strokeStyle=k.color;c.globalAlpha=.6;c.lineWidth=1.2;c.beginPath();c.ellipse(k.x,k.y+8,30+Math.sin(t*3)*3,12,0,0,Math.PI*2);c.stroke();c.restore();drawMagicalKey(c,k.round,k.x,k.y-46+Math.sin(t*4)*4,102,now);
   for(let i=0;i<16;i++){const a=i*2.4+now*.8,r=20+(i%4)*8;c.fillStyle=k.color;c.globalAlpha=.3+Math.sin(now*5+i)*.2;c.fillRect(k.x+Math.cos(a)*r,k.y-30+Math.sin(a)*r*.6-(t*20+i*11)%60,2,3);}c.globalAlpha=1;
- }else{const p=room.players.find(p=>p.id===k.carrier);if(p){const age=now-k.collectedAt;c.save();c.globalAlpha=Math.max(0,1-age/1.5);drawMagicalKey(c,k.round,p.x,p.y-90-age*20,65,now);c.restore();}}
+ }else{const p=room.players.find(p=>p.id===k.carrier);if(p){const age=now-k.collectedAt;c.save();c.globalAlpha=Math.min(1,Math.max(0,(room.keySceneUntil-now)/.9));drawMagicalKey(c,k.round,p.x,p.y-110+Math.sin(now*3)*4,96,now);c.restore();}}
 }
 export function drawKeyRing(canvas,keys){const c=canvas.getContext('2d');c.clearRect(0,0,canvas.width,canvas.height);for(let i=0;i<3;i++){c.save();c.globalAlpha=keys.some(k=>k.round===i)?1:.16;drawMagicalKey(c,i,24+i*40,24,40);c.restore();}}
 export function drawKeyPassage(c,room,now){

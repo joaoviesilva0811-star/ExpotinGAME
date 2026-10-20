@@ -1,0 +1,3291 @@
+{
+  "description": "Linux na nuvem, renderiza\u00e7\u00e3o por software. FPS n\u00e3o \u00e9 garantia para Windows. A adapta\u00e7\u00e3o reduz densidade transit\u00f3ria, preservando avisos de perigo e personagens.",
+  "baselineCommit": "ac8925c7f0f496b19b3e0b487e0520dd14b7c61d",
+  "syntheticBefore": {
+    "canvas": [
+      1200,
+      760
+    ],
+    "results": [
+      {
+        "scenario": "regular",
+        "frames": 180,
+        "fps": 48.216007714561236,
+        "p95": 33.400000000000546,
+        "cpuMedian": 1.7000000029802322,
+        "cpuP95": 3,
+        "callsPerFrame": {
+          "drawImage": 122,
+          "stroke": 646,
+          "fill": 314,
+          "save": 412
+        },
+        "effects": {
+          "particles": 602,
+          "pooled": 752,
+          "smoke": 18,
+          "fields": 1,
+          "budget": {
+            "particles": 1800,
+            "smoke": 96,
+            "volumes": 160,
+            "detail": 1
+          }
+        }
+      },
+      {
+        "scenario": "storm",
+        "frames": 180,
+        "fps": 13.534343396368286,
+        "p95": 100,
+        "cpuMedian": 4,
+        "cpuP95": 7.600000001490116,
+        "callsPerFrame": {
+          "drawImage": 261,
+          "stroke": 2118,
+          "fill": 644,
+          "save": 1191
+        },
+        "effects": {
+          "particles": 1526,
+          "pooled": 274,
+          "smoke": 81,
+          "fields": 9,
+          "budget": {
+            "particles": 1800,
+            "smoke": 96,
+            "volumes": 160,
+            "detail": 1
+          }
+        }
+      },
+      {
+        "scenario": "storm-low",
+        "frames": 180,
+        "fps": 32.24015331984024,
+        "p95": 50,
+        "cpuMedian": 1.5999999940395355,
+        "cpuP95": 2.399999998509884,
+        "callsPerFrame": {
+          "drawImage": 127,
+          "stroke": 794,
+          "fill": 215,
+          "save": 391
+        },
+        "effects": {
+          "particles": 215,
+          "pooled": 285,
+          "smoke": 11,
+          "fields": 3,
+          "budget": {
+            "particles": 500,
+            "smoke": 18,
+            "volumes": 42,
+            "detail": 0.45
+          }
+        }
+      }
+    ],
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+  },
+  "syntheticAfter": {
+    "canvas": [
+      1200,
+      760
+    ],
+    "results": [
+      {
+        "scenario": "regular",
+        "frames": 180,
+        "fps": 59.66982695750182,
+        "p95": 16.700000000000728,
+        "cpuMedian": 1.2999999970197678,
+        "cpuP95": 1.9000000059604645,
+        "callsPerFrame": {
+          "drawImage": 114,
+          "stroke": 173,
+          "fill": 85,
+          "save": 179
+        },
+        "effects": {
+          "particles": 111,
+          "pooled": 1210,
+          "smoke": 18,
+          "fields": 1,
+          "budget": {
+            "particles": 1559,
+            "smoke": 72,
+            "volumes": 120,
+            "detail": 0.8660254037844386
+          }
+        },
+        "effectDetail": 75,
+        "adaptiveEffects": true
+      },
+      {
+        "scenario": "storm",
+        "frames": 180,
+        "fps": 35.41146150970864,
+        "p95": 33.399999999999636,
+        "cpuMedian": 1.300000011920929,
+        "cpuP95": 2.2000000029802322,
+        "callsPerFrame": {
+          "drawImage": 134,
+          "stroke": 197,
+          "fill": 80,
+          "save": 211
+        },
+        "effects": {
+          "particles": 329,
+          "pooled": 1471,
+          "smoke": 8,
+          "fields": 6,
+          "budget": {
+            "particles": 624,
+            "smoke": 12,
+            "volumes": 19,
+            "detail": 0.34641016151377546
+          }
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true
+      },
+      {
+        "scenario": "storm-low",
+        "frames": 180,
+        "fps": 45.57192769254138,
+        "p95": 33.400000000001455,
+        "cpuMedian": 1,
+        "cpuP95": 1.5,
+        "callsPerFrame": {
+          "drawImage": 109,
+          "stroke": 153,
+          "fill": 69,
+          "save": 169
+        },
+        "effects": {
+          "particles": 108,
+          "pooled": 1363,
+          "smoke": 3,
+          "fields": 6,
+          "budget": {
+            "particles": 173,
+            "smoke": 4,
+            "volumes": 6,
+            "detail": 0.3
+          }
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true
+      }
+    ],
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+  },
+  "native": {
+    "environment": "Linux cloud, Electron44.9, --disable-gpu, 1200x760 logical canvas, 1440x960 viewport; no recording",
+    "samples": [
+      {
+        "fps": 60,
+        "p95": 16.700000000000728,
+        "cpu": 1.3099999981621901,
+        "particles": 250,
+        "pooled": 421,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1559,
+          "smoke": 72,
+          "volumes": 120,
+          "detail": 0.8660254037844386
+        },
+        "effectDetail": 75,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 5
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 24.147521754999996
+      },
+      {
+        "fps": 60,
+        "p95": 16.700000000000728,
+        "cpu": 1.1983333316942055,
+        "particles": 342,
+        "pooled": 329,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1559,
+          "smoke": 72,
+          "volumes": 120,
+          "detail": 0.8660254037844386
+        },
+        "effectDetail": 75,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 10,
+          "limit": 24,
+          "textures": 5
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 25.155276889000003
+      },
+      {
+        "fps": 60.00393468424167,
+        "p95": 16.799999999999272,
+        "cpu": 1.5360655733307853,
+        "particles": 289,
+        "pooled": 382,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1559,
+          "smoke": 72,
+          "volumes": 120,
+          "detail": 0.8660254037844386
+        },
+        "effectDetail": 75,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 8,
+          "limit": 24,
+          "textures": 5
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 26.161655215000007
+      },
+      {
+        "fps": 60,
+        "p95": 16.700000000000728,
+        "cpu": 1.553333333383004,
+        "particles": 201,
+        "pooled": 470,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1559,
+          "smoke": 72,
+          "volumes": 120,
+          "detail": 0.8660254037844386
+        },
+        "effectDetail": 75,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 5
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 27.167298573000004
+      },
+      {
+        "fps": 60.003934684241464,
+        "p95": 16.799999999999272,
+        "cpu": 1.193442622657682,
+        "particles": 182,
+        "pooled": 489,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1559,
+          "smoke": 72,
+          "volumes": 120,
+          "detail": 0.8660254037844386
+        },
+        "effectDetail": 75,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 5
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 28.171175019999993
+      },
+      {
+        "fps": 60,
+        "p95": 16.799999999999272,
+        "cpu": 1.3966666661202907,
+        "particles": 262,
+        "pooled": 409,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1559,
+          "smoke": 72,
+          "volumes": 120,
+          "detail": 0.8660254037844386
+        },
+        "effectDetail": 75,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 5
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 29.173782120999995
+      },
+      {
+        "fps": 60.00393468424167,
+        "p95": 16.799999999999272,
+        "cpu": 1.4885245903593596,
+        "particles": 108,
+        "pooled": 563,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1559,
+          "smoke": 72,
+          "volumes": 120,
+          "detail": 0.8660254037844386
+        },
+        "effectDetail": 75,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 5
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 30.174516388999997
+      },
+      {
+        "fps": 55.999999999999794,
+        "p95": 33.30000000000291,
+        "cpu": 1.6303571425378323,
+        "particles": 828,
+        "pooled": 131,
+        "smoke": 41,
+        "fields": 2,
+        "budget": {
+          "particles": 1169,
+          "smoke": 41,
+          "volumes": 68,
+          "detail": 0.649519052838329
+        },
+        "effectDetail": 42,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 6
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 31.174876511999994
+      },
+      {
+        "fps": 40.64647246685394,
+        "p95": 33.400000000001455,
+        "cpu": 2.2523809536581947,
+        "particles": 87,
+        "pooled": 872,
+        "smoke": 21,
+        "fields": 1,
+        "budget": {
+          "particles": 759,
+          "smoke": 17,
+          "volumes": 28,
+          "detail": 0.421875
+        },
+        "effectDetail": 18,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 6
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 32.229887262
+      },
+      {
+        "fps": 32.90747193186204,
+        "p95": 66.69999999999709,
+        "cpu": 3.6882352960460327,
+        "particles": 143,
+        "pooled": 816,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 759,
+          "smoke": 17,
+          "volumes": 28,
+          "detail": 0.421875
+        },
+        "effectDetail": 18,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 6
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 33.304343167999996
+      },
+      {
+        "fps": 58,
+        "p95": 16.799999999995634,
+        "cpu": 3.032758621820088,
+        "particles": 119,
+        "pooled": 840,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 759,
+          "smoke": 17,
+          "volumes": 28,
+          "detail": 0.421875
+        },
+        "effectDetail": 18,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 34.307646921999996
+      },
+      {
+        "fps": 59.02026362384427,
+        "p95": 16.80000000000291,
+        "cpu": 1.846666668355465,
+        "particles": 147,
+        "pooled": 812,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 759,
+          "smoke": 17,
+          "volumes": 28,
+          "detail": 0.421875
+        },
+        "effectDetail": 18,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 35.29922289900002
+      },
+      {
+        "fps": 31,
+        "p95": 83.40000000000146,
+        "cpu": 5.26129032383042,
+        "particles": 160,
+        "pooled": 799,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 759,
+          "smoke": 17,
+          "volumes": 28,
+          "detail": 0.421875
+        },
+        "effectDetail": 18,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 36.33124127300001
+      },
+      {
+        "fps": 43.2815266574858,
+        "p95": 49.900000000001455,
+        "cpu": 3.222727271643552,
+        "particles": 190,
+        "pooled": 769,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 759,
+          "smoke": 17,
+          "volumes": 28,
+          "detail": 0.421875
+        },
+        "effectDetail": 18,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 37.384178154
+      },
+      {
+        "fps": 52,
+        "p95": 33.400000000001455,
+        "cpu": 2.1846153856470036,
+        "particles": 38,
+        "pooled": 921,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 759,
+          "smoke": 17,
+          "volumes": 28,
+          "detail": 0.421875
+        },
+        "effectDetail": 18,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 38.33690896200001
+      },
+      {
+        "fps": 53.118237261459846,
+        "p95": 33.299999999995634,
+        "cpu": 1.5907407425068043,
+        "particles": 81,
+        "pooled": 878,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 759,
+          "smoke": 17,
+          "volumes": 28,
+          "detail": 0.421875
+        },
+        "effectDetail": 18,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 39.47744837200001
+      },
+      {
+        "fps": 59.02026362384427,
+        "p95": 16.700000000004366,
+        "cpu": 2.571666667362054,
+        "particles": 139,
+        "pooled": 820,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 759,
+          "smoke": 17,
+          "volumes": 28,
+          "detail": 0.421875
+        },
+        "effectDetail": 18,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 40.48698304300002
+      },
+      {
+        "fps": 54.096586997147405,
+        "p95": 33.30000000000291,
+        "cpu": 2.749090909145095,
+        "particles": 320,
+        "pooled": 639,
+        "smoke": 9,
+        "fields": 1,
+        "budget": {
+          "particles": 658,
+          "smoke": 13,
+          "volumes": 21,
+          "detail": 0.36535446722156006
+        },
+        "effectDetail": 13,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 41.46078876900003
+      },
+      {
+        "fps": 40.33051347629359,
+        "p95": 33.400000000001455,
+        "cpu": 6.626829269819144,
+        "particles": 62,
+        "pooled": 897,
+        "smoke": 8,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 42.526185191000025
+      },
+      {
+        "fps": 26.66920659110388,
+        "p95": 166.59999999999854,
+        "cpu": 6.121428570044892,
+        "particles": 136,
+        "pooled": 823,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 43.61609333800002
+      },
+      {
+        "fps": 33.872060389044954,
+        "p95": 116.59999999999854,
+        "cpu": 3.959999997700964,
+        "particles": 123,
+        "pooled": 836,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 44.77318018700004
+      },
+      {
+        "fps": 54.10190832185686,
+        "p95": 33.5,
+        "cpu": 2.5472727260806343,
+        "particles": 181,
+        "pooled": 778,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 45.76422241000003
+      },
+      {
+        "fps": 47,
+        "p95": 33.400000000001455,
+        "cpu": 2.4170212764689265,
+        "particles": 355,
+        "pooled": 604,
+        "smoke": 12,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 46.796294641000046
+      },
+      {
+        "fps": 30.971738288811547,
+        "p95": 116.80000000000291,
+        "cpu": 3.4156249999068677,
+        "particles": 211,
+        "pooled": 748,
+        "smoke": 7,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 9,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 47.84759671200005
+      },
+      {
+        "fps": 50.994900509949076,
+        "p95": 33.400000000001455,
+        "cpu": 1.850980392858094,
+        "particles": 85,
+        "pooled": 874,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 48.72106088800004
+      },
+      {
+        "fps": 45.94037127320464,
+        "p95": 33.39999999999418,
+        "cpu": 2.1530612229692694,
+        "particles": 81,
+        "pooled": 878,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 49.883464669000034
+      },
+      {
+        "fps": 45.24886877828028,
+        "p95": 50,
+        "cpu": 4.043478260869565,
+        "particles": 81,
+        "pooled": 878,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 50.907912382000035
+      },
+      {
+        "fps": 48.19988195947282,
+        "p95": 33.400000000001455,
+        "cpu": 2.0571428579943523,
+        "particles": 50,
+        "pooled": 909,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 4,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 51.89624324200003
+      },
+      {
+        "fps": 41.31418453669099,
+        "p95": 33.400000000001455,
+        "cpu": 2.478571429848671,
+        "particles": 344,
+        "pooled": 615,
+        "smoke": 12,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 52.89872432000003
+      },
+      {
+        "fps": 12.856775520699442,
+        "p95": 183.40000000000146,
+        "cpu": 7.746666666865349,
+        "particles": 458,
+        "pooled": 501,
+        "smoke": 12,
+        "fields": 5,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 17,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 54.10124866800003
+      },
+      {
+        "fps": 19.355463079454122,
+        "p95": 183.29999999999563,
+        "cpu": 3.1150000005960465,
+        "particles": 47,
+        "pooled": 912,
+        "smoke": 0,
+        "fields": 4,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 55.148484912000036
+      },
+      {
+        "fps": 44.26955238563699,
+        "p95": 33.30000000000291,
+        "cpu": 2.0000000013245476,
+        "particles": 79,
+        "pooled": 880,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 56.15085927700004
+      },
+      {
+        "fps": 57.99420057994209,
+        "p95": 16.80000000000291,
+        "cpu": 2.0517241392156174,
+        "particles": 41,
+        "pooled": 918,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 57.151703018000035
+      },
+      {
+        "fps": 60.00393468424167,
+        "p95": 16.700000000004366,
+        "cpu": 1.3000000004397063,
+        "particles": 68,
+        "pooled": 891,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 58.20639922700003
+      },
+      {
+        "fps": 60.00393468424125,
+        "p95": 16.700000000004366,
+        "cpu": 1.6508196724242852,
+        "particles": 236,
+        "pooled": 723,
+        "smoke": 8,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 59.188136233000016
+      },
+      {
+        "fps": 57.05292150304946,
+        "p95": 16.799999999995634,
+        "cpu": 1.3534482771466518,
+        "particles": 92,
+        "pooled": 867,
+        "smoke": 6,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 60.19178917100002
+      },
+      {
+        "fps": 60.00393468424167,
+        "p95": 16.799999999995634,
+        "cpu": 1.306557376609474,
+        "particles": 62,
+        "pooled": 897,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 61.19512056500001
+      },
+      {
+        "fps": 60,
+        "p95": 16.700000000004366,
+        "cpu": 0.9866666669646899,
+        "particles": 65,
+        "pooled": 894,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 62.24865478300001
+      },
+      {
+        "fps": 57,
+        "p95": 16.700000000004366,
+        "cpu": 1.5508771930870258,
+        "particles": 171,
+        "pooled": 788,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 63.254040295000024
+      },
+      {
+        "fps": 54.101908321857636,
+        "p95": 33.30000000000291,
+        "cpu": 1.7763636364178224,
+        "particles": 343,
+        "pooled": 616,
+        "smoke": 12,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 64.25733795700002
+      },
+      {
+        "fps": 54.101908321857636,
+        "p95": 33.30000000000291,
+        "cpu": 1.7763636364178224,
+        "particles": 361,
+        "pooled": 598,
+        "smoke": 11,
+        "fields": 3,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 65.260282122
+      },
+      {
+        "fps": 53,
+        "p95": 33.30000000000291,
+        "cpu": 1.7056603766274903,
+        "particles": 76,
+        "pooled": 883,
+        "smoke": 3,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 66.26059095100001
+      },
+      {
+        "fps": 60.00393468424125,
+        "p95": 16.79999999998836,
+        "cpu": 1.4016393435294512,
+        "particles": 103,
+        "pooled": 856,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 5,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 67.26370681400002
+      },
+      {
+        "fps": 60.003934684242104,
+        "p95": 16.70000000001164,
+        "cpu": 1.3245901633970072,
+        "particles": 70,
+        "pooled": 889,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 9,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 68.317794035
+      },
+      {
+        "fps": 60,
+        "p95": 16.80000000000291,
+        "cpu": 0.9383333320418994,
+        "particles": 100,
+        "pooled": 859,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 8,
+          "limit": 24,
+          "textures": 7
+        },
+        "round": 0,
+        "state": "battle",
+        "at": 69.31894378900002
+      }
+    ],
+    "medianFPS": 54.101908321857636,
+    "minimumFPS": 12.856775520699442,
+    "medianCPU": 1.850980392858094,
+    "errors": []
+  },
+  "spriteReview": {
+    "total": 1840,
+    "clips": [
+      {
+        "name": "acolyte-bolt",
+        "cols": 8,
+        "count": 64
+      },
+      {
+        "name": "archer-frost",
+        "cols": 8,
+        "count": 64
+      },
+      {
+        "name": "archer-pierce",
+        "cols": 8,
+        "count": 64
+      },
+      {
+        "name": "archer-rain",
+        "cols": 8,
+        "count": 64
+      },
+      {
+        "name": "archer-shot",
+        "cols": 7,
+        "count": 56
+      },
+      {
+        "name": "azrakiel-lances",
+        "cols": 8,
+        "count": 64
+      },
+      {
+        "name": "azrakiel-rift",
+        "cols": 8,
+        "count": 64
+      },
+      {
+        "name": "knight-charge",
+        "cols": 7,
+        "count": 56
+      },
+      {
+        "name": "knight-cleave",
+        "cols": 8,
+        "count": 64
+      },
+      {
+        "name": "azrakiel-scythe",
+        "cols": 6,
+        "count": 48
+      },
+      {
+        "name": "knight-sweep",
+        "cols": 8,
+        "count": 64
+      },
+      {
+        "name": "knight-ward",
+        "cols": 8,
+        "count": 64
+      },
+      {
+        "name": "revenant-slash",
+        "cols": 8,
+        "count": 64
+      },
+      {
+        "name": "rogue-cross",
+        "cols": 8,
+        "count": 64
+      },
+      {
+        "name": "rogue-shadow",
+        "cols": 8,
+        "count": 64
+      },
+      {
+        "name": "rogue-stab",
+        "cols": 7,
+        "count": 56
+      },
+      {
+        "name": "rogue-venom",
+        "cols": 7,
+        "count": 56
+      },
+      {
+        "name": "tharazul-breath",
+        "cols": 8,
+        "count": 64
+      },
+      {
+        "name": "tharazul-stomp",
+        "cols": 8,
+        "count": 64
+      },
+      {
+        "name": "tharazul-claw",
+        "cols": 8,
+        "count": 64
+      },
+      {
+        "name": "varkhul-chains",
+        "cols": 8,
+        "count": 64
+      },
+      {
+        "name": "thornling-rake",
+        "cols": 7,
+        "count": 56
+      },
+      {
+        "name": "varkhul-cleave",
+        "cols": 6,
+        "count": 48
+      },
+      {
+        "name": "varkhul-slam",
+        "cols": 8,
+        "count": 64
+      },
+      {
+        "name": "acolyte-walk",
+        "cols": 8,
+        "count": 64
+      },
+      {
+        "name": "archer-walk",
+        "cols": 8,
+        "count": 64
+      },
+      {
+        "name": "knight-walk",
+        "cols": 8,
+        "count": 64
+      },
+      {
+        "name": "rogue-walk",
+        "cols": 7,
+        "count": 56
+      },
+      {
+        "name": "thornling-walk",
+        "cols": 8,
+        "count": 64
+      },
+      {
+        "name": "revenant-walk",
+        "cols": 8,
+        "count": 64
+      }
+    ],
+    "rows": [
+      {
+        "name": "acolyte-bolt",
+        "d": 0,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "acolyte-bolt",
+        "d": 1,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "acolyte-bolt",
+        "d": 2,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "acolyte-bolt",
+        "d": 3,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "acolyte-bolt",
+        "d": 4,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "acolyte-bolt",
+        "d": 5,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "acolyte-bolt",
+        "d": 6,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "acolyte-bolt",
+        "d": 7,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-frost",
+        "d": 0,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-frost",
+        "d": 1,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-frost",
+        "d": 2,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-frost",
+        "d": 3,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-frost",
+        "d": 4,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-frost",
+        "d": 5,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-frost",
+        "d": 6,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-frost",
+        "d": 7,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-pierce",
+        "d": 0,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-pierce",
+        "d": 1,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-pierce",
+        "d": 2,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-pierce",
+        "d": 3,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-pierce",
+        "d": 4,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-pierce",
+        "d": 5,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-pierce",
+        "d": 6,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-pierce",
+        "d": 7,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-rain",
+        "d": 0,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-rain",
+        "d": 1,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-rain",
+        "d": 2,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-rain",
+        "d": 3,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-rain",
+        "d": 4,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-rain",
+        "d": 5,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-rain",
+        "d": 6,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-rain",
+        "d": 7,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-shot",
+        "d": 0,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "archer-shot",
+        "d": 1,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "archer-shot",
+        "d": 2,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "archer-shot",
+        "d": 3,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "archer-shot",
+        "d": 4,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "archer-shot",
+        "d": 5,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "archer-shot",
+        "d": 6,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "archer-shot",
+        "d": 7,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "azrakiel-lances",
+        "d": 0,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "azrakiel-lances",
+        "d": 1,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "azrakiel-lances",
+        "d": 2,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "azrakiel-lances",
+        "d": 3,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "azrakiel-lances",
+        "d": 4,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "azrakiel-lances",
+        "d": 5,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "azrakiel-lances",
+        "d": 6,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "azrakiel-lances",
+        "d": 7,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "azrakiel-rift",
+        "d": 0,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "azrakiel-rift",
+        "d": 1,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "azrakiel-rift",
+        "d": 2,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "azrakiel-rift",
+        "d": 3,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "azrakiel-rift",
+        "d": 4,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "azrakiel-rift",
+        "d": 5,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "azrakiel-rift",
+        "d": 6,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "azrakiel-rift",
+        "d": 7,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "azrakiel-scythe",
+        "d": 0,
+        "cols": 6,
+        "unique": 6
+      },
+      {
+        "name": "azrakiel-scythe",
+        "d": 1,
+        "cols": 6,
+        "unique": 6
+      },
+      {
+        "name": "azrakiel-scythe",
+        "d": 2,
+        "cols": 6,
+        "unique": 6
+      },
+      {
+        "name": "azrakiel-scythe",
+        "d": 3,
+        "cols": 6,
+        "unique": 6
+      },
+      {
+        "name": "azrakiel-scythe",
+        "d": 4,
+        "cols": 6,
+        "unique": 6
+      },
+      {
+        "name": "azrakiel-scythe",
+        "d": 5,
+        "cols": 6,
+        "unique": 6
+      },
+      {
+        "name": "azrakiel-scythe",
+        "d": 6,
+        "cols": 6,
+        "unique": 6
+      },
+      {
+        "name": "azrakiel-scythe",
+        "d": 7,
+        "cols": 6,
+        "unique": 6
+      },
+      {
+        "name": "knight-charge",
+        "d": 0,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "knight-charge",
+        "d": 1,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "knight-charge",
+        "d": 2,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "knight-charge",
+        "d": 3,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "knight-charge",
+        "d": 4,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "knight-charge",
+        "d": 5,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "knight-charge",
+        "d": 6,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "knight-charge",
+        "d": 7,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "knight-cleave",
+        "d": 0,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-cleave",
+        "d": 1,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-cleave",
+        "d": 2,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-cleave",
+        "d": 3,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-cleave",
+        "d": 4,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-cleave",
+        "d": 5,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-cleave",
+        "d": 6,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-cleave",
+        "d": 7,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-sweep",
+        "d": 0,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-sweep",
+        "d": 1,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-sweep",
+        "d": 2,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-sweep",
+        "d": 3,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-sweep",
+        "d": 4,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-sweep",
+        "d": 5,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-sweep",
+        "d": 6,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-sweep",
+        "d": 7,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-ward",
+        "d": 0,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-ward",
+        "d": 1,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-ward",
+        "d": 2,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-ward",
+        "d": 3,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-ward",
+        "d": 4,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-ward",
+        "d": 5,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-ward",
+        "d": 6,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-ward",
+        "d": 7,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "revenant-slash",
+        "d": 0,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "revenant-slash",
+        "d": 1,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "revenant-slash",
+        "d": 2,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "revenant-slash",
+        "d": 3,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "revenant-slash",
+        "d": 4,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "revenant-slash",
+        "d": 5,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "revenant-slash",
+        "d": 6,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "revenant-slash",
+        "d": 7,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "rogue-cross",
+        "d": 0,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "rogue-cross",
+        "d": 1,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "rogue-cross",
+        "d": 2,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "rogue-cross",
+        "d": 3,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "rogue-cross",
+        "d": 4,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "rogue-cross",
+        "d": 5,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "rogue-cross",
+        "d": 6,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "rogue-cross",
+        "d": 7,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "rogue-shadow",
+        "d": 0,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "rogue-shadow",
+        "d": 1,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "rogue-shadow",
+        "d": 2,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "rogue-shadow",
+        "d": 3,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "rogue-shadow",
+        "d": 4,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "rogue-shadow",
+        "d": 5,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "rogue-shadow",
+        "d": 6,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "rogue-shadow",
+        "d": 7,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "rogue-stab",
+        "d": 0,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "rogue-stab",
+        "d": 1,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "rogue-stab",
+        "d": 2,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "rogue-stab",
+        "d": 3,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "rogue-stab",
+        "d": 4,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "rogue-stab",
+        "d": 5,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "rogue-stab",
+        "d": 6,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "rogue-stab",
+        "d": 7,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "rogue-venom",
+        "d": 0,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "rogue-venom",
+        "d": 1,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "rogue-venom",
+        "d": 2,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "rogue-venom",
+        "d": 3,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "rogue-venom",
+        "d": 4,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "rogue-venom",
+        "d": 5,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "rogue-venom",
+        "d": 6,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "rogue-venom",
+        "d": 7,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "tharazul-breath",
+        "d": 0,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "tharazul-breath",
+        "d": 1,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "tharazul-breath",
+        "d": 2,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "tharazul-breath",
+        "d": 3,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "tharazul-breath",
+        "d": 4,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "tharazul-breath",
+        "d": 5,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "tharazul-breath",
+        "d": 6,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "tharazul-breath",
+        "d": 7,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "tharazul-claw",
+        "d": 0,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "tharazul-claw",
+        "d": 1,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "tharazul-claw",
+        "d": 2,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "tharazul-claw",
+        "d": 3,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "tharazul-claw",
+        "d": 4,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "tharazul-claw",
+        "d": 5,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "tharazul-claw",
+        "d": 6,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "tharazul-claw",
+        "d": 7,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "tharazul-stomp",
+        "d": 0,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "tharazul-stomp",
+        "d": 1,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "tharazul-stomp",
+        "d": 2,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "tharazul-stomp",
+        "d": 3,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "tharazul-stomp",
+        "d": 4,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "tharazul-stomp",
+        "d": 5,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "tharazul-stomp",
+        "d": 6,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "tharazul-stomp",
+        "d": 7,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "thornling-rake",
+        "d": 0,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "thornling-rake",
+        "d": 1,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "thornling-rake",
+        "d": 2,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "thornling-rake",
+        "d": 3,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "thornling-rake",
+        "d": 4,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "thornling-rake",
+        "d": 5,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "thornling-rake",
+        "d": 6,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "thornling-rake",
+        "d": 7,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "varkhul-chains",
+        "d": 0,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "varkhul-chains",
+        "d": 1,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "varkhul-chains",
+        "d": 2,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "varkhul-chains",
+        "d": 3,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "varkhul-chains",
+        "d": 4,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "varkhul-chains",
+        "d": 5,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "varkhul-chains",
+        "d": 6,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "varkhul-chains",
+        "d": 7,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "varkhul-cleave",
+        "d": 0,
+        "cols": 6,
+        "unique": 6
+      },
+      {
+        "name": "varkhul-cleave",
+        "d": 1,
+        "cols": 6,
+        "unique": 6
+      },
+      {
+        "name": "varkhul-cleave",
+        "d": 2,
+        "cols": 6,
+        "unique": 6
+      },
+      {
+        "name": "varkhul-cleave",
+        "d": 3,
+        "cols": 6,
+        "unique": 6
+      },
+      {
+        "name": "varkhul-cleave",
+        "d": 4,
+        "cols": 6,
+        "unique": 6
+      },
+      {
+        "name": "varkhul-cleave",
+        "d": 5,
+        "cols": 6,
+        "unique": 6
+      },
+      {
+        "name": "varkhul-cleave",
+        "d": 6,
+        "cols": 6,
+        "unique": 6
+      },
+      {
+        "name": "varkhul-cleave",
+        "d": 7,
+        "cols": 6,
+        "unique": 6
+      },
+      {
+        "name": "varkhul-slam",
+        "d": 0,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "varkhul-slam",
+        "d": 1,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "varkhul-slam",
+        "d": 2,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "varkhul-slam",
+        "d": 3,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "varkhul-slam",
+        "d": 4,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "varkhul-slam",
+        "d": 5,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "varkhul-slam",
+        "d": 6,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "varkhul-slam",
+        "d": 7,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "acolyte-walk",
+        "d": 0,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "acolyte-walk",
+        "d": 1,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "acolyte-walk",
+        "d": 2,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "acolyte-walk",
+        "d": 3,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "acolyte-walk",
+        "d": 4,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "acolyte-walk",
+        "d": 5,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "acolyte-walk",
+        "d": 6,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "acolyte-walk",
+        "d": 7,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-walk",
+        "d": 0,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-walk",
+        "d": 1,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-walk",
+        "d": 2,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-walk",
+        "d": 3,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-walk",
+        "d": 4,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-walk",
+        "d": 5,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-walk",
+        "d": 6,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "archer-walk",
+        "d": 7,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-walk",
+        "d": 0,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-walk",
+        "d": 1,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-walk",
+        "d": 2,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-walk",
+        "d": 3,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-walk",
+        "d": 4,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-walk",
+        "d": 5,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-walk",
+        "d": 6,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "knight-walk",
+        "d": 7,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "revenant-walk",
+        "d": 0,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "revenant-walk",
+        "d": 1,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "revenant-walk",
+        "d": 2,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "revenant-walk",
+        "d": 3,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "revenant-walk",
+        "d": 4,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "revenant-walk",
+        "d": 5,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "revenant-walk",
+        "d": 6,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "revenant-walk",
+        "d": 7,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "rogue-walk",
+        "d": 0,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "rogue-walk",
+        "d": 1,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "rogue-walk",
+        "d": 2,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "rogue-walk",
+        "d": 3,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "rogue-walk",
+        "d": 4,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "rogue-walk",
+        "d": 5,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "rogue-walk",
+        "d": 6,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "rogue-walk",
+        "d": 7,
+        "cols": 7,
+        "unique": 7
+      },
+      {
+        "name": "thornling-walk",
+        "d": 0,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "thornling-walk",
+        "d": 1,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "thornling-walk",
+        "d": 2,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "thornling-walk",
+        "d": 3,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "thornling-walk",
+        "d": 4,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "thornling-walk",
+        "d": 5,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "thornling-walk",
+        "d": 6,
+        "cols": 8,
+        "unique": 8
+      },
+      {
+        "name": "thornling-walk",
+        "d": 7,
+        "cols": 8,
+        "unique": 8
+      }
+    ],
+    "edgeFailures": 0,
+    "interpolated": 30,
+    "sourceEdge": 0,
+    "errors": []
+  },
+  "walkCacheReview": {
+    "report": [
+      {
+        "actor": "knight",
+        "unique": 32
+      },
+      {
+        "actor": "archer",
+        "unique": 32
+      },
+      {
+        "actor": "rogue",
+        "unique": 28
+      },
+      {
+        "actor": "revenant",
+        "unique": 32
+      },
+      {
+        "actor": "thornling",
+        "unique": 32
+      },
+      {
+        "actor": "acolyte",
+        "unique": 32
+      },
+      {
+        "actor": "varkhul",
+        "unique": 48
+      },
+      {
+        "actor": "tharazul",
+        "unique": 48
+      },
+      {
+        "actor": "azrakiel",
+        "unique": 48
+      }
+    ],
+    "cache": {
+      "frames": 864,
+      "bytes": 33522744,
+      "limit": 33554432
+    }
+  },
+  "couchReview": {
+    "players": [
+      {
+        "id": "73265b44929d81e57c9ee945289818aa",
+        "name": "Lyra Couch",
+        "classId": "archer",
+        "energy": 100,
+        "skills": 1
+      },
+      {
+        "id": "bce13299e7744330cb75d50bd3d8ea15",
+        "name": "Jogador 2",
+        "classId": "knight",
+        "energy": 78.87942656000001,
+        "skills": 1
+      },
+      {
+        "id": "5ab473d32b065ee780461ca81d368eaf",
+        "name": "Jogador 3",
+        "classId": "rogue",
+        "energy": 84.060449796,
+        "skills": 1
+      }
+    ],
+    "windows": 1,
+    "activeMusicTracks": 1,
+    "errors": [],
+    "hardware": "Gamepad API virtual devices, not physical USB/Bluetooth controllers"
+  },
+  "fullNative": {
+    "score": 2021,
+    "wins": 3,
+    "keys": [
+      {
+        "round": 0,
+        "id": "iron-crown",
+        "name": "Chave da Coroa Sangrenta",
+        "color": "#ec6c75",
+        "carrier": "bot-62e9b5ea3edc",
+        "at": 98.40946122300019
+      },
+      {
+        "round": 1,
+        "id": "living-root",
+        "name": "Chave do Cora\u00e7\u00e3o Verde",
+        "color": "#9fd88b",
+        "carrier": "bot-62e9b5ea3edc",
+        "at": 232.97204737000058
+      },
+      {
+        "round": 2,
+        "id": "void-wing",
+        "name": "Chave das Seis Asas",
+        "color": "#bd9cf2",
+        "carrier": "bot-ecce0c0e6f07",
+        "at": 401.72553494899944
+      }
+    ],
+    "secretUnlocked": true,
+    "vaultOpenedAt": 412.7051709399991,
+    "results": [
+      {
+        "round": 0,
+        "won": true,
+        "reason": "",
+        "remaining": 224,
+        "reward": 174,
+        "players": [
+          {
+            "id": "c3a94d34cb8be4a4bc087e13fba28d44",
+            "name": "Lyra",
+            "damage": 1713.8999999999978,
+            "taken": 47,
+            "avoided": 0,
+            "revives": 0,
+            "skills": 45,
+            "comboPoints": 24.50583333333332,
+            "maxCombo": 46
+          },
+          {
+            "id": "bot-62e9b5ea3edc",
+            "name": "Aldric",
+            "damage": 1953.799999999999,
+            "taken": 48.4,
+            "avoided": 21.6,
+            "revives": 0,
+            "skills": 44,
+            "comboPoints": 27.900000000000023,
+            "maxCombo": 42
+          },
+          {
+            "id": "bot-ecce0c0e6f07",
+            "name": "Nyx",
+            "damage": 2510.3,
+            "taken": 80,
+            "avoided": 0,
+            "revives": 0,
+            "skills": 45,
+            "comboPoints": 37.37250000000002,
+            "maxCombo": 44
+          }
+        ]
+      },
+      {
+        "round": 1,
+        "won": true,
+        "reason": "",
+        "remaining": 197,
+        "reward": 215,
+        "players": [
+          {
+            "id": "c3a94d34cb8be4a4bc087e13fba28d44",
+            "name": "Lyra",
+            "damage": 1949.7999999999975,
+            "taken": 10,
+            "avoided": 0,
+            "revives": 0,
+            "skills": 59,
+            "comboPoints": 21.42999999999998,
+            "maxCombo": 37
+          },
+          {
+            "id": "bot-62e9b5ea3edc",
+            "name": "Aldric",
+            "damage": 2668,
+            "taken": 16.6,
+            "avoided": 18.4,
+            "revives": 0,
+            "skills": 59,
+            "comboPoints": 52.15833333333329,
+            "maxCombo": 69
+          },
+          {
+            "id": "bot-ecce0c0e6f07",
+            "name": "Nyx",
+            "damage": 3154.199999999999,
+            "taken": 44,
+            "avoided": 0,
+            "revives": 0,
+            "skills": 57,
+            "comboPoints": 44.5275,
+            "maxCombo": 48
+          }
+        ]
+      },
+      {
+        "round": 2,
+        "won": true,
+        "reason": "",
+        "remaining": 163,
+        "reward": 304,
+        "players": [
+          {
+            "id": "c3a94d34cb8be4a4bc087e13fba28d44",
+            "name": "Lyra",
+            "damage": 2581.3,
+            "taken": 94.5,
+            "avoided": 3,
+            "revives": 0,
+            "skills": 51,
+            "comboPoints": 42.17333333333333,
+            "maxCombo": 82
+          },
+          {
+            "id": "bot-62e9b5ea3edc",
+            "name": "Aldric",
+            "damage": 3228.3000000000034,
+            "taken": 95.19999999999999,
+            "avoided": 52.8,
+            "revives": 0,
+            "skills": 77,
+            "comboPoints": 43.357500000000016,
+            "maxCombo": 43
+          },
+          {
+            "id": "bot-ecce0c0e6f07",
+            "name": "Nyx",
+            "damage": 4317.399999999996,
+            "taken": 155,
+            "avoided": 6,
+            "revives": 0,
+            "skills": 79,
+            "comboPoints": 71.23166666666664,
+            "maxCombo": 60
+          }
+        ]
+      }
+    ],
+    "players": [
+      {
+        "name": "Lyra",
+        "isBot": false,
+        "stats": {
+          "damage": 6244.999999999998,
+          "taken": 151.5,
+          "avoided": 3,
+          "revives": 0,
+          "skills": 155,
+          "comboPoints": 88.10916666666667,
+          "maxCombo": 82
+        }
+      },
+      {
+        "name": "Aldric",
+        "isBot": true,
+        "stats": {
+          "damage": 7850.100000000014,
+          "taken": 160.2,
+          "avoided": 92.80000000000001,
+          "revives": 0,
+          "skills": 180,
+          "comboPoints": 123.41583333333284,
+          "maxCombo": 69
+        }
+      },
+      {
+        "name": "Nyx",
+        "isBot": true,
+        "stats": {
+          "damage": 9981.899999999994,
+          "taken": 279,
+          "avoided": 6,
+          "revives": 0,
+          "skills": 181,
+          "comboPoints": 153.13166666666658,
+          "maxCombo": 60
+        }
+      }
+    ],
+    "errors": []
+  },
+  "windows": {
+    "files": 261,
+    "sourceFilesCompared": 164,
+    "size": 431518751,
+    "sha256": "96ecba99a198c0e01b7c5b4e53781ed9757893cb87faf472b7bb0cbc3620bba3"
+  }
+}

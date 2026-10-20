@@ -1,63 +1,73 @@
 {
-  "version": "1.5.0",
+  "version": "1.6.0",
   "filename": "IronCrown-Windows-x64.zip",
-  "size": 349178249,
-  "sha256": "f4ccf0ee808778ff29c09e53396913c19345f723c1882add75d74a470d57cbc9",
+  "size": 431518751,
+  "sha256": "96ecba99a198c0e01b7c5b4e53781ed9757893cb87faf472b7bb0cbc3620bba3",
   "parts": [
     {
       "name": "IronCrown-PC.zip.001",
       "size": 33554432,
-      "sha256": "bb6ca95cea9e9b71b27d2f70e06e60e04f0cc1d0e792faa4ccf09c5248068600"
+      "sha256": "6b653e7eb6ef97087d4c9c315973ec94eb4bd1af1c77b96b7ddf2f8afa66e3bb"
     },
     {
       "name": "IronCrown-PC.zip.002",
       "size": 33554432,
-      "sha256": "1148be2f204c24d30d2ff70a2f903fe2aa090e36a9bf199db1677f3492ee0b62"
+      "sha256": "393a8b7b225c6cdc3a1e6199cb64f32fbc189dc910db7a1d15bd5aa71cc13819"
     },
     {
       "name": "IronCrown-PC.zip.003",
       "size": 33554432,
-      "sha256": "eccd6b710883067696b02bffbff3d89a746d15701a3eaaa482e38343df5e6c72"
+      "sha256": "7b03ff0e1d9de2efb0402f7601dc4e44bc07c329a331c5309a5f7deb44f3e021"
     },
     {
       "name": "IronCrown-PC.zip.004",
       "size": 33554432,
-      "sha256": "028a96f1e8c976e1aba84d339ca5c91a9a007f1d031f5972670b4b8b939699ae"
+      "sha256": "60edb1b1177331bdaf01e83f6f3ef911c6f8e47d98a521fec22e008ff458541c"
     },
     {
       "name": "IronCrown-PC.zip.005",
       "size": 33554432,
-      "sha256": "1d011e149d06b62c4e66f6a888e951616ca1c92e58e8e95b2778ad9d3bf8918b"
+      "sha256": "e35d4078d952cbc49102583258526c0bdb3b4b02071a86c2ed5d1e0d67a16c17"
     },
     {
       "name": "IronCrown-PC.zip.006",
       "size": 33554432,
-      "sha256": "49c643787ca8e5cb77b86abb52f756dbc38c7992ac169c09d3f9194bfb0f23c4"
+      "sha256": "06f56e51d9b870a8f7befdffb742d11c94e9d5c254e90ee742efd45a8d67e7b7"
     },
     {
       "name": "IronCrown-PC.zip.007",
       "size": 33554432,
-      "sha256": "de85fdc52b7832aba17dda65ab39fe56e7d51b101fea71d5bedd24204e0ef08e"
+      "sha256": "d34125198d5c89338e0bb2e32885df7bb7dcbeb7d38a552b6393c2b2b85d1895"
     },
     {
       "name": "IronCrown-PC.zip.008",
       "size": 33554432,
-      "sha256": "f918b061000f385b8ea4a4213037505398117838eb23c76c53c1c20fb6f6dc3b"
+      "sha256": "7bda9fd5df38f2c878ccd8c2bcfc632d895267d8dac6d582a3c61812794b77f0"
     },
     {
       "name": "IronCrown-PC.zip.009",
       "size": 33554432,
-      "sha256": "1c9eca83c00f24b9f9a82d1b5cf8701fe873bdaeca3b32ae3c8f8b66a79fd012"
+      "sha256": "b9bcd0a8584cdb07df9878d18ef2cdcb1054d0522f40b6153105e3782219cad4"
     },
     {
       "name": "IronCrown-PC.zip.010",
       "size": 33554432,
-      "sha256": "ee6b8c53c8eb42834d10ed3df7c617621781b675670be86d239bfa2807a2a9fd"
+      "sha256": "bb3ca84c2ef8a2c92f6d90dbaa090b9b2cf6fa5a2bb49bfdc2da4fffd71b06b7"
     },
     {
       "name": "IronCrown-PC.zip.011",
-      "size": 13633929,
-      "sha256": "acf8ec981b519ee4741a764aa1dd9b25a1426325912491f226a6614be517101d"
+      "size": 33554432,
+      "sha256": "ba118e6f6a2286e7c7b51e841a1743aa00fa59dd0dab528a7b8d4a0e7f30c5c2"
+    },
+    {
+      "name": "IronCrown-PC.zip.012",
+      "size": 33554432,
+      "sha256": "4f6634b86e685bbe7404b12d25c7b45086919504ca568d6239525b48adfdca3b"
+    },
+    {
+      "name": "IronCrown-PC.zip.013",
+      "size": 28865567,
+      "sha256": "b344d89f0205c43d6ec270c998a36889fbdb9c78bb0720380325568eb345ea0b"
     }
   ]
 }

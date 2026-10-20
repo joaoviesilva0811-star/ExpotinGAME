@@ -23,16 +23,16 @@ As salas ficam em memória e não sobrevivem a reinício. A reconexão preserva 
 
 ## Edição PC e companheiros (1.1)
 
-Electron abre um menu local com preload mínimo e IPC validado pela origem do arquivo. A janela de jogo é separada, sem integração Node, com sandbox e isolamento de contexto. O servidor usa um processo filho do Node oficial incluído no pacote, para manter compatibilidade com SQLite; não depende do Node da instalação do usuário. Dados ficam no perfil do usuário.
+Electron abre um menu local com preload mínimo e IPC validado pela origem do arquivo. Menu e jogo usam a mesma janela, sem integração Node, com sandbox e isolamento de contexto. O preload expõe IPC mínimo; cada operação é validada pela origem e pelo frame emissor. O servidor usa um processo filho do Node oficial incluído no pacote, para manter compatibilidade com SQLite; não depende do Node da instalação do usuário. Dados ficam no perfil do usuário.
 
-Solo escuta somente em 127.0.0.1, em porta livre. LAN escuta em 0.0.0.0:48230; clientes do aplicativo conectam ao IPv4 privado informado. Fechar a janela de jogo do anfitrião encerra seu servidor. Não há migração de servidor.
+Solo escuta somente em 127.0.0.1, em porta livre. LAN escuta em 0.0.0.0:48230; clientes do aplicativo conectam ao IPv4 privado informado. Fechar o aplicativo ou voltar ao menu do PC no anfitrião encerra seu servidor. Não há migração de servidor.
 
 `server/bots.js` decide intenções a cada 150ms: busca alcance adequado, considera áreas perigosas e obstáculos, usa habilidades com recargas normais, defende e tenta reviver. As intenções passam pelos mesmos comandos e funções de combate dos humanos. Não há vida ou dano especial. No solo, `syncBots` cria somente as outras duas classes. No lobby LAN, completar classes com IA é opcional; humanos têm prioridade nos slots. Bots nunca são líderes.
 
 
 ## Expansão 1.2
 
-`bosses.js` define seis padrões por chefe e suas geometrias. `hazardContains` em `shared.js` é a definição comum de alcance para o servidor e companheiros. Cones, linhas e anéis com centro seguro têm avisos separados da execução. A fase 2 começa em 65–70% e a fase 3 em 30–35%; transições cancelam ataques futuros. Preparação nas fases avançadas reduz o dano recebido pelo chefe em 35%, deixando a recuperação como janela ofensiva.
+`bosses.js` define oito padrões por chefe e suas geometrias. `hazardContains` em `shared.js` é a definição comum de alcance para o servidor e companheiros. Cones, linhas e anéis com centro seguro têm avisos separados da execução. A fase 2 começa em 65–70% e a fase 3 em 30–35%; transições cancelam ataques futuros. Preparação nas fases avançadas reduz o dano recebido pelo chefe em 35%, deixando a recuperação como janela ofensiva.
 
 `minions.js` administra invocações limitadas, mira fixada antes do ataque, projéteis e perseguição. `loot.js` gera os drops no servidor, limita inventário a três itens, valida coleta por proximidade e valida consumo. Jogadores incapacitados não usam itens ou dash. Poções não exigem energia, mas exigem posse e recarga de 1,25s; dash custa 20 com recarga de 2,4s e invulnerabilidade de 0,24s.
 
@@ -84,4 +84,14 @@ Os efeitos usam nove folhas individuais `fx-<modelo>.png`, com duas colunas e tr
 
 `server/keys.js` gera a chave exclusiva somente após vitória. A coleta é automática por proximidade validada no servidor, compartilhada pela equipe e independente das poções. A passagem fica bloqueada até a coleta, inclusive se a conexão cair; o cliente não pode criar uma chave por comando. Os snapshots carregam inventário, portão liberado e abertura da câmara. Após três vitórias com as três chaves, o servidor sinaliza a abertura da câmara secreta. A cena encena as três classes da história, sem criar participantes de rede ou mudar estatísticas. As chaves reiniciam ao começar outra expedição e não são inventário persistente de conta.
 
-No aplicativo nativo, o modo solo usa uma porta efêmera. Para preservar as opções entre aberturas, `game-preload.cjs` expõe somente leitura/gravação de preferências de apresentação. O processo principal valida a janela e o frame emissor, sanitiza os campos com `cleanSettings`, serializa a gravação e usa um único arquivo fixo `presentation.json` no perfil Electron. Não recebe caminhos de arquivo nem permite comandos de combate. No navegador comum, o armazenamento continua local à origem.
+No aplicativo nativo, o modo solo usa uma porta efêmera. Para preservar as opções entre aberturas, `preload.cjs` expõe as operações do menu e leitura/gravação de preferências; os handlers validam separadamente as origens autorizadas. O processo principal valida a janela e o frame emissor, sanitiza os campos com `cleanSettings`, serializa a gravação e usa um único arquivo fixo `presentation.json` no perfil Electron. Não recebe caminhos de arquivo nem permite comandos de combate. No navegador comum, o armazenamento continua local à origem.
+
+## Coop no mesmo PC e apresentação 1.6
+
+`gamepads.js` normaliza até três dispositivos standard da Gamepad API, com deadzone radial, mira independente e detecção de pressão por borda. O layout é identificado pelo nome/vendor do dispositivo. `local-seats.js` cria sessões guest e sockets autenticados separados para J2/J3; não há vida ou dano locais. `Room.couch` permite a sala privada com preenchimento das classes ausentes por bots. Os jogadores locais usam previsão visual própria, câmera que enquadra o grupo e HUD individual. A liderança pode mudar entre sessões locais em uma reconexão.
+
+`combos.js` conta dano oficial com limite para hits simultâneos, mantém a janela de 3,5 s e aplica somente bônus de pontos, limitado a ×1,75. Dano sofrido quebra a sequência; não altera o dano dos golpes. Chaves aguardam 2,5 s antes da coleta e mantêm apresentação de pelo menos 8,5 s, com destaque pós-coleta de 4,5 s.
+
+Os 30 atlas novos contêm 1.840 poses: 24 de ataques e seis de caminhada. Recortes, contornos e pés são analisados sem modificar os PNGs. `animation-layout.js` mistura poses em superfícies reutilizáveis; as subposes de caminhada são compartilhadas num cache de até 32 MiB de pixels. Partículas são agrupadas por material, fissuras usam caminhos compilados e volumes usam texturas menores. A adaptação por tempo de quadro reduz densidade transitória, preservando personagens e avisos completos.
+
+`AudioEngine` preserva o player durante menus, para música na saída da página e respeita a opção de mudo. Temas e efeitos têm volume separado, persistido no perfil do aplicativo.
