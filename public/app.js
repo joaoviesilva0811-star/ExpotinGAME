@@ -1,3 +1,7 @@
+import {drawIntroFilm} from './intro-film.js';
+import {introFilmShot} from './intro-timing.js';
+import {CameraMotion} from './camera-motion.js';
+import {GateTimeline} from './gate-timing.js';
 import {paintPortrait} from './portraits.js';
 import {ImpactFeel} from './impact-feel.js';
 import {arenaObstacles} from './arena-state.js';
@@ -35,7 +39,7 @@ const nativeDesktop=desktopParams.get('desktop')==='1';
 const apiBase = (window.IRON_CONFIG?.serverUrl || '').replace(/\/$/,'');
 const canvas=$('game'), ctx=canvas.getContext('2d',{alpha:false});canvas.width=WORLD.w;canvas.height=WORLD.h;ctx.imageSmoothingEnabled=false;
 const audio=new AudioEngine();
-const enableAudio=()=>audio.enable().then(()=>{$('audio-toggle').textContent='♪';$('audio-toggle').title='Desativar áudio';});
+const enableAudio=()=>audio.enable().then(enabled=>{$('audio-toggle').dataset.muted=String(!enabled);$('audio-toggle').title=enabled?'Desativar áudio':'Ativar áudio';$('audio-toggle').setAttribute('aria-label',$('audio-toggle').title);});
 document.addEventListener('pointerdown',e=>{if(e.target.closest('#audio-toggle'))return;enableAudio();},{once:true});
 document.addEventListener('keydown',enableAudio,{once:true});
 let room=null,session=null,token=null,ws=null,connected=false,connecting=null,reconnectTimer=null,retry=0;
@@ -54,7 +58,7 @@ const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const footPositions=new Map();
 const gamepads=new GamepadHub(),localSeats=new LocalSeats({room:()=>room,session:()=>session,send:(type,data)=>send(type,{...data,seq:++seq}),notify:toast});let controllerSignature='';const seatMotion=new Map(),seatVisual=new Map();
 let settings;try{settings=cleanSettings(JSON.parse(storageGet('iron-presentation')||'{}'));}catch{settings=cleanSettings();}
-setEffectsQuality(settings.quality);configureLighting(settings.lighting,settings.quality);const localMotion=new LocalMotion(),tracks=new Map(),monitor=new FrameMonitor(),hurtCamera=new HurtCamera(),hurtEffects=new HurtEffects(),healthMemory=new HealthMemory(),impactFeel=new ImpactFeel();const effectsSurface=new AdaptiveEffects();effectsSurface.configure(settings.quality,settings.autoEffects);audio.configure(settings);let perfLast=0,lastHud=0,teamMarkup='',solidsNow=[],localVisual=null;
+setEffectsQuality(settings.quality);configureLighting(settings.lighting,settings.quality);const localMotion=new LocalMotion(),tracks=new Map(),monitor=new FrameMonitor(),cameraMotion=new CameraMotion(),gateTimeline=new GateTimeline(),hurtCamera=new HurtCamera(),hurtEffects=new HurtEffects(),healthMemory=new HealthMemory(),impactFeel=new ImpactFeel();const effectsSurface=new AdaptiveEffects();effectsSurface.configure(settings.quality,settings.autoEffects);audio.configure(settings);let perfLast=0,lastHud=0,teamMarkup='',solidsNow=[],localVisual=null;
 function setZoom(value){zoom=clamp(value,1,2);$('zoom-value').textContent=Math.round(zoom*100)+'%';}
 $('zoom-in').onclick=()=>setZoom(zoom+.12);$('zoom-out').onclick=()=>setZoom(zoom-.12);
 const portraitCamera=()=>screen==='battle'&&portraitQuery.matches;
@@ -114,7 +118,7 @@ function connect(){
 }
 function acceptSnapshot(value,initial=false){
   const oldState=room?.state,oldRound=room?.round;room=value;snapshotAt=performance.now();
-  if(initial||oldRound!==value.round||oldState!==value.state){tracks.clear();localMotion.reset();resetAnimationState();resetPoseMixes();hurtCamera.reset();hurtEffects.reset();healthMemory.reset();impactFeel.reset();for(const m of seatMotion.values())m.reset();seatVisual.clear();}
+  if(initial||oldRound!==value.round||oldState!==value.state){tracks.clear();localMotion.reset();resetAnimationState();resetPoseMixes();hurtCamera.reset();cameraMotion.reset();gateTimeline.reset();hurtEffects.reset();healthMemory.reset();impactFeel.reset();for(const m of seatMotion.values())m.reset();seatVisual.clear();}
   solidsNow=[...arenaObstacles(value),...value.hazards.filter(h=>h.solid&&h.at<=value.now)];
   for(const [id,entity]of [...value.players.map(p=>[p.id,p]),...value.minions.map(p=>[p.id,p]),...(value.boss?[['boss',value.boss]]:[])]){let track=tracks.get(id);if(!track){track=new PositionTrack();tracks.set(id,track);}track.push(entity,value.now);}
   const own=value.players.find(p=>p.id===session?.id);if(own)localMotion.accept(own,snapshotAt/1000,latency/1000);for(const {slot,player}of localSeats.players())if(slot){if(!seatMotion.has(player.id))seatMotion.set(player.id,new LocalMotion());seatMotion.get(player.id).accept(player,snapshotAt/1000,latency/1000);}
@@ -226,7 +230,7 @@ function presentationSettings(){openModal(`<span class="eyebrow">CONFORTO E DESE
 $('open-lore').onclick=()=>openModal(`<span class="eyebrow">OS DONOS DA ESCURIDÃO</span><h2>Três arenas. Três maldições.</h2>${BOSSES.map((b,i)=>`<div class="lore-item"><strong style="color:${b.color}">${b.name}</strong><p>${b.title} · ${b.arena}<br>${['Desvie da espada e da onda de choque. A investida do cavaleiro interrompe preparações na primeira fase.','Evite as nuvens de veneno e as raízes. Na segunda fase, raízes sólidas bloqueiam partes do caminho.','Saia das marcas de explosão e do arco da foice. O Apocalipse adiciona zonas perigosas.'][i]}</p></div>`).join('')}`);
 async function showRanking(){const revision=openModal('<span class="eyebrow">QUADRO DE LENDAS</span><h2>Expedições eternizadas.</h2><p>Consultando os registros…</p>');try{const rows=await api('leaderboard');if(!$('modal').open||revision!==modalRevision)return;$('modal-content').innerHTML=`<span class="eyebrow">QUADRO DE LENDAS</span><h2>Expedições eternizadas.</h2>${rows.length?`<table><thead><tr><th>#</th><th>EQUIPE</th><th>PONTOS</th><th>CHEFES</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.team)}</td><td>${r.score}</td><td>${r.wins}/3</td></tr>`).join('')}</tbody></table>`:'<p>As páginas ainda estão vazias. Sua equipe pode escrever a primeira lenda.</p>'}`;}catch(e){if(!$('modal').open||revision!==modalRevision)return;$('modal-content').innerHTML=`<h2>Registros indisponíveis.</h2><p>${esc(e.message)}</p>`;}}
 $('ranking').onclick=showRanking;
-$('audio-toggle').onclick=async()=>{const enabled=await audio.toggle();$('audio-toggle').textContent=enabled?'♪':'♫';$('audio-toggle').title=enabled?'Desativar áudio':'Ativar áudio';$('audio-toggle').setAttribute('aria-label',$('audio-toggle').title);toast(enabled?'Áudio ativado.':'Áudio desativado.');};
+$('audio-toggle').onclick=async()=>{const enabled=await audio.toggle();$('audio-toggle').dataset.muted=String(!enabled);$('audio-toggle').title=enabled?'Desativar áudio':'Ativar áudio';$('audio-toggle').setAttribute('aria-label',$('audio-toggle').title);toast(enabled?'Áudio ativado.':'Áudio desativado.');};
 $('fullscreen').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{toast('Tela cheia não está disponível neste navegador.');}};
 async function authenticate(path,data){const result=await api(path,data);token=result.token;storageSet('iron-session',token);setSession(result.session);await connect();audio.fx('ui');}
 $('guest-form').addEventListener('submit',async e=>{e.preventDefault();const btn=$('guest-submit');btn.disabled=true;try{await authenticate('guest',{name:$('player-name').value.trim()});storageSet('iron-name',$('player-name').value);}catch(error){toast(error.message,true);}finally{btn.disabled=false;}});
@@ -300,12 +304,13 @@ function eventEffect(e){
   if(e.type==='arenaTrap'){toast(e.name+' · saia do selo no chão!');}
   if(e.type==='opening'){emitLight(e.x,e.y,'#b4efdd',115,.5,.25);}
   if(e.type==='round'){resetLighting();positions.clear();resetAnimationState();resetPoseMixes();hurtCamera.reset();impactFeel.reset();localMotion.reset();resetFX();rings.length=particles.length=floats.length=0;}
-  if(e.type==='gate'){impactFX(e.x,e.y,'gold',true);audio.fx('gate');shake=3;}
+  // Gate contact/audio is scheduled at its actual visual travel and landing.
   if(e.type==='awaken'){magicFX(e.x,e.y,e.round===1?'green':e.round===2?'violet':'red',60);audio.fx('roar',e.round);ring(e.x,e.y,270,info.color,1.5);shake=4;}
   if(e.type==='hit'){const source=room.players.find(p=>p.id===e.owner);weaponImpact(e.x,e.y+25,source?.classId,source?.facing||0);if(localSeats.players().some(s=>s.player.id===e.owner))impactFeel.hit(source?.classId,source?.facing||0,e.amount,frameTime);emitLight(e.x,e.y,'#ffe3a9',100,.18,.35);
     burst(e.x,e.y+22,'#d9b39b',7);const old=floats.find(f=>f.owner===e.owner&&f.target===e.target&&f.life>.72);if(old){old.amount+=e.amount;old.text=Math.round(old.amount).toString();old.life=1;}else{const i=room.players.findIndex(p=>p.id===e.owner);floats.push({owner:e.owner,target:e.target,amount:e.amount,x:e.x+(i-1.5)*25,y:e.y-12-(i%2)*19,text:Math.round(e.amount).toString(),color:e.owner===session.id?'#f1d4a0':'#c4c6ae',life:1});}audio.fx(source?.classId==='knight'?'heavyHit':source?.classId==='archer'?'arrowImpact':'daggerImpact');
   }
   if(e.type==='attack'){
+    if(localSeats.players().some(s=>s.player.id===e.owner))cameraMotion.attack(e.kind,e.angle,frameTime);
     attackUntil.set(e.owner,frameTime+.5);
     if(e.kind!=='archer')slashFX(e.x,e.y,e.angle,e.kind==='rogue'?'violet':'gold',e.slot===1,e.slot>=0?0:.12,e.id);
     if(e.slot>=0)magicFX(e.x,e.y,e.kind==='archer'?'green':e.kind==='rogue'?'violet':'gold',12);audio.fx(e.kind==='archer'?'arrow':e.slot===2?'magic':e.kind==='rogue'?'dagger':'sword');
@@ -374,10 +379,17 @@ function render(time){
   if(gamepads.locked&&own){const a=gamepads.seats[0]?.aim||{x:1,y:0},p=localVisual||own;pointer={x:p.x+a.x*160,y:p.y+a.y*160};}
   const partyShot=localPartyCamera(localSeats.players().map(s=>seatVisual.get(s.player.id)||s.player),zoom),sharedCamera=partyShot.shared;
   const partyCenter=partyShot.center,sharedZoom=partyShot.zoom;
+  for(const cue of gateTimeline.step(room,now)){
+    cameraMotion.gate(cue.closing,cue.landing);audio.fx(cue.landing?'gateStop':'gate');
+    if(cue.landing){burst(cue.x,cue.y,'#bba88f',22,75);ring(cue.x,cue.y,45,'#c6ad7955',.45);}
+  }
+  const sway=cameraMotion.step(dt,room?.state==='battle'?localSeats.players().map(s=>s.player.id===session?.id?(localVisual||s.player):(seatVisual.get(s.player.id)||s.player)):[],reducedMotion?0:settings.shake);ctx.translate(sway.x,sway.y);
   const keyScene=gameplay&&room.keyDrop&&now<room.keySceneUntil;const keyBanner=$('key-announcement');keyBanner.hidden=!keyScene;if(keyScene){keyBanner.style.setProperty('--key-color',room.keyDrop.color);$('reward-name').textContent=room.keyDrop.name;$('reward-caption').textContent=room.keyDrop.collectedAt?'CHAVE CONQUISTADA · PASSAGEM LIBERADA':'UM SELO MÁGICO FOI REVELADO';const kc=$('reward-key').getContext('2d');kc.clearRect(0,0,128,128);drawMagicalKey(kc,round,64,64+Math.sin(now*3)*3,104,now);}const ending=gameplay&&room.state==='ending'&&!keyScene;
   const corridor=gameplay&&room.state==='round_end'&&now-room.outroStarted>=6&&!keyScene,awakening=room?.state==='countdown'&&now>=room.intro?.awakeningAt&&now<room.intro.awakeningAt+4.4;
+  const introShot=introFilmShot(room,now);document.body.classList.toggle('in-arrival-film',!!introShot);
   const emoteShot=localEmoteShot(room,localSeats.players().map(s=>s.player.id),now,zoom);
-  const broadCast=settings.autoCamera&&room?.boss?.state==='windup'&&room.hazards.some(h=>h.r>220||h.length>400);viewZoom+=((ending?(room.secretUnlocked?1:1.1):keyScene?Math.min(zoom,1.3):corridor?1:awakening?Math.min(zoom,1.25):emoteShot?emoteShot.zoom:sharedCamera?sharedZoom:broadCast?Math.max(1.1,zoom-.14):zoom)-viewZoom)*(1-Math.exp(-dt*4));
+  const gateShot=room?.state==='countdown'&&now<room.intro.gateAt+1.4;
+  const broadCast=settings.autoCamera&&room?.boss?.state==='windup'&&room.hazards.some(h=>h.r>220||h.length>400);viewZoom+=((ending?(room.secretUnlocked?1:1.1):keyScene?Math.min(zoom,1.3):gateShot?Math.min(zoom,1.12):corridor?1:awakening?Math.min(zoom,1.25):emoteShot?emoteShot.zoom:sharedCamera?sharedZoom:broadCast?Math.max(1.1,zoom-.14):zoom)-viewZoom)*(1-Math.exp(-dt*4));
   $('results').classList.toggle('corridor',!!corridor);document.body.classList.toggle('in-cinematic',!!(ending||keyScene||corridor||room?.state==='countdown'&&room.transitionAt-now>3));
   document.body.classList.toggle('secret-ending',!!(ending&&room.secretUnlocked));const story=$('story-card');let tale=null;if(ending&&now-room.endingAt>(room.secretUnlocked?11:2.5))tale=endingStory(room.wins);else if(corridor){const bridge=BRIDGES[round];tale={chapter:'ENTRE AS SOMBRAS',title:bridge[0],text:bridge[1]};}else if(room?.state==='countdown'&&now-room.intro.started<3.5)tale=STORY[round];story.hidden=!tale;if(tale){$('story-chapter').textContent=tale.chapter;$('story-title').textContent=tale.title;$('story-text').textContent=tale.text;}
   let fade=0;if(room?.state==='countdown')fade=clamp(1-(now-room.intro.started)/.8,0,1);if(room?.state==='round_end')fade=clamp((now-room.transitionAt+.65)/.65,0,1);$('scene-fade').style.opacity=fade;
@@ -385,9 +397,12 @@ function render(time){
   const cover=portraitCamera(),rect=stageRect;canvas.style.objectFit=cover?'cover':'contain';canvas.style.objectPosition='50% 50%';cameraFraction=.5;
   const screenScale=cover?Math.max(rect.width/WORLD.w,rect.height/WORLD.h):Math.min(rect.width/WORLD.w,rect.height/WORLD.h);
   const visibleW=(cover?rect.width/screenScale:WORLD.w)/viewZoom,visibleH=(cover?rect.height/screenScale:WORLD.h)/viewZoom;
-  if(gameplay){const raw=localVisual||me()||room.players[0],hero=room.state==='countdown'||ending?cinematicPlayer(room,raw,room.players.indexOf(raw),now):raw,p=ending||corridor?{x:600,y:380}:awakening?room.boss:keyScene?room.keyDrop:emoteShot?emoteShot:sharedCamera?partyCenter:cameraFocus(hero,pointer,settings.autoCamera&&!reducedMotion),t=1-Math.exp(-dt*5);const tx=clamp(p?.x||600,visibleW/2,WORLD.w-visibleW/2),ty=clamp(p?.y||380,visibleH/2,WORLD.h-visibleH/2);viewX+=(tx-viewX)*t;viewY+=(ty-viewY)*t;ctx.translate(600,380);ctx.scale(viewZoom,viewZoom);ctx.translate(-viewX,-viewY);}
+  if(gameplay){const raw=localVisual||me()||room.players[0],hero=room.state==='countdown'||ending?cinematicPlayer(room,raw,room.players.indexOf(raw),now):raw,p=ending||corridor?{x:600,y:380}:gateShot?{x:visibleW/2,y:380}:awakening?room.boss:keyScene?room.keyDrop:emoteShot?emoteShot:sharedCamera?partyCenter:cameraFocus(hero,pointer,settings.autoCamera&&!reducedMotion),t=1-Math.exp(-dt*5);const tx=clamp(p?.x||600,visibleW/2,WORLD.w-visibleW/2),ty=clamp(p?.y||380,visibleH/2,WORLD.h-visibleH/2);viewX+=(tx-viewX)*t;viewY+=(ty-viewY)*t;ctx.translate(600,380);ctx.scale(viewZoom,viewZoom);ctx.translate(-viewX,-viewY);}
   else{viewX=600;viewY=380;}
   const cameraLeft=viewX-visibleW/2,cameraWidth=visibleW;
+  // Keep simulation/presentation clocks advancing; discard the hidden world raster
+  // while the illustrated film is opaque. Its final fade reveals the live arena.
+  if(introShot?.opacity>=1){ctx.beginPath();ctx.rect(0,0,0,0);ctx.clip();}
   setRenderBounds(gameplay?{left:viewX-WORLD.w/viewZoom/2,right:viewX+WORLD.w/viewZoom/2,top:viewY-WORLD.h/viewZoom/2,bottom:viewY+WORLD.h/viewZoom/2}:null);
   stepFX(dt);setLightingDensity(effectsSurface.scale);stepLighting(dt,round,frameTime,room?.projectiles||[],room?.boss?.phase||1);
   if(corridor)drawCorridor(ctx,frameTime);else ctx.drawImage(ending&&room.secretUnlocked&&sceneImage('secret-chamber')||terrain(round),0,0,WORLD.w,WORLD.h);if(!corridor){drawGroundLighting(ctx,round);if(gameplay&&!ending)drawArenaGround(ctx,room,frameTime,settings.quality);drawGroundFX(ctx);}
@@ -444,6 +459,7 @@ function render(time){
   }
   if(flash>0){ctx.fillStyle=`rgba(170,30,45,${flash})`;ctx.fillRect(0,0,1200,760);flash=Math.max(0,flash-dt);}
   ctx.restore();
+  drawIntroFilm(ctx,room,now,frameTime,{x:sway.x,y:sway.y,reduced:reducedMotion});
   hurtEffects.overlay(ctx,hurtView,dt,frameTime,room?.state==='battle'&&own?own.hp/own.maxHp:0,{enabled:settings.hurtEffects&&room?.state==='battle',reducedMotion,shared:sharedCamera});
   audio.criticalPulse(frameTime,settings.hurtEffects&&!reducedMotion&&!sharedCamera&&room?.state==='battle'&&own?.hp>0?Math.max(0,(.25-own.hp/own.maxHp)/.25):0);
   if(screen==='battle'&&room){
@@ -458,7 +474,7 @@ function render(time){
   }
   if(screen==='results'&&room?.state==='round_end'&&$('next-round'))$('next-round').textContent=`Próxima arena em ${Math.max(0,Math.ceil(room.transitionAt-now))} segundos · ${BOSSES[Math.min(2,room.round+1)].arena}`;
   if(screen==='battle'&&room?.state==='battle'&&frameTime-lastStep>.43){const p=me();if(p&&p.hp>0&&Math.hypot(p.vx,p.vy)>25){audio.fx('step');footFX(p.x,p.y+3);lastStep=frameTime;}}
-  audio.music(frameTime,round,screen==='battle'&&room?.state==='battle');const perf=monitor.record(frameInterval,performance.now()-cpuStart);if(time-perfLast>500){perfLast=time;const el=$('performance');el.hidden=!settings.showPerf;if(settings.showPerf){const fx=effectsStats();el.textContent=Math.round(perf.fps)+' FPS · P95 '+perf.p95.toFixed(1)+'ms · CPU '+perf.cpu.toFixed(1)+'ms · '+fx.particles+' partículas';}window.IRON_PERF={...perf,...effectsStats(),...effectsSurface.stats(),quality:settings.quality,lights:lightingStats(),camera:{x:viewX,y:viewY,zoom:viewZoom,emote:emoteShot?.owner||null}};}requestAnimationFrame(render);
+  audio.music(frameTime,round,screen==='battle'&&room?.state==='battle');const perf=monitor.record(frameInterval,performance.now()-cpuStart);if(time-perfLast>500){perfLast=time;const el=$('performance');el.hidden=!settings.showPerf;if(settings.showPerf){const fx=effectsStats();el.textContent=Math.round(perf.fps)+' FPS · P95 '+perf.p95.toFixed(1)+'ms · CPU '+perf.cpu.toFixed(1)+'ms · '+fx.particles+' partículas';}window.IRON_PERF={...perf,...effectsStats(),...effectsSurface.stats(),quality:settings.quality,lights:lightingStats(),camera:{x:viewX,y:viewY,zoom:viewZoom,motion:{x:sway.x,y:sway.y,envelope:sway.envelope},emote:emoteShot?.owner||null}};}requestAnimationFrame(render);
 }
 document.querySelector('.brand').addEventListener('click',event=>{event.preventDefault();if(room)help();else showScreen('home');});
 window.IRON_ART={exportAtlas,bossSprite,playerSprite};

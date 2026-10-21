@@ -1,3 +1,4 @@
+import {strideFrame} from './stride-sprites.js';
 import {recoilOffset} from './damage-response.js';
 import {transitionFrame,resetTransitions} from './transition-sprites.js';
 import {expressFrame,cinemaFrame,gaitFrame} from './motion-sprites.js';
@@ -18,7 +19,7 @@ export {facingRow} from './animation-state.js';
 let metadata={};const metadataReady=fetch(new URL('./assets/animation-frames.json',import.meta.url)).then(r=>r.json()).then(data=>{metadata=data;cache.clear();});
 const sheets=new Map(),cache=new Map(),gaits=new Map(),bossGaits=new Map(),imageLoads=[];
 export function resetAnimationState(){resetTransitions();gaits.clear();bossGaits.clear();resetHurtReactions();}
-export const BASE_ANIMATION_FRAMES=732,ANIMATION_FRAMES=3861;
+export const BASE_ANIMATION_FRAMES=732,ANIMATION_FRAMES=3881;
 for(const name of ['knight','archer','rogue','varkhul','tharazul','azrakiel','minions',...['knight','archer','rogue'].map(n=>'emote-'+n),...['knight','archer','rogue','varkhul','tharazul','azrakiel','revenant','thornling','acolyte'].map(n=>'direction-'+n)]){
   const image=new Image();imageLoads.push(new Promise((resolve,reject)=>{image.onload=()=>{sheets.set(name,image);resolve(true);};image.onerror=()=>reject(new Error('Missing sprite: '+name));}));image.src=new URL(`./assets/${name.startsWith('emote-')||name.startsWith('direction-')?name:'animation-'+name}.png`,import.meta.url).href;
 }
@@ -45,7 +46,7 @@ function frame(name,row,col,boss=false){
 }
 export function characterFrame(p,time,now){
   let gait=gaits.get(p.id);if(!gait){gait={x:p.x,y:p.y,step:0};gaits.set(p.id,gait);}
-  const d=Math.hypot(p.x-gait.x,p.y-gait.y);if(d<40)gait.step+=d;gait.x=p.x;gait.y=p.y;
+  const d=Math.hypot(p.x-gait.x,p.y-gait.y);if(d<40)gait.step+=d;gait.x=p.x;gait.y=p.y;p.walkPhase=gait.step/84;
   let row=0,col=0,flip=false;
   const moving=Math.hypot(p.vx||0,p.vy||0)>12,a=moving?Math.atan2(p.vy,p.vx):p.facing||0;
   row=Math.abs(Math.cos(a))>.65?(Math.cos(a)>0?3:2):(Math.sin(a)>0?0:1);
@@ -56,7 +57,7 @@ export function characterFrame(p,time,now){
   if(p.emoteUntil>now){const row=['step','cross','spin','victory'].indexOf(p.emote),col=Math.floor((now-p.emoteAt)*7)%6;const image=frame('emote-'+p.classId,Math.max(0,row),col);if(image)return {image,flip:false,angle:p.emote==='spin'?[1.57,.5,-.6,-1.57,3.14,2.4][col]:1.57};}
   if(transition&&p.hp>0&&!(p.lastHurt!==undefined&&now-p.lastHurt<.17))return transition;
   const strike=strikeFrame(heroStrike(p,now));if(strike)return{...strike,angle:p.facing};
-  if(moving&&!p.block){const walk=strikeFrame({clip:p.classId+'-walk',direction:facingRow(p.aiming?p.facing:a),progress:gait.step/84%1,loop:true});if(walk&&!p.aiming)return{...walk,angle:a};}
+  if(moving&&!p.block){const walk=strideFrame(p.classId,facingRow(p.aiming?p.facing:a),gait.step/84)||strikeFrame({clip:p.classId+'-walk',direction:facingRow(p.aiming?p.facing:a),progress:gait.step/84%1,loop:true});if(walk&&!p.aiming)return{...walk,angle:a};}
   const hurtImage=hurtFrame(p,p.classId,now);
   const bow=p.classId==='archer'&&p.hp>0?archerPose(p,now):null;
   if(hurtImage&&!moving&&!(p.classId==='archer'&&(p.aiming||bow?.phase==='fire')))return{image:hurtImage,flip:false,angle:p.facing,hurt:true};

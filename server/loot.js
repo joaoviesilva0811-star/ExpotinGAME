@@ -40,5 +40,5 @@ export function roundDialogue(room,offset=0){
     {knight:'Esta é a última porta. Todos voltaremos por ela.',archer:'Seis asas, um alvo. Guardem energia para o eclipse.',rogue:'Chegamos até aqui juntos. Agora derrubamos um deus.'}
   ][room.round];
   const dialogue=[...room.players.values()].slice(0,3).map((p,i)=>({owner:p.id,name:p.name,classId:p.classId,text:lines[p.classId],at:room.now+offset+i*2.1,until:room.now+offset+(i+1)*2.1}));
-  dialogue.push({owner:'boss',name:BOSSES[room.round].name,boss:true,text:['Nenhum vivo atravessa os portões do meu reino!','Suas raízes beberão o sangue de vocês.','O vazio já conhece os seus nomes.'][room.round],at:room.now+10.3,until:room.now+12.4});return dialogue;
+  dialogue.push({owner:'boss',name:BOSSES[room.round].name,boss:true,text:['Nenhum vivo atravessa os portões do meu reino!','Suas raízes beberão o sangue de vocês.','O vazio já conhece os seus nomes.'][room.round],at:room.now+offset+6.3,until:room.now+offset+8.4});return dialogue;
 }

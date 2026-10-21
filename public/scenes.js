@@ -1,14 +1,12 @@
+import {paintGate,gatesReady} from './gate-art.js';
 import {drawItemSprite} from './item-art.js';
 import {WORLD,clamp} from './shared.js';
 const images=new Map(),loads=[];
-for(const name of ['arena-throne','arena-forest','arena-cathedral','corridor','secret-chamber','secret-chamber-open']){const img=new Image();loads.push(new Promise((resolve,reject)=>{img.onload=()=>{images.set(name,img);resolve(true);};img.onerror=()=>reject(Error('Missing scene '+name));}));img.src=new URL(`./assets/${name}.png`,import.meta.url).href;}
-export const sceneAssetsReady=Promise.all(loads);
+for(const name of ['arena-throne','arena-forest','arena-cathedral','corridor','secret-chamber','secret-chamber-open','comic-throne','comic-forest','comic-cathedral']){const img=new Image();loads.push(new Promise((resolve,reject)=>{img.onload=()=>{images.set(name,img);resolve(true);};img.onerror=()=>reject(Error('Missing scene '+name));}));img.src=new URL(`./assets/${name}.png`,import.meta.url).href;}
+export const sceneAssetsReady=Promise.all([...loads,gatesReady]).then(values=>values.every(v=>v!==false));
 export const sceneImage=round=>images.get(typeof round==='string'?round:['arena-throne','arena-forest','arena-cathedral'][round]);
 export function cinematicPlayer(room,p,index,now){
- if(room.state==='countdown'&&room.intro){
-  const t=clamp((now-room.intro.started-index*.16)/3.25,0,1);
-  if(t<1)return{...p,x:-35+(p.x+35)*t,y:365+index*18+(p.y-365-index*18)*t,vx:98,vy:(p.y-365-index*18)/3.25,facing:0,emoteUntil:0,attackAt:-10};
- }
+ if(room.state==='countdown')return{...p,vx:0,vy:0,attackAt:-10,emoteUntil:0};
  if(room.state==='ending'&&now<room.endingAt)return p;
  if(room.state==='ending'&&room.secretUnlocked){const t=Math.max(0,now-room.endingAt),walk=clamp((t-8)/3,0,1);return{...p,x:510+index*90,y:495-walk*165,vx:0,vy:t>8&&t<11?-70:0,facing:-Math.PI/2,attackAt:-10,emoteUntil:0,hp:100};}
  if(room.state==='ending'&&p.hp>0){const t=clamp((now-room.endingAt)/3.8,0,1);return{...p,x:p.x+(490+index*66-p.x)*t,y:p.y+(485+index%2*30-p.y)*t,vx:t<1?95:0,vy:0,facing:-Math.PI/2,emoteUntil:0,attackAt:-10};}
@@ -18,17 +16,7 @@ export function cinematicPlayer(room,p,index,now){
  }
  return p;
 }
-export function drawGate(c,room,now){
- if(!room?.intro)return;const t=clamp((now-room.intro.gateAt)/.85,0,1),bounce=t===1?Math.sin((now-room.intro.gateAt)*27)*Math.exp(-(now-room.intro.gateAt)*5)*3:0;
- c.save();c.translate(48,380+bounce);
- c.fillStyle='#090f16';c.fillRect(-17,-74,34,148);
- for(const y of [-72,63]){c.fillStyle='#56636a';c.fillRect(-25,y,50,13);c.fillStyle='#b19d72';c.fillRect(-23,y,46,2);}
- c.save();c.beginPath();c.rect(-15,-61,30,122*t);c.clip();
- c.fillStyle='#202b35';c.fillRect(-14,-61,28,122);c.strokeStyle='#84918b';c.lineWidth=2;
- for(const x of [-10,0,10]){c.beginPath();c.moveTo(x,-61);c.lineTo(x,61);c.stroke();}
- for(let y=-55;y<61;y+=16){c.fillStyle='#45535b';c.fillRect(-14,y,28,3);c.fillStyle='#d0aa6a';c.fillRect(-11,y,2,2);c.fillRect(9,y,2,2);}
- c.restore();c.restore();
-}
+export function drawGate(c,room,now){if(room?.intro)paintGate(c,room,now);}
 export function drawAwakening(c,b,round,now,intro){
  if(!intro||now<intro.awakeningAt||now>intro.awakeningAt+4.5)return;
  const t=clamp((now-intro.awakeningAt)/4.4,0,1),color=['#ef7d65','#9fdf86','#c89cff'][round];

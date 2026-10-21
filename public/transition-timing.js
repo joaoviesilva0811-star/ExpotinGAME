@@ -8,7 +8,7 @@ export class TransitionTiming{
   const x=Math.cos(p.facing||0),y=Math.sin(p.facing||0),direction=Math.abs(x)>.65?(x>0?'east':'west'):y<0?'north':'south',age=Math.max(0,now-a.at);
   const pose=(action,t)=>({group:action+'-'+direction,progress:Math.max(0,Math.min(.9999,t)),direction});
   if(mode==='guard')return pose('guard',age/.32);
-  if(mode==='attack'&&p.attackSlot===-1&&now-p.attackAt<.14)return pose('settle',(now-p.attackAt)/.14);
+  // Basic windup belongs to its attack clip; a settle clip here interrupted it.
   if(mode==='idle'&&a.previous==='guard'&&age<.22)return pose('guard',1-age/.22);
   if(mode==='idle'&&['move','attack','emote'].includes(a.previous)&&age<.3)return pose('settle',a.previous==='move'?age/.3:1-age/.3);
   return null;

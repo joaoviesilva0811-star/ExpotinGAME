@@ -1,3 +1,4 @@
+import {paintGate} from './gate-art.js';
 import {drawItemSprite} from './item-art.js';
 import {KEYS} from './keys.js';
 import {clamp} from './shared.js';
@@ -17,12 +18,7 @@ export function drawKeyRing(canvas,keys){const c=canvas.getContext('2d');c.clear
 export function drawKeyPassage(c,room,now){
  if(room.round>1||!room.keyDrop)return;
  const opened=room.gateUnlocked,t=opened?clamp((now-room.keyDrop.collectedAt)/1.2,0,1):0,color=KEYS[room.round].color;
- c.save();c.translate(1112,370);c.fillStyle='#080d17';c.fillRect(-34,-91,68,116);
- for(let side=-1;side<=1;side+=2)for(let row=0;row<7;row++){c.fillStyle=row%2?'#4e4b55':'#66616a';c.fillRect(side<0?-48:32,-90+row*18,16,16);c.fillStyle='#b2987044';c.fillRect(side<0?-48:32,-90+row*18,16,2);}
- c.fillStyle='#827064';c.fillRect(-38,-105,76,13);c.fillStyle='#b69a72';c.fillRect(-27,-109,54,5);
- c.save();c.beginPath();c.rect(-33,-91,66,116);c.clip();
- for(let side=-1;side<=1;side+=2){c.save();c.translate(side*t*36,0);c.fillStyle='#222632';c.fillRect(side<0?-32:0,-90,32,115);for(let y=-86;y<24;y+=19){c.fillStyle='#66717b';c.fillRect(side<0?-29:3,y,26,2);}c.fillStyle='#9b8157';c.fillRect(side<0?-9:5,-42,4,16);c.restore();}c.restore();
- c.strokeStyle=color;c.globalAlpha=opened?1:.4;c.lineWidth=2;for(let i=0;i<3;i++){c.strokeRect(-19+i*16,-101,6,6);}c.restore();
+ paintGate(c,room,now,true);
  if(t>0)light(c,1112,335,140,color,t*.35);
  if(opened&&now-room.keyDrop.collectedAt<1.2){const f=clamp((now-room.keyDrop.collectedAt)/1.2,0,1);drawMagicalKey(c,room.round,room.keyDrop.x+(1112-room.keyDrop.x)*f,room.keyDrop.y-40+(335-room.keyDrop.y)*f,58*(1-f*.5),now);}
 }

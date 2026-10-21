@@ -4,7 +4,7 @@ Jogo 2D cooperativo para PC Windows, com até 3 controles no mesmo PC ou até 4 
 
 ## Baixar o jogo pelo GitHub
 
-**[Baixar a versão Windows portátil](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/download/v1.10.0/IronCrown-Windows-x64.zip)** · **[Página da release](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/tag/v1.10.0)**
+**[Baixar a versão Windows portátil](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/download/v1.11.0/IronCrown-Windows-x64.zip)** · **[Página da release](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/tag/v1.11.0)**
 
 Extraia o ZIP completo e abra **Shadows of the Iron Crown.exe**. Não precisa instalar Node.js. A release é publicada pela automação do GitHub após a tag; o andamento aparece na aba **Actions**.
 
@@ -14,11 +14,22 @@ O pacote pronto excede o limite de 100 MB por arquivo do GitHub. Por isso, o rep
 
 [Prévia atual do aplicativo com controle](preview/previa-pc.mp4) · [Passagem pela masmorra](preview/corredor-2.png) · [Cutscene final](preview/pc-10-final.png)
 
-![Menu da edição PC 1.10](preview/pc-01-menu.png)
+![Menu da edição PC 1.11](preview/pc-01-menu.png)
 
 [Retratos novos](public/assets/cast-portraits.png) · [Poses dos chefes e emotes](preview/18-motion-contact.png) · [Zoom do emote no aplicativo](preview/18-emote-zoom.png) · [Coop com três controles](preview/16-couch-battle.png)
 
 [Reação ao dano no aplicativo](preview/20-native-hurt.png) · [Galeria de coberturas e destroços (fixture de arte)](preview/20-cover-art-review.png)
+
+[HQ de Varkhul](public/assets/comic-throne.png) · [HQ de Tharazul](public/assets/comic-forest.png) · [HQ de Azrakiel](public/assets/comic-cathedral.png)
+
+## Novidades da versão 1.11 — Movimento, Portões e HQ
+
+- Câmera balança com os passos, reage ao início do ataque e aos acertos, com impacto recebido mais forte; intensidade ajustável e redução no coop.
+- Habilidades avançam até o fim sem saltar de volta à preparação; a animação do básico não é interrompida pela pose de parada. Movimento contínuo do corpo acompanha a passada.
+- 20 poses intermediárias selecionadas por continuidade, pés e escala registrados; fontes inconsistentes descartadas. A duração da passada e a velocidade do personagem são preservadas.
+- Portões novos por arena, com grade móvel, correntes, som e tremor sincronizados ao início e fim da abertura/fechamento. A entrada correndo foi substituída por uma cutscene em HQ com três quadros próprios por arena e personagens baseados nos retratos dos diálogos, antes do diálogo e despertar.
+- Fundo novo do menu com movimento sutil e ferramentas superiores com ícones/molduras personalizados.
+- [Pôster do jogo](artwork/IronCrown-Poster.png), também anexado à release. Arte promocional, não captura da partida.
 
 ## Novidades da versão 1.10 — Impacto e Imersão
 

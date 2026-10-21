@@ -8,7 +8,7 @@ export function heroStrike(p,now){
  const instant=p.attackSlot>=0,hit=p.classId==='archer'?.17:p.classId==='rogue'?.12:.18;
  // The server emits skills immediately: begin at release, then follow through
  // and reload. Basic anticipation instead ends exactly at the server hit time.
- const progress=instant?(elapsed/duration+.5)%1:elapsed<hit?elapsed/hit*.5:.5+(elapsed-hit)/Math.max(.01,duration-hit)*.5;
+ const progress=instant?.5+elapsed/duration*.499:elapsed<hit?elapsed/hit*.5:.5+(elapsed-hit)/Math.max(.01,duration-hit)*.5;
  return {clip:p.classId+'-'+action,progress,direction:facingRow(p.facing||0)};
 }
 export function bossStrike(b,round,now){

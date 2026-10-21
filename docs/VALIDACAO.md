@@ -1,3 +1,27 @@
+# Validação da versão 1.11.0
+
+Executada em Linux com Node 24.19.0 e Electron 44.9.0, em 21/10/2026. Sem teste físico de Windows ou controles USB/Bluetooth.
+
+- `npm test`: **96 testes aprovados**. Incluem continuidade temporal de habilidades, balanço por passada, independência em 60/120 Hz, limite de impulsos, redução no coop, tremor zero, ciclo/registro das 20 poses intermediárias, uma única emissão por evento de portão, reconexão tardia e sequência da abertura em HQ antes de diálogo/despertar/combate.
+- `scripts/ready-smoke.js`: recursos preparados em aproximadamente 7s, sem erros. Os caches de ilustrações, portões e poses são preparados no lobby.
+- Novos desenhos de caminhada: 184 poses nas folhas de origem; 25 candidatas passaram pela comparação de continuidade, e **20 são usadas em direções alcançáveis**. Só essas 20 entram na contagem nova de atores. A métrica compara diferenças premultiplicadas de RGBA com pés/escala alinhados e aceita uma intermediária somente quando reduz o maior salto em pelo menos 2%. É QA de continuidade, não julgamento artístico humano ou criação de imagens a partir da métrica.
+- Portões: seis partes originais completas registradas por transparência. Os PNGs não são modificados; o jogo recorta/cacheia as partes e anima a grade. Abertura e fechamento vêm dos mesmos horários autoritativos da sala; não concedem chaves/desbloqueio no cliente.
+- `scripts/motion-gates-review.js`: aplicativo final com HQ, três painéis revelados antes do diálogo, primeira vitória por controle virtual normal, duas batidas de portão sincronizadas, movimento/ataque com balanço, intensidade zero, ícones personalizados e áudio silenciado preservado após a primeira tecla. Uma janela, sem erros de JavaScript. As imagens de HQ são ilustrações baseadas nos retratos, não sprites sobre outro cenário; movimento por revelação/enquadramento/partículas, não animação corporal quadro a quadro.
+
+- Campanha nativa final: **três vitórias, três chaves e Câmara da Coroa**, fases I/II/III dos três chefes, **53 / 65 / 88s** de combate e sete eventos de quebra de cobertura. Cavaleiro e dois bots mortais, entradas normais por controle virtual; sem editar HP, dano ou relógio. Sem erros de JavaScript. Houve outros testes/gravação durante partes da campanha, portanto ela não é benchmark isolado.
+- Coop final: três sessões autenticadas, movimento/mira independentes, habilidades, dash com energia, bloqueio de teclado/mouse, HUD PS/Xbox, reconexão e cinco ciclos de menu passaram. Uma janela e uma trilha ativa.
+- ZIP Windows final: **522.490.941 bytes**, 16 partes, CRC de 330 entradas íntegro, executável PE x64 e **233 arquivos de fonte/arte conferidos byte a byte**, além do guia e versão. SHA-256 em `docs/benchmarks/v1.11.0.json`.
+
+Medição isolada, sem vídeo/capturas ou outros testes nativos: HQ com mediana **60 FPS**, menor amostra **59 FPS**; batalha com **45 amostras, mediana 60 FPS, menor amostra 36 FPS e CPU JavaScript mediana 1,25 ms**. Qualidade alta, efeitos/luzes adaptativos e renderização por software. São amostras desta máquina, não garantia para todo PC.
+
+Resultados nativos finais, medições de batalha/cutscene, conferência de ZIP e metadados da prévia estão consolidados em `docs/benchmarks/v1.11.0.json`. Capturas em `preview/21-*` vêm do aplicativo; a arte do pôster e as ilustrações originais não são screenshots de gameplay.
+
+Prévia final gravada sem outros testes nativos ativos: **2.204 quadros recebidos em aproximadamente 75s**, mais menu/preparação, vídeo final 1440×960 de 80.600000s codificado a 60 FPS. Há quadros repetidos na codificação; ela não mede a cadência da partida. A trilha original foi mixada no vídeo, não capturada de dispositivo de áudio.
+
+Não houve teste de GPU física ou Windows. 60 FPS é um objetivo, não garantia em todo computador. Publicação/certificação na Steam não faz parte desta entrega.
+
+---
+
 # Validação da versão 1.10.0
 
 Executada em Linux com Node 24.19.0 e Electron 44.9.0, em 21/10/2026. Aplicativo nativo equivalente; sem teste físico de Windows ou controles USB/Bluetooth.

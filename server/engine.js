@@ -1,3 +1,4 @@
+import {INTRO_GATE_AT,INTRO_DIALOGUE_AT} from '../public/intro-timing.js';
 import {arenaObstacles} from '../public/arena-state.js';
 import {resetArena,damageCover,damageCoversInHazard,tickArena} from './arena.js';
 import {comboState,recordCombo,resetCombo,expireCombo} from './combos.js';
@@ -105,8 +106,8 @@ export class Room {
   }
   prepareRound() {
     this.keyDrop=null;this.keySceneUntil=0;this.gateUnlocked=false;
-    this.state = 'countdown'; this.transitionAt = this.now + 17.7; this.remaining = 300;
-    this.projectiles = []; this.hazards = []; this.effects = []; this.minions = []; this.drops=[];this.lootKills=0;this.intro={started:this.now,gateAt:this.now+3.55,dialogueAt:this.now+4,awakeningAt:this.now+10.3};this.gateClosed=false;this.awakened=false;this.dialogue=roundDialogue(this,4); this.nextWave = this.transitionAt+8; this.waveIndex = 0;
+    this.state = 'countdown'; this.transitionAt = this.now + INTRO_DIALOGUE_AT+13.7; this.remaining = 300;
+    this.projectiles = []; this.hazards = []; this.effects = []; this.minions = []; this.drops=[];this.lootKills=0;this.intro={started:this.now,gateAt:this.now+INTRO_GATE_AT,dialogueAt:this.now+INTRO_DIALOGUE_AT,awakeningAt:this.now+INTRO_DIALOGUE_AT+6.3};this.gateClosed=false;this.awakened=false;this.dialogue=roundDialogue(this,INTRO_DIALOGUE_AT); this.nextWave = this.transitionAt+8; this.waveIndex = 0;
     resetArena(this);
     const info = BOSSES[this.round];
     const hp = Math.round(info.hp * (.25 + .1875 * this.players.size));

@@ -73,3 +73,14 @@ novos sprites gerados nem imagens editadas por scripts.
 
 `arena-covers.png` é um atlas RGBA original gerado para o jogo, com seis desenhos completos: três coberturas e três estados destruídos. Fonte preservada sem alterações: `exec-8f3f8ed4-f525-4b45-83e8-6662f2fcb34d.png`.
 `cover-frames.json` registra os retângulos e tamanhos de reprodução; `scripts/analyze-cover-art.py` apenas lê a transparência e escreve JSON. O Canvas prepara a arte em cache, acrescentando a rachadura de meia vida. Colisão/vida continuam no servidor. Desenhos de cenário não entram na contagem de 3.861 poses de atores.
+
+## 1.11 — Movimento, portões, menu e pôster
+
+Fontes RGBA originais preservadas: `stride-knight.png` (exec-2cf5ffe9-7767-4854-a9b2-411330356fba.png), `stride-archer.png` (exec-be59dd43-a1e9-4e3f-835f-9cb9031adb50.png), `stride-rogue.png` (exec-39f835ed-5e9d-413d-be82-201d41ee6158.png). As folhas não atenderam integralmente ao ciclo de 16 poses solicitado. Não são apresentadas como 184 poses novas utilizáveis: análise de continuidade aceitou 25 candidatas, das quais **20** são usadas nas direções realmente alcançáveis (5 cavaleiro, 4 arqueiro, 11 ladino). Metadados preservam o tempo das poses base e inserem a intermediária no meio do intervalo. Acervo de atores: 3.881 poses, sem contar espelhamentos.
+
+`dungeon-gates.png` (exec-abb77939-acf0-4134-9000-61ae3f0e0edb.png): seis partes originais de portões, moldura e grade para cada arena. O PNG não é alterado; `analyze-gates.py` registra componentes e contornos em JSON; o jogo prepara as camadas em cache.
+
+`menu-expedition.png` (exec-f2782fd2-4034-4d10-8a01-92e037dabd71.png): nova ilustração de menu original, com animação sutil na camada de apresentação.
+`artwork/IronCrown-Poster.png` (exec-6c81550d-0055-4286-a0ac-1fe9f6d4d33c.png): pôster original do projeto. Não é uma captura de gameplay. `tool-*.svg` são quatro ícones originais em caminhos com alinhamento a pixels, integrados às molduras existentes.
+
+Cutscenes em HQ: `comic-throne.png` (`exec-e0eac2cb-4412-4a71-aed2-bd2ca5a560b8.png`), `comic-forest.png` (`exec-b3efb983-97c2-4f1a-9288-c2f017a56d90.png`), `comic-cathedral.png` (`exec-fcb4eb20-0f45-4fd2-9607-fc4920728aa2.png`). Nove quadros originais, criados usando `cast-portraits.png` como referência explícita dos personagens. Os PNGs são preservados sem alterações; o Canvas seleciona os três painéis, revela-os em sequência e anima enquadramento sutil, partículas e tremor sincronizado ao portão. Não são poses novas de atores nem animação corporal quadro a quadro. A abertura dura 9,6s antes dos diálogos; a partida aguarda o horário autoritativo. As ilustrações de fundo anteriores foram descartadas por inconsistência visual.

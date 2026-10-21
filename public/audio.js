@@ -51,6 +51,7 @@ export class AudioEngine {
     if(kind==='daggerImpact'){this.sample('slash',.24);this.tone(460,.07,'triangle',.09,-190);return;}
     if(kind==='heavyHit'){this.sample('hit',.85);this.tone(72,.19,'sine',.24,-35);return;}
     const samples={attack:'slash',arrow:'arrow',hit:'hit',block:'block',dash:'dash',roar:'roar-'+round};if(samples[kind]){this.sample(samples[kind],kind==='roar'?.8:.7);return;}
+    if(kind==='gateStop'){this.noise(.32,.55,700);this.tone(42,.48,'sine',.46,-20);this.tone(175,.2,'triangle',.14,-100);return;}
     if(kind==='gate'){this.noise(.55,.5,550);this.tone(54,.6,'triangle',.45,-27);this.tone(171,.4,'triangle',.12,-60);}
     if(kind==='pickup'){this.tone(660,.22,'sine',.24);this.tone(990,.35,'sine',.13);}
     if(kind==='frost'){this.noise(.4,.2,4400);[523,784,1047].forEach(f=>this.tone(f,.65,'sine',.1,160));}

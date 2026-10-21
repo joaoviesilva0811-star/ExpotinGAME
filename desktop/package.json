@@ -1,7 +1,7 @@
 {
   "name": "iron-crown-desktop",
   "productName": "Shadows of the Iron Crown",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "private": true,
   "type": "module",
   "main": "main.cjs"
