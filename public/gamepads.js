@@ -16,7 +16,7 @@ export class GamepadHub{
   this.locked=this.seats.some(s=>s.connected);return frames;
  }
  intent(slot,blocked=false){const s=this.seats[slot],a=s?.aim||{x:1,y:0};return !s?.connected||blocked?{x:0,y:0,ax:a.x,ay:a.y,attack:false,block:false,revive:false}:s.intent;}
- rumble(slot,amount=20,blocked=false){const actuator=this.seats[slot]?.pad?.vibrationActuator;try{actuator?.playEffect('dual-rumble',{duration:blocked?65:120,weakMagnitude:blocked?.15:.35,strongMagnitude:blocked?.12:Math.min(.8,.2+amount/70)})?.catch(()=>{});}catch{}}
+ rumble(slot,amount=20,blocked=false,heavy=false){const actuator=this.seats[slot]?.pad?.vibrationActuator;try{actuator?.playEffect('dual-rumble',{duration:blocked?65:heavy?190:110,weakMagnitude:blocked?.22:heavy?.65:.35,strongMagnitude:blocked?.12:Math.min(.9,.2+amount/70)})?.catch(()=>{});}catch{}}
 }
 // Menus work with either family; the mouse remains available while open.
 export function padMenu(frame,root){

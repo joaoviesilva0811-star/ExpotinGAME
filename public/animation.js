@@ -1,3 +1,4 @@
+import {recoilOffset} from './damage-response.js';
 import {transitionFrame,resetTransitions} from './transition-sprites.js';
 import {expressFrame,cinemaFrame,gaitFrame} from './motion-sprites.js';
 import {rescueFrame} from './rescue-sprites.js';
@@ -90,7 +91,7 @@ export function drawMinion(c,m,time,now){
   const directional=['windup','recover'].includes(m.state)?frame('direction-'+m.kind,facingRow(m.aim!==undefined&&['windup','recover'].includes(m.state)?m.aim:m.facing),dcol):null;
   const hurtImage=['idle','recover'].includes(m.state)?hurtFrame(m,m.kind,now):null;const walk=m.state==='chase'?strikeFrame({clip:m.kind+'-walk',direction:facingRow(m.facing),progress:time*1.45%1,loop:true}):null;const strike=walk||(hurtImage?null:strikeFrame(minionStrike(m,now)));const image=hurtImage||strike?.image||directional||frame('minions',m.round,col);const spawning=now<m.activeAt;
   if(image)drawCastShadow(c,image,m,82,75,11);
-  c.save();c.translate(m.x,m.y);c.globalAlpha=spawning?.35:1;const motion=actorMotion(m,time,now);c.translate(0,motion.lift);c.rotate(motion.lean);c.scale(motion.sx,motion.sy);
+  const recoil=recoilOffset(m,now);c.save();c.translate(m.x+recoil.x,m.y+recoil.y);c.globalAlpha=spawning?.35:1;const motion=actorMotion(m,time,now);c.translate(0,motion.lift);c.rotate(motion.lean);c.scale(motion.sx,motion.sy);
   c.fillStyle='#0007';c.beginPath();c.ellipse(0,7,18,7,0,0,7);c.fill();
   if(image){if(strike?.flip||!strike&&!hurtImage&&!directional&&Math.cos(m.facing)<0)c.scale(-1,1);if(m.state==='chase')c.translate(0,Math.sin(time*6)*.8);if(strike)drawPose(c,m.id,now-m.hurtAt<.14?{...strike,image:hitFlash(strike.image),next:hitFlash(strike.next)}:strike,-41,-64,82,75,time);else drawAnimatedFrame(c,now-m.hurtAt<.14?hitFlash(image):image,-41,-64,82,75);}
   else{c.fillStyle=['#a06167','#86a269','#9781b1'][m.round];c.fillRect(-12,-32,24,32);}

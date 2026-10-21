@@ -4,7 +4,7 @@ Jogo 2D cooperativo para PC Windows, com até 3 controles no mesmo PC ou até 4 
 
 ## Baixar o jogo pelo GitHub
 
-**[Baixar a versão Windows portátil](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/download/v1.9.0/IronCrown-Windows-x64.zip)** · **[Página da release](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/tag/v1.9.0)**
+**[Baixar a versão Windows portátil](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/download/v1.10.0/IronCrown-Windows-x64.zip)** · **[Página da release](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/tag/v1.10.0)**
 
 Extraia o ZIP completo e abra **Shadows of the Iron Crown.exe**. Não precisa instalar Node.js. A release é publicada pela automação do GitHub após a tag; o andamento aparece na aba **Actions**.
 
@@ -14,9 +14,21 @@ O pacote pronto excede o limite de 100 MB por arquivo do GitHub. Por isso, o rep
 
 [Prévia atual do aplicativo com controle](preview/previa-pc.mp4) · [Passagem pela masmorra](preview/corredor-2.png) · [Cutscene final](preview/pc-10-final.png)
 
-![Menu da edição PC 1.9](preview/pc-01-menu.png)
+![Menu da edição PC 1.10](preview/pc-01-menu.png)
 
 [Retratos novos](public/assets/cast-portraits.png) · [Poses dos chefes e emotes](preview/18-motion-contact.png) · [Zoom do emote no aplicativo](preview/18-emote-zoom.png) · [Coop com três controles](preview/16-couch-battle.png)
+
+[Reação ao dano no aplicativo](preview/20-native-hurt.png) · [Galeria de coberturas e destroços (fixture de arte)](preview/20-cover-art-review.png)
+
+## Novidades da versão 1.10 — Impacto e Imersão
+
+- Seis sprites novos de coberturas e destroços: pedra entalhada, raízes detalhadas e cristais góticos, registrados e preparados em cache antes da partida.
+- Câmera do coop acompanha o último jogador de pé e mantém enquadramento válido quando todos caem.
+- Hurt cam com impulso direcional, contragolpe suave e limite de deslocamento. Golpes distantes tremem menos; a câmera compartilhada reduz a intensidade para os três jogadores.
+- Recuo visual de personagens, chefes e lacaios acompanha a origem do dano, sem alterar colisões, travar entradas ou interromper a simulação.
+- Bloqueio, quebra de defesa e queda têm resposta própria de câmera, som e vibração. Proteção de aliado deixa de ser confundida com bloqueio de escudo.
+- Vida recém-perdida aparece em dourado no HUD do jogador, chefe e três assentos locais. Vida crítica recebe bordas discretas e pulsação sonora, sem blur; pode ser desativada em Gráficos e áudio.
+- HUD de EXPOSTO acompanha o tempo real do bônus. Sem mudanças no dano básico 25/32/18, energia, dificuldade ou coop.
 
 ## Novidades da versão 1.9 — Arenas Vivas
 

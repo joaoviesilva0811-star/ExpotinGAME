@@ -1,6 +1,10 @@
 import {COVER_LAYOUTS} from './arena-state.js';
 import {clamp} from './shared.js';
 const sheets=new Map(),TAU=Math.PI*2;
+let coverAtlas=null,coverFrames=[];
+export const arenaArtReady=fetch(new URL('./assets/cover-frames.json',import.meta.url)).then(r=>{if(!r.ok)throw Error('Cover registration missing');return r.json();}).then(spec=>new Promise(resolve=>{
+ const atlas=new Image();atlas.onerror=()=>resolve(false);atlas.onload=()=>{coverAtlas=atlas;coverFrames=spec.frames;resolve(true);};atlas.src=new URL('./assets/'+spec.file,import.meta.url).href;
+})).catch(()=>false);
 const canvas=(w,h)=>{const a=document.createElement('canvas');a.width=w;a.height=h;return a;};
 const colors=[['#cfad7b','#615a54','#292d36'],['#aad475','#576344','#293d37'],['#c2a5ed','#6c637e','#2b2b40']];
 function polygon(c,points,fill,stroke){c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.closePath();c.fillStyle=fill;c.fill();if(stroke){c.strokeStyle=stroke;c.stroke();}}
@@ -8,7 +12,9 @@ function prop(round,broken=false,cracked=false){
  const key=[round,broken,cracked].join(':');if(sheets.has(key))return sheets.get(key);
  const a=canvas(116,130),c=a.getContext('2d'),[gold,mid,dark]=colors[round];c.imageSmoothingEnabled=false;c.translate(58,111);
  c.fillStyle='#03081088';c.beginPath();c.ellipse(1,6,40,15,0,0,TAU);c.fill();
- if(broken){for(let i=0;i<14;i++){const x=Math.sin(i*7.3)*30,y=Math.cos(i*3.1)*9;polygon(c,[[x-6,y],[x-3,y-7-i%7],[x+7,y-4],[x+6,y+3]],i%3?mid:gold,dark);}}
+ const registered=coverFrames.find(f=>f.round===round&&f.broken===broken);
+ if(coverAtlas&&registered){const [sx,sy,sw,sh]=registered.rect,[w,h]=registered.size;c.drawImage(coverAtlas,sx,sy,sw,sh,-w/2,-h+9,w,h);}
+ else if(broken){for(let i=0;i<14;i++){const x=Math.sin(i*7.3)*30,y=Math.cos(i*3.1)*9;polygon(c,[[x-6,y],[x-3,y-7-i%7],[x+7,y-4],[x+6,y+3]],i%3?mid:gold,dark);}}
  else if(round===0){
   polygon(c,[[-28,-2],[0,10],[29,-2],[29,-13],[0,-2],[-28,-13]],'#5a514d','#242833');
   polygon(c,[[-20,-13],[-20,-78],[0,-67],[0,-2]],'#45424a','#262a32');polygon(c,[[0,-2],[0,-67],[21,-78],[21,-13]],'#67606a','#292d36');

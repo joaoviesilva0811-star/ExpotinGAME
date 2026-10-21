@@ -9,7 +9,7 @@ const root=resolve('artifacts/controller-recording-'+Date.now()),framesDir=resol
 const app=await electron.launch({executablePath:resolve('dist/IronCrown-Linux-x64/iron-crown'),args:['--no-sandbox','--ozone-platform=headless','--disable-gpu'],env:{...process.env,XDG_CONFIG_HOME:resolve(root,'config'),XDG_CACHE_HOME:resolve(root,'cache')},timeout:25000});
 try{
  await installCombatDriver(app.context(),{gamepad:true});
- const menu=await app.firstWindow(),errors=[];menu.on('pageerror',e=>errors.push(e.message));await menu.setViewportSize({width:1120,height:820});await menu.waitForTimeout(800);await menu.screenshot({path:'artifacts/pc-01-menu.png'});await menu.locator('#nickname').fill('Lyra');await menu.locator('[data-class=archer]').click();
+ const menu=await app.firstWindow(),errors=[];menu.on('pageerror',e=>errors.push(e.message));await menu.setViewportSize({width:1120,height:820});await menu.waitForTimeout(800);await menu.screenshot({path:'artifacts/pc-01-menu.png'});await menu.locator('#nickname').fill('Lyra');await menu.locator('[data-class='+(process.env.PREVIEW_CLASS||'archer')+']').click();
  const next=menu.waitForURL(/^http:/);await menu.locator('#solo').click();await next;const page=menu;await page.setViewportSize({width:1440,height:960});await page.getByRole('button',{name:'Estou pronto'}).click();
  await page.screenshot({path:'artifacts/pc-02-solo.png'});
  const cdp=await app.context().newCDPSession(page);const frames=[],writes=[];

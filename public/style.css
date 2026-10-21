@@ -86,3 +86,10 @@ input:not([type=checkbox]){background:linear-gradient(#0c1016,#1c1b21);border:1p
 #boss-portrait{position:absolute;left:-51px;top:0;width:46px;height:46px;image-rendering:pixelated;background:#171923;border:5px solid transparent;border-image:var(--frame) 170 stretch}@media(max-width:900px){#boss-portrait{display:none}}
 
 .ability.ready{border-color:var(--class-accent,#d7b47b)}.ability kbd{color:var(--class-accent,#d7b47b)}.ability:focus-visible{outline-color:var(--class-accent,#d7b47b)}
+
+/* Recently lost HP stays gold briefly, including all three couch seats. */
+.resource.health,.boss-health{position:relative;isolation:isolate;overflow:hidden}
+.resource.health .health-memory,.boss-health .health-memory,.couch-resource.health .health-memory{position:absolute;inset:0 auto 0 0;height:100%;background:linear-gradient(#f0cf8f,#a87643);transition:none;z-index:0;pointer-events:none}
+#my-health,#boss-health-fill{position:relative;z-index:1}
+.couch-resource.health i:not(.health-memory){z-index:1}
+.resource.health span,.boss-health span,.couch-resource.health span{z-index:2}

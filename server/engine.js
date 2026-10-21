@@ -147,7 +147,7 @@ export class Room {
     if (this.state !== 'battle' || !this.boss || this.boss.hp <= 0 || this.now < this.boss.immuneUntil) return 0;
     if(this.boss.state==='recover'&&this.now<(this.boss.exposedUntil||0))amount*=1.12;
     if (this.boss.guarding && this.boss.state === 'windup') amount *= .65;
-    const actual = Math.min(Math.round(amount * 10) / 10, this.boss.hp); this.boss.hp -= actual; this.boss.hurtAt = this.now;
+    const actual = Math.min(Math.round(amount * 10) / 10, this.boss.hp); this.boss.hp -= actual; this.boss.hurtAt = this.now; this.boss.hurtAngle=Math.atan2(this.boss.y-p.y,this.boss.x-p.x);this.boss.hurtAmount=actual;
     p.stats.damage += actual; p.roundStats.damage += actual;recordCombo(p,actual,this.now);
     this.emit('hit', { x: this.boss.x, y: this.boss.y - 40, amount: actual, owner: p.id, target: 'boss' });
     if (this.boss.hp <= 0) this.endRound(true);
@@ -155,7 +155,7 @@ export class Room {
   }
   hitMinion(p, m, amount) {
     if (m.hp <= 0 || this.now < m.activeAt || this.state !== 'battle') return 0;
-    const actual = Math.min(m.hp, amount); m.hp -= actual; m.hurtAt = this.now;
+    const actual = Math.min(m.hp, amount); m.hp -= actual; m.hurtAt = this.now; m.hurtAngle=Math.atan2(m.y-p.y,m.x-p.x);m.hurtAmount=actual;
     p.stats.damage += actual; p.roundStats.damage += actual;recordCombo(p,actual,this.now);
     this.emit('hit', { x:m.x, y:m.y-20, amount:actual, owner:p.id, target:m.id, minion:true });
     if (m.hp <= 0) { dropPotion(this,m); this.emit('minionDeath', {x:m.x,y:m.y,kind:m.kind}); p.energy = Math.min(100,p.energy+8); }
@@ -243,6 +243,7 @@ export class Room {
 
   hurt(p, amount, breaks = false, source = null) {
     if (!this.active(p) || this.state !== 'battle' || this.now<p.dodgeUntil) return;
+    const guarded=p.block&&!breaks,guardBroken=breaks&&p.block;
     let factor = 1;
     if (p.block && !breaks) factor *= .4;
     if (p.shieldUntil > this.now) factor *= .5;
@@ -254,7 +255,8 @@ export class Room {
     if(taken>0)resetCombo(p);p.emoteUntil=0;p.reviveTarget = null; p.revive = 0; p.lastHurt = this.now;
     if (breaks && p.block) { p.block = false; p.blockAt = this.now + .8; this.emit('notice', { text: `${p.name}: defesa quebrada!` }); }
     const origin=source||this.boss||{x:p.x-1,y:p.y};
-    this.emit('hurt', {angle:Math.atan2(p.y-origin.y,p.x-origin.x), owner: p.id, x: p.x, y: p.y, amount: final, blocked: factor < 1 });
+    p.hurtAngle=Math.atan2(p.y-origin.y,p.x-origin.x);p.hurtAmount=taken;p.hurtBlocked=guarded;
+    this.emit('hurt', {angle:p.hurtAngle, owner:p.id,x:p.x,y:p.y,amount:taken,maxHp:p.maxHp,hp:p.hp,blocked:guarded,mitigated:factor<1,guardBroken,downed:p.hp<=0});
     if (p.hp <= 0) { p.downAt = this.now; p.block = false; p.vx = p.vy = 0; this.emit('notice', { text: `${p.name} caiu! Segure R perto para reviver.` }); }
   }
   endRound(won, reason = '') {
@@ -417,7 +419,7 @@ export class Room {
   snapshot() {
     const playerView = p => ({ emote:p.emote,emoteAt:p.emoteAt,emoteUntil:p.emoteUntil,emoteReady:p.emoteReady,id: p.id, name: p.name, classId: p.classId, isBot: !!p.isBot, ready: p.ready, connected: p.connected,
       x: p.x, y: p.y, vx: p.vx, vy: p.vy, hp: p.hp, maxHp: p.maxHp, energy: p.energy, facing: p.facing, aiming: !!p.input.attack,
-      attackAt:p.attackAt,attackFor:p.attackFor,attackSlot:p.attackSlot,lastHurt:p.lastHurt,dodgeAt:p.dodgeAt,dodgeUntil:p.dodgeUntil,dodgeReady:p.dodgeReady,reviveStartedAt:p.reviveStartedAt,aidAt:p.aidAt,aidUntil:p.aidUntil,revivedAt:p.revivedAt,revivedBy:p.revivedBy,
+      hurtAngle:p.hurtAngle,hurtAmount:p.hurtAmount,hurtBlocked:p.hurtBlocked,attackAt:p.attackAt,attackFor:p.attackFor,attackSlot:p.attackSlot,lastHurt:p.lastHurt,dodgeAt:p.dodgeAt,dodgeUntil:p.dodgeUntil,dodgeReady:p.dodgeReady,reviveStartedAt:p.reviveStartedAt,aidAt:p.aidAt,aidUntil:p.aidUntil,revivedAt:p.revivedAt,revivedBy:p.revivedBy,
       combo:p.combo,potions:p.potions,potionReady:p.potionReady,
       cds: p.cds, basicAt: p.basicAt, block: p.block, shieldUntil: p.shieldUntil, rootUntil: p.rootUntil,
       downAt: p.downAt, eliminated: p.eliminated, revive: p.revive, reviveTarget: p.reviveTarget, stats: p.stats });

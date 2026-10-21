@@ -1,3 +1,4 @@
+import {recoilOffset} from './damage-response.js';
 import {hitFlash} from './frame-tint.js';
 import {drawCastShadow} from './lighting.js';
 import {actorMotion} from './animation-timing.js';
@@ -194,13 +195,13 @@ export function drawPlayer(c,p,time,{scale=1,alpha=1,attacking=false,now=time}={
   c.save();c.globalAlpha=alpha;
   drawCastShadow(c,img,p,(img.ironFrame?.width||img.width)*scale,(img.ironFrame?.height||img.height)*scale,15*scale);
   c.fillStyle='#030b1280';c.beginPath();c.ellipse(p.x,p.y+7,22*scale,9*scale,0,0,Math.PI*2);c.fill();
-  c.translate(p.x,p.y);
+  const recoil=recoilOffset(p,now);c.translate(p.x+recoil.x,p.y+recoil.y);
   const motion=actorMotion(p,time,now);if(p.hp>0){c.translate(0,motion.lift);c.rotate(motion.lean);c.scale(motion.sx,motion.sy);}
   if(p.hp<=0){if(!animated?.downPose)c.rotate(-Math.PI/2);c.globalAlpha*=animated?.downPose ? .78 : .5;}
   else if(p.dodgeUntil>now){c.rotate(Math.sin((now-p.dodgeAt)/.24*Math.PI)*.35);c.globalAlpha*=.75;}
   if(animated?.flip)c.scale(-1,1);
   if(animated?.bowPhase==='aim'&&Math.hypot(p.vx||0,p.vy||0)>12)c.translate(0,Math.sin(time*8)*.8);
-  const hurt=now-(p.lastHurt??-10);if(hurt>=0&&hurt<.16){c.translate(Math.cos(a)*-3,0);}
+  const hurt=now-(p.lastHurt??-10);
   const iw=img.ironFrame?.width||img.width,ih=img.ironFrame?.height||img.height;drawPose(c,p.id||p.classId,animated?.next?{...animated,image:hurt>=0&&hurt<.16?hitFlash(img):img,next:hurt>=0&&hurt<.16?hitFlash(animated.next):animated.next}:{image:hurt>=0&&hurt<.16?hitFlash(img):img},-iw/2*scale,(-ih+15)*scale,iw*scale,ih*scale,time);c.restore();
 }
 export function drawBoss(c,b,round,time,now=time){
@@ -211,7 +212,7 @@ export function drawBoss(c,b,round,time,now=time){
 
   let w=animation?210:206,h=animation?210:206;if(b.state==='fallen'){h*=.45;w*=1.1;}if(b.state==='dormant'){h*=round===1?.6:.77;w*=round===2?.77:1;c.filter='brightness(.5) saturate(.6)';}
   const bob=b.state==='chase'?Math.sin(time*6)*1.3:0;
-  const motion=actorMotion(b,time,now,true);c.translate(b.x,b.y+23+bob+motion.lift);c.rotate(motion.lean);c.scale(motion.sx*(b.walkFlip?-1:1),motion.sy);drawPose(c,'boss-'+round,b.strikePose?{...b.strikePose,image:now-b.hurtAt<.055?hitFlash(img):img,next:now-b.hurtAt<.055?hitFlash(b.strikePose.next):b.strikePose.next}:{image:now-b.hurtAt<.055?hitFlash(img):img},-w*sc/2,-h*sc,w*sc,h*sc,time);c.restore();
+  const motion=actorMotion(b,time,now,true),recoil=recoilOffset(b,now,true);c.translate(b.x+recoil.x,b.y+23+bob+motion.lift+recoil.y);c.rotate(motion.lean);c.scale(motion.sx*(b.walkFlip?-1:1),motion.sy);drawPose(c,'boss-'+round,b.strikePose?{...b.strikePose,image:now-b.hurtAt<.055?hitFlash(img):img,next:now-b.hurtAt<.055?hitFlash(b.strikePose.next):b.strikePose.next}:{image:now-b.hurtAt<.055?hitFlash(img):img},-w*sc/2,-h*sc,w*sc,h*sc,time);c.restore();
 }
 
 const terrains=new Map();
@@ -321,5 +322,5 @@ export function drawPlayerHighlight(c,p,time,now){
   const edge=document.createElement('canvas');edge.width=img.width+4;edge.height=img.height+4;if(img.ironFrame)edge.ironFrame={...img.ironFrame,left:img.ironFrame.left-2,top:img.ironFrame.top-2};const e=edge.getContext('2d');for(const[x,y]of [[-1.25,0],[1.25,0],[0,-1.25],[0,1.25]])e.drawImage(fill,2+x,2+y);e.globalCompositeOperation='destination-out';e.drawImage(fill,2,2);entry={fill,edge};silhouetteCache.set(img,entry);
  }
  const m=actorMotion(p,time,now),w=img.ironFrame?.width||img.width,h=img.ironFrame?.height||img.height;
- c.save();c.translate(p.x,p.y+m.lift);c.rotate(m.lean);c.scale((pose.flip?-1:1)*m.sx,m.sy);c.globalAlpha=.85;drawAnimatedFrame(c,entry.edge,-w/2,-h+15,w,h);c.globalAlpha=.1;drawAnimatedFrame(c,entry.fill,-w/2,-h+15,w,h);c.restore();
+ const recoil=recoilOffset(p,now);c.save();c.translate(p.x+recoil.x,p.y+m.lift+recoil.y);c.rotate(m.lean);c.scale((pose.flip?-1:1)*m.sx,m.sy);c.globalAlpha=.85;drawAnimatedFrame(c,entry.edge,-w/2,-h+15,w,h);c.globalAlpha=.1;drawAnimatedFrame(c,entry.fill,-w/2,-h+15,w,h);c.restore();
 }

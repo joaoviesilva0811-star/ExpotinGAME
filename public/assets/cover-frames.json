@@ -1,0 +1,89 @@
+{
+  "file": "arena-covers.png",
+  "frames": [
+    {
+      "round": 0,
+      "broken": false,
+      "rect": [
+        113,
+        8,
+        285,
+        549
+      ],
+      "size": [
+        60,
+        109
+      ]
+    },
+    {
+      "round": 1,
+      "broken": false,
+      "rect": [
+        535,
+        23,
+        473,
+        559
+      ],
+      "size": [
+        90,
+        106
+      ]
+    },
+    {
+      "round": 2,
+      "broken": false,
+      "rect": [
+        1123,
+        1,
+        328,
+        577
+      ],
+      "size": [
+        70,
+        116
+      ]
+    },
+    {
+      "round": 0,
+      "broken": true,
+      "rect": [
+        17,
+        637,
+        461,
+        366
+      ],
+      "size": [
+        87,
+        64
+      ]
+    },
+    {
+      "round": 1,
+      "broken": true,
+      "rect": [
+        526,
+        639,
+        484,
+        360
+      ],
+      "size": [
+        91,
+        62
+      ]
+    },
+    {
+      "round": 2,
+      "broken": true,
+      "rect": [
+        1062,
+        618,
+        453,
+        390
+      ],
+      "size": [
+        85,
+        70
+      ]
+    }
+  ]
+}

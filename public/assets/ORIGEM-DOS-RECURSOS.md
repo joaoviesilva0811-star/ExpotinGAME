@@ -68,3 +68,8 @@ originais. Os seis bustos são separados pelo contorno de cada silhueta, preserv
 coroas, chifres e ombros mesmo onde os retângulos se sobrepõem. Coberturas, destroços,
 feixes e névoa são desenho procedural em superfícies Canvas reutilizadas; não são
 novos sprites gerados nem imagens editadas por scripts.
+
+## 1.10 — Coberturas e destroços
+
+`arena-covers.png` é um atlas RGBA original gerado para o jogo, com seis desenhos completos: três coberturas e três estados destruídos. Fonte preservada sem alterações: `exec-8f3f8ed4-f525-4b45-83e8-6662f2fcb34d.png`.
+`cover-frames.json` registra os retângulos e tamanhos de reprodução; `scripts/analyze-cover-art.py` apenas lê a transparência e escreve JSON. O Canvas prepara a arte em cache, acrescentando a rachadura de meia vida. Colisão/vida continuam no servidor. Desenhos de cenário não entram na contagem de 3.861 poses de atores.

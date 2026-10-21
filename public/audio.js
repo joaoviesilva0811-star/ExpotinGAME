@@ -5,6 +5,22 @@ export class AudioEngine {
   }
   syncVisibility(){if(this.track){this.track.volume=this.enabled&&!document.hidden?this.musicVolume:0;if(document.hidden||!this.enabled)this.track.pause();}if(this.master)this.master.gain.setTargetAtTime(this.enabled&&!document.hidden?this.volume:0,this.ctx.currentTime,.05);}
   configure(settings){this.musicVolume=Math.max(0,Math.min(1,settings.musicVolume??.68));this.volume=.23*Math.max(0,Math.min(1,settings.effectsVolume??.8));this.syncVisibility();}
+  playerHurt(profile,enhanced=true){
+    this.fx(profile.blocked?'block':'hit');
+    if(!enhanced||!this.enabled||!this.ctx)return;
+    const t=this.ctx.currentTime;if(t-(this.lastHurtLayer??-10)<.09)return;this.lastHurtLayer=t;
+    if(profile.blocked){this.tone(930,.085,'triangle',.09,-390);return;}
+    this.tone(profile.heavy?48:76,profile.heavy?.24:.13,'sine',.12+profile.severity*.12,-20);
+    if(profile.guardBroken){this.noise(.16,.16,3200);this.tone(460,.18,'triangle',.11,-310);}
+    // Briefly make space for the contact, without pausing/restarting any track.
+    this.duckUntil=t+(profile.heavy?.25:.14);
+  }
+  criticalPulse(time,intensity){
+    if(!this.enabled||document.hidden||intensity<=0||time-(this.lastPulse??-10)<.92)return;
+    this.lastPulse=time;this.tone(51,.15,'sine',.04+Math.min(1,intensity)*.06,-9);
+    // Schedule on the audio clock; no timeout survives a screen/menu change.
+    this.tone(70,.09,'sine',.025,0,.13);
+  }
   dispose(){this.disposed=true;this.enabled=false;if(this.track){this.track.pause();this.track.src='';}this.ctx?.close().catch(()=>{});}
   async context(){
     if(this.disposed)return false;
@@ -20,8 +36,8 @@ export class AudioEngine {
     let buffer=this.samples.get(name);if(!buffer){this.samples.set(name,'loading');fetch(new URL(`./assets/audio/${name}.ogg`,import.meta.url)).then(r=>r.arrayBuffer()).then(b=>this.ctx.decodeAudioData(b)).then(b=>this.samples.set(name,b)).catch(()=>this.samples.delete(name));return;}
     if(buffer==='loading')return;const source=this.ctx.createBufferSource(),g=this.ctx.createGain();source.buffer=buffer;g.gain.value=gain;source.connect(g);g.connect(this.master);source.start();
   }
-  tone(freq,duration=.15,type='sine',gain=.3,slide=0){
-    if(!this.enabled||!this.ctx)return;const t=this.ctx.currentTime,o=this.ctx.createOscillator(),g=this.ctx.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(20,freq+slide),t+duration);
+  tone(freq,duration=.15,type='sine',gain=.3,slide=0,delay=0){
+    if(!this.enabled||!this.ctx)return;const t=this.ctx.currentTime+delay,o=this.ctx.createOscillator(),g=this.ctx.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(20,freq+slide),t+duration);
     g.gain.setValueAtTime(.001,t);g.gain.exponentialRampToValueAtTime(gain,t+.012);g.gain.exponentialRampToValueAtTime(.001,t+duration);o.connect(g);g.connect(this.master);o.start(t);o.stop(t+duration+.03);
   }
   noise(duration=.12,gain=.35,cutoff=1800){
@@ -60,7 +76,9 @@ export class AudioEngine {
       if(this.track){this.track.pause();this.track.src='';}
       this.track=new Audio(new URL(`./assets/audio/${name}.ogg`,import.meta.url));this.track.loop=true;this.track.preload='auto';this.trackName=name;
     }
-    this.track.volume=this.enabled&&!document.hidden?this.musicVolume:0;
+    const duck=this.ctx&&this.ctx.currentTime<(this.duckUntil||0)?.82:1;
+    this.musicDuck=(this.musicDuck??1)+(duck-(this.musicDuck??1))*.12;
+    this.track.volume=this.enabled&&!document.hidden?this.musicVolume*this.musicDuck:0;
     if(this.enabled&&!document.hidden&&this.track.paused)this.track.play().catch(()=>{});
     if(document.hidden&&!this.track.paused)this.track.pause();
   }

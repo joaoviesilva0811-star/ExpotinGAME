@@ -1,3 +1,26 @@
+# Validação da versão 1.10.0
+
+Executada em Linux com Node 24.19.0 e Electron 44.9.0, em 21/10/2026. Aplicativo nativo equivalente; sem teste físico de Windows ou controles USB/Bluetooth.
+
+- `npm test`: **88 testes aprovados**, incluindo direção/intensidade/limites da câmera, retorno amortecido, equivalência de tempo em 60/120 Hz, recuo aditivo sem alterar entidades, memória da vida, bloqueio/quebra/mitigação, HP realmente perdido e redução do tremor pela distância. Novo caso da câmera: último sobrevivente, jogador principal caído e derrota de toda a equipe mantêm enquadramento finito.
+- `scripts/feedback-review.js`: aplicativo empacotado, controle virtual normal e espera imóvel para receber um ataque real. Conferidos eventos autoritativos, origem/HP, geometria das barras e números, opção de desativar reações e tremor zero, uma janela e nenhum erro de JavaScript. Captura `preview/20-native-hurt.png`.
+- `scripts/cover-art-review.js` e `scripts/analyze-cover-art.py`: seis desenhos RGBA inteiros de cobertura/destroços, três estados em cache por arena, registro de escala e prontidão antes da luta. PNG original preservado. A galeria `preview/20-cover-art-review.png` é fixture de arte, não gameplay.
+- `REVIEW_VERSION=20 CAMPAIGN_CLASS=knight node scripts/campaign-review.js`: **três vitórias, três chaves e Câmara da Coroa**, fases I/II/III nos três chefes, aproximadamente **70 / 68 / 89s** de combate e sete eventos de quebra de cobertura. Cavaleiro e dois bots mortais, Gamepad API virtual e entradas normais; sem editar HP, dano ou relógio. Zero erros de JavaScript. Essa campanha precede somente o último ajuste de enquadramento do coop; a simulação e o fluxo solo são os mesmos. Capturas ocasionais e outros testes nativos rodando durante partes da campanha: suas amostras não são benchmark isolado.
+- `scripts/couch-smoke.js`: três jogadores autenticados, controle de cada classe, movimento/mira, habilidades, energia, bloqueio de teclado/mouse, HUD PS/Xbox, desconexão/reconexão e cinco ciclos de menu. Uma janela e uma trilha ativa. Executado antes da troca visual de coberturas, que foi conferida depois no teste nativo de rede/campanha.
+- `scripts/preferences-smoke.js`: qualidade, volume, tremor zero e nova opção de reações ao dano persistem após voltar ao menu e abrir outro servidor solo; IPC sanitiza os valores.
+- `scripts/desktop-smoke.js`: duas instâncias nativas sobre TCP 127.0.0.1 compartilham destruição de cobertura, vida do chefe e reconexão; conferidos áudio do menu, chegada, diálogo, despertar, emote, dash com energia e seleção/bots. Comparações de HUD aguardam flechas em voo para comparar o mesmo estado estável.
+- Pacote Windows portátil: PE x64, 15 partes, CRC íntegro e **213 arquivos de public/server/desktop conferidos byte a byte** contra a fonte, além do guia e versão. SHA-256 e tamanho em `docs/benchmarks/v1.10.0.json`.
+
+`REVIEW_VERSION=20 node scripts/performance-review.js`: 45 amostras da primeira arena, sem vídeo, capturas ou outros testes nativos simultâneos; qualidade alta com efeitos/luzes adaptativos. **Mediana 60 FPS, menor amostra 35 FPS, CPU JavaScript mediana 1,46 ms**. É uma amostra de batalha sobre renderização por software, não prova de estabilidade em todas as cenas ou máquinas.
+
+Prévia final: 1.831 quadros recebidos em aproximadamente 69s de fluxo, além de telas de menu/preparação, arquivo 1440×960 codificado em 60 FPS.
+
+Dados completos e prévia desta versão: dados consolidados em `docs/benchmarks/v1.10.0.json`. O vídeo é gravado do aplicativo com entradas normais; a trilha original do jogo é mixada no vídeo, não capturada de um dispositivo de áudio. Vídeo codificado a 60 FPS não significa 60 quadros diferentes capturados por segundo.
+
+O objetivo continua sendo 60 FPS, com redução adaptativa de efeitos/luzes. Não há garantia de 60 FPS em todos os PCs; testes usam renderização por software, não uma GPU física de Windows. Tremor pode ser zerado e reações adicionais podem ser desligadas sem mudar regras, dano ou controles.
+
+---
+
 # Validação da versão 1.9.0
 
 Executada em Linux com Node 24.19.0 e Electron 44.9.0, em 20/10/2026 (America/Sao_Paulo; 21/10 UTC). Sem teste físico de Windows ou controles USB/Bluetooth.

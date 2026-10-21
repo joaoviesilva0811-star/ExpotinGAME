@@ -1,4 +1,4 @@
-SHADOWS OF THE IRON CROWN — EDIÇÃO PC 1.9.0
+SHADOWS OF THE IRON CROWN — EDIÇÃO PC 1.10.0
 
 WINDOWS 10/11 DE 64 BITS
 
@@ -233,3 +233,14 @@ Dano básico preservado: 25 cavaleiro, 32 arqueiro, 18 ladino.
 Novos retratos e HUD compacto, iluminação por arena, resíduos e efeitos próprios
 para cada classe. As transições de postura usam poses nítidas, sem mistura de
 corpos. Controles, coop no mesmo PC, LAN, resgates e a Câmara da Coroa permanecem.
+
+IMPACTO E IMERSÃO — 1.10
+
+Golpes causam recuo visual na direção da origem e impulso suave da câmera.
+Bloqueio e quebra de defesa têm sons/vibração diferentes. Efeitos distantes
+causam menos tremor; coop no mesmo PC limita a câmera compartilhada.
+Vida perdida fica dourada por um instante nas barras; abaixo de 30% há
+bordas discretas e abaixo de 25% um pulso sonoro na tela individual.
+Desative Reações ao dano e aviso de vida crítica em Gráficos e áudio, ou
+reduza Impacto da câmera a zero. Não há filtro de desfoque nem pausa no hit.
+Estas reações são visuais/sonoras: não mudam dano, energia ou colisão.
