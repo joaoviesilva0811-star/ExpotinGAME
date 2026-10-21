@@ -1,5 +1,5 @@
 // Real runtime atlas cache: source uniqueness, complete weapons, directional
-// clips and subframe interpolation, without changing any combat state.
+// clips and crisp pose playback, without changing any combat state.
 import {chromium} from 'playwright-core';import {mkdir,writeFile} from 'node:fs/promises';import assert from 'node:assert/strict';
 await mkdir('artifacts',{recursive:true});const browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
 try{
@@ -12,7 +12,7 @@ try{
   window.reviewDraw=async(group)=>{const names=Object.keys(data).filter(n=>group==='heroes'?/^(knight|archer|rogue)-/.test(n):group==='bosses'?/^(varkhul|tharazul|azrakiel)-/.test(n):/^(revenant|thornling|acolyte)-/.test(n)),canvas=document.createElement('canvas');canvas.id='contact';canvas.width=1280;canvas.height=names.length*170+60;const c=canvas.getContext('2d');c.fillStyle='#101823';c.fillRect(0,0,canvas.width,canvas.height);c.imageSmoothingEnabled=false;c.font='20px monospace';c.fillStyle='#e4c899';c.fillText('IRON CROWN · ATAQUES NOVOS / OITO DIREÇÕES',20,32);names.forEach((name,row)=>{c.font='13px monospace';c.fillStyle='#e4c899';c.fillText(name,12,65+row*170);for(let i=0;i<8;i++){const p=sprites.strikeFrame({clip:name,direction:i%2?6:0,progress:(i+.001)/8});c.save();c.translate(80+i*156,155+row*170);if(p.flip)c.scale(-1,1);drawAnimatedFrame(c,p.image,-50,-92,100,92);c.restore();}});document.querySelector('#contact')?.remove();Object.assign(canvas.style,{position:'fixed',inset:0,zIndex:1000});document.body.append(canvas);return canvas.height;};
   return{...sprites.strikeDiagnostics(),rows,edgeFailures:edge.length,interpolated:new Set(interpolated).size,sourceEdge:Object.values(data).flatMap(s=>s.frames).filter(f=>f.sourceEdge).length};
  });
- assert.equal(report.total,1840);assert.equal(report.clips.length,30);assert.equal(report.sourceEdge,0);assert.equal(report.edgeFailures,0);assert.ok(report.rows.every(r=>r.unique===r.cols));assert.equal(report.interpolated,30);
+ assert.equal(report.total,1994);assert.equal(report.clips.length,33);assert.equal(report.sourceEdge,0);assert.equal(report.edgeFailures,0);assert.ok(report.rows.every(r=>r.unique===r.cols));assert.ok(report.interpolated>=6&&report.interpolated<=8);
  for(const group of ['heroes','bosses','minions']){const height=await page.evaluate(group=>window.reviewDraw(group),group);await page.setViewportSize({width:1280,height});await page.screenshot({path:`artifacts/16-strikes-${group}.png`});}
- assert.deepEqual(errors,[]);await writeFile('artifacts/strike-review.json',JSON.stringify({...report,errors},null,2));console.log('PASS: 1,840 new source poses, 30 action/walk clips, eight directions, complete padded frames, 30 unique rendered subframes per half second.');
+ assert.deepEqual(errors,[]);await writeFile('artifacts/strike-review.json',JSON.stringify({...report,errors},null,2));console.log('PASS: 1,994 source poses in 33 action/walk clips, eight directions and complete sharp source frames.');
 }finally{await browser.close();}

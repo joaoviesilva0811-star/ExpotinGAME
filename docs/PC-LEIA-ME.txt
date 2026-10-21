@@ -1,4 +1,4 @@
-SHADOWS OF THE IRON CROWN — EDIÇÃO PC 1.7.0
+SHADOWS OF THE IRON CROWN — EDIÇÃO PC 1.8.0
 
 WINDOWS 10/11 DE 64 BITS
 
@@ -204,3 +204,16 @@ Ataques básicos: cavaleiro 25, arqueiro 32, ladino 18. Recargas e consumo de en
 192 novas poses de ajudar/levantar, partículas de cura e indicador de ajuda recebida.
 Bots revivem jogadores e outros bots, coordenam o resgatador, contornam pilares e avaliam ataques anunciados. O canal exige 4s sem dano, retorna 40% da vida e não atravessa paredes.
 Poções e coroas redesenhadas: frascos de rubi e gelo, brilho e líquido animados, coroa de ferro e coroa secreta com três gemas; 32 novas poses de objetos no chão, inventário, menus e cenas finais.
+
+NITIDEZ E ANIMAÇÃO — VERSÃO 1.8
+
+O jogo prepara os sprites e os efeitos na sala de preparação. Espere a mensagem
+terminar para marcar pronto; isso evita carregar a arte durante a apresentação.
+Chefes têm mais poses de caminhada e despertar; emotes aproximam a câmera deste
+PC e devolvem o enquadramento ao terminar ou ao retomar a ação.
+Contornos não usam mais mistura de corpos inteiros entre poses.
+
+Use Efeitos Baixo/Médio/Alto e ajuste automático nas configurações. Os avisos de
+dano continuam completos. O desempenho depende do computador; não há trava de
+14 FPS em cutscenes. O pacote foi validado em Linux equivalente com Electron,
+sem teste físico de Windows ou controles USB/Bluetooth neste ambiente.

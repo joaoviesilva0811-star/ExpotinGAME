@@ -9,7 +9,7 @@ on:
       tag:
         description: 'Tag existente para publicar'
         required: true
-        default: 'v1.7.0'
+        default: 'v1.8.0'
 
 permissions:
   contents: read
@@ -25,7 +25,9 @@ jobs:
         with:
           persist-credentials: false
       - name: Reconstruir o ZIP e verificar todos os hashes
-        run: python3 scripts/restore-windows.py
+        run: |
+          python3 scripts/restore-windows.py
+          python3 scripts/verify-windows.py
       - name: Publicar o executável e a prévia
         env:
           GH_TOKEN: ${{ github.token }}
@@ -33,6 +35,6 @@ jobs:
           RELEASE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
         run: |
           if ! gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
-            gh release create "$RELEASE_TAG" --verify-tag --title "Iron Crown $RELEASE_TAG — Nenhum Companheiro Fica Para Trás" --notes-file "docs/RELEASE-$RELEASE_TAG.md"
+            gh release create "$RELEASE_TAG" --verify-tag --title "Iron Crown $RELEASE_TAG — Movimento e Nitidez" --notes-file "docs/RELEASE-$RELEASE_TAG.md"
           fi
           gh release upload "$RELEASE_TAG" release/IronCrown-Windows-x64.zip release/IronCrown-Windows-x64.zip.sha256 preview/previa-pc.mp4 docs/PC-LEIA-ME.txt --clobber

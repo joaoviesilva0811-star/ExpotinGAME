@@ -9,6 +9,7 @@ export async function installCombatDriver(context,{gamepad=false}={}){
         let m=JSON.parse(raw),r=window.__room,p=r?.players.find(p=>p.id===window.__session?.id);
         if(!gamepad&&['input','skill','dodge','potion'].includes(m.type))m.seq=++seq;
         if(m.type!=='input'||r?.state!=='battle'||!p||p.hp<=0){if(gamepad&&m.type==='input'&&r?.state!=='battle')window.__automatedPads=[];return super.send(gamepad?raw:JSON.stringify(m));}
+        if(gamepad&&Date.now()<(window.__driverPauseUntil||0)){super.send(raw);const emote=Date.now()<(window.__driverEmoteUntil||0);window.__automatedPads=[{index:0,id:'Xbox virtual acceptance controller',connected:true,mapping:'standard',axes:[0,0,1,0],buttons:Array.from({length:17},(_,i)=>({pressed:emote&&i===13,value:emote&&i===13?1:0}))}];return;}
         const normalize=(x,y)=>{const d=Math.hypot(x,y)||1;return{x:x/d,y:y/d};},distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
         const nearest=r.minions?.filter(m=>m.hp>0&&m.activeAt<=r.now).sort((a,b)=>distance(p,a)-distance(p,b))[0];
         const b=nearest&&distance(p,nearest)<(p.classId==='archer'?480:230)?nearest:r.boss,dist=distance(p,b),dir=normalize(b.x-p.x,b.y-p.y),desired=p.classId==='archer'?290:b===r.boss?96:67;

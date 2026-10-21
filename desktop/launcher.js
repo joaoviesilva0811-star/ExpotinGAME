@@ -29,3 +29,5 @@ async function launch(mode){
   finally{document.body.classList.remove('departing');busy=false;for(const b of document.querySelectorAll('button'))b.disabled=false;}
 }
 $('solo').onclick=()=>launch('solo');$('couch').onclick=()=>launch('couch');$('host').onclick=()=>launch('host');$('join').onclick=()=>{$('join-form').hidden=!$('join-form').hidden;if(!$('join-form').hidden)$('address').focus();};$('join-form').onsubmit=event=>{event.preventDefault();launch('join');};
+
+window.ironDesktop?.launchError().then(message=>{if(message){$('status').className='error';$('status').textContent=message;}}).catch(()=>{});

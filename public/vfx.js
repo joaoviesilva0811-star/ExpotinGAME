@@ -1,7 +1,8 @@
+import {effectVariant} from './effect-variants.js';
 import {groundMesh} from './ground-mesh.js';
 import {particleMaterial,paintParticles} from './particle-painter.js';
 import {QUALITY} from './presentation.js';
-import {createVolumes,drawVolume,drawVolumeGlow,drawSmoke,drawMissileVolume} from './volumes.js';
+import {createVolumes,volumeDuration,drawVolume,drawVolumeGlow,drawSmoke,drawMissileVolume} from './volumes.js';
 import {impactAreaPoints,traceImpactArea,impactStyle} from './impact-geometry.js';
 // Bounded layered effects: tapered weapon trails, airborne sparks and ground debris.
 let renderBounds=null;export function setRenderBounds(bounds){renderBounds=bounds;}
@@ -26,9 +27,9 @@ export function impactFX(x,y,kind='gold',heavy=false){
 }
 export function magicFX(x,y,kind='violet',count=22){spawn(x,y,palette[kind]||palette.violet,count,'mote',90);}
 export function footFX(x,y){spawn(x,y,['#8c8271','#6e6a60'],2,'dust',14);}
-export function slashFX(x,y,angle,kind='gold',heavy=false,wait=.12){
+export function slashFX(x,y,angle,kind='gold',heavy=false,wait=.12,variant=0){
  if(slashes.length>=48)slashes.shift();
- slashes.push({x,y,angle,wait,colors:palette[kind]||palette.gold,kind,life:heavy?.4:.3,total:heavy?.4:.3,r:heavy?104:kind==='violet'?54:67,heavy,emitted:0});
+ slashes.push({x,y,angle,wait,model:kind==='violet'?(variant%2?'eclipse-crescents':'voidSweep'):(variant%2?'forge-cleave':'steelSweep'),colors:palette[kind]||palette.gold,kind,life:heavy?.4:.3,total:heavy?.4:.3,r:heavy?104:kind==='violet'?54:67,heavy,emitted:0});
 }
 export function bowFX(x,y,angle,kind='gold',wait=.17){if(launches.length<32)launches.push({x,y,angle,kind,wait});}
 export function stepFX(dt){
@@ -92,12 +93,12 @@ export function drawFX(c){
   // Only the ground layer is clipped to damage geometry. Cutting a hole in
   // airborne billboards amputates roots, blades and clouds. Their emitters
   // still sit outside the safe center, whose boundary is drawn above the FX.
-  for(let i=0;i<f.volumes.length;i+=budget.detail<.6?3:budget.detail<1?2:1){const b=f.volumes[i];if(drawn++>=budget.volumes)break;drawVolume(c,f.kind,b.x,b.y,b.width,(age-b.delay)/1.2,.88,b.flip,f.model,b.angle||0);}
+  for(let i=0;i<f.volumes.length;i+=budget.detail<.6?3:budget.detail<1?2:1){const b=f.volumes[i];if(drawn++>=budget.volumes)break;drawVolume(c,f.kind,b.x,b.y,b.width,(age-b.delay)/volumeDuration(f.model),.88,b.flip,f.model,b.angle||0);}
   if(f.h.inner){c.globalAlpha=Math.min(.9,f.life*2);c.strokeStyle='#101c1de0';c.lineWidth=4;c.beginPath();c.arc(f.h.x,f.h.y,f.h.inner,0,Math.PI*2);c.stroke();c.strokeStyle='#d5f2cf';c.lineWidth=1.3;c.stroke();}
   c.restore();
  }
  c.globalCompositeOperation='lighter';
- for(const s of slashes){if(s.wait>0)continue;const t=1-s.life/s.total;bladeTrail(c,s,t);if(s.kind==='violet')bladeTrail(c,{...s,r:s.r*.72,x:s.x-8,y:s.y+8},t,-.4);}
+ for(const s of slashes){if(s.wait>0)continue;const t=1-s.life/s.total;bladeTrail(c,s,t);drawVolume(c,s.kind,s.x+Math.cos(s.angle)*s.r*.35,s.y+Math.sin(s.angle)*s.r*.35-9,s.r*1.7,t,.65,false,s.model,s.angle);if(s.kind==='violet')bladeTrail(c,{...s,r:s.r*.72,x:s.x-8,y:s.y+8},t,-.4);}
  c.restore();
 }
 export function drawProjectile(c,p,time){
@@ -122,7 +123,7 @@ export function drawProjectile(c,p,time){
 }
 export function hazardImpact(h,kind){
  if(h.minor){impactFX(h.x,h.y,kind,false);return;}
- const model=impactStyle(h,kind),points=impactAreaPoints(h).map(p=>({...p,angle:p.seed*.73,reach:13+p.seed%13})),colors=palette[kind]||palette.red;
+ const model=effectVariant(impactStyle(h,kind),h),points=impactAreaPoints(h).map(p=>({...p,angle:p.seed*.73,reach:13+p.seed%13})),colors=palette[kind]||palette.red;
  if(fields.length>=16)fields.shift();fields.push({h:{...h},kind,model,points,volumes:createVolumes(h,points,model),life:1.45,total:1.45});
  // Emit throughout the interior as well as along the perimeter. A bounded subset
  // feeds the airborne simulation; the surface layer still covers every cell.

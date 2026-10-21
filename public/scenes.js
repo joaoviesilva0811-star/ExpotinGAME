@@ -1,7 +1,8 @@
 import {drawItemSprite} from './item-art.js';
 import {WORLD,clamp} from './shared.js';
-const images=new Map();
-for(const name of ['arena-throne','arena-forest','arena-cathedral','corridor','secret-chamber','secret-chamber-open']){const img=new Image();img.onload=()=>images.set(name,img);img.src=new URL(`./assets/${name}.png`,import.meta.url).href;}
+const images=new Map(),loads=[];
+for(const name of ['arena-throne','arena-forest','arena-cathedral','corridor','secret-chamber','secret-chamber-open']){const img=new Image();loads.push(new Promise((resolve,reject)=>{img.onload=()=>{images.set(name,img);resolve(true);};img.onerror=()=>reject(Error('Missing scene '+name));}));img.src=new URL(`./assets/${name}.png`,import.meta.url).href;}
+export const sceneAssetsReady=Promise.all(loads);
 export const sceneImage=round=>images.get(typeof round==='string'?round:['arena-throne','arena-forest','arena-cathedral'][round]);
 export function cinematicPlayer(room,p,index,now){
  if(room.state==='countdown'&&room.intro){

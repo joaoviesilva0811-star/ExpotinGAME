@@ -31,3 +31,24 @@ As quatro trilhas foram recompostas com motivos próprios, metais sintetizados, 
 Versão 1.7: `rescue-knight.png`, `rescue-archer.png` e `rescue-rogue.png` são folhas originais geradas com as artes de Muralha Real, Flecha Congelante e Passo Sombrio como referência. Cada folha tem oito colunas e oito linhas: quatro vistas de auxílio e quatro de recuperação, 64 poses por personagem e 192 novas poses no total (acervo de atores: 3.016). Os PNGs são preservados integralmente. `scripts/analyze-rescue.py` só analisa alfa/silhuetas e grava registro dos pés, escala e contorno em `rescue-frames.json`. Poses ajoelhadas e deitadas mantêm sua altura menor; a escala é calculada sobre as poses em pé. O cache Canvas guarda recortes com margem e mistura poses alinhadas sem editar os arquivos de origem.
 
 Complemento visual 1.7: `relic-items.png` é uma folha original gerada a partir da direção artística das chaves, preservada sem edição. São 32 poses, oito por item: poção rubi de cura, frasco cristalino de gelo, coroa de ferro amaldiçoada e coroa real restaurada com três gemas. `scripts/analyze-items.py` analisa apenas as silhuetas e registra recortes em `item-layouts.js`. O cache desenha os ícones em células com margens; movimento e brilhos são apresentados no Canvas. As poções estão integradas ao loot e ao inventário, e as coroas ao menu e aos desfechos. Esses quadros de objetos são contados separadamente das 3.016 poses de atores.
+
+Versão 1.8: quinze PNGs originais gerados para o projeto e preservados sem edição:
+três `express-*.png` (213 poses de emotes), três `cinema-*.png` (95 poses utilizáveis
+de repouso/despertar/fúria), três `gait-*.png` (224 poses, quatro vistas de caminhada),
+`strike-varkhul-riposte.png` (48), `strike-tharazul-roots.png` (64),
+`strike-azrakiel-orbit.png` (42), e três `variants-*.png` (91 quadros utilizáveis de
+12 efeitos). São 686 poses adicionais de atores e 3.702 utilizáveis no acervo;
+os 145 quadros de efeitos e os 32 quadros de objetos são contados separadamente.
+Os scripts `analyze-motion.py`, `analyze-strikes.py --new-only` e
+`analyze-variants.py` apenas leem alfa/silhuetas e escrevem metadados. O registro
+segue os pés e preserva armas/capas; desenhos que já tocam a borda de origem são
+excluídos dos grupos de reprodução. Uma pose de despertar de Azrakiel e cinco
+poses novas de efeitos foram excluídas; as duas últimas vistas de órbita também
+não são carregadas e usam espelhamento de vistas completas compatíveis.
+
+As folhas geradas nem sempre contêm o número pedido de colunas: as contagens
+acima refletem os desenhos reais, não a grade solicitada. A 1.8 remove a mistura
+alfa de corpos inteiros usada na 1.6/1.7, que causava contornos duplos. Um quadro
+apresenta uma pose de origem inteira, com movimentação/recuo/câmera contínuos;
+não são 60 desenhos originais por segundo. As descrições de mistura anteriores
+registram o histórico dessas versões, não o renderizador atual.

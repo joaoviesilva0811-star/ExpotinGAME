@@ -9,9 +9,9 @@ test('each class selects four distinct attacks, timed to the authoritative relea
   assert.equal(clips.size,4);p.attackSlot=-1;const hit={knight:.18,archer:.17,rogue:.12}[classId];assert.equal(heroStrike(p,hit).progress,.5);assert.equal(heroStrike(p,.66),null);p.hp=0;assert.equal(heroStrike(p,0),null);
  }
 });
-test('boss attacks have three families with continuous anticipation, execution and recovery',()=>{
+test('boss attacks have four families with continuous anticipation, execution and recovery',()=>{
  for(let round=0;round<3;round++){
-  const b={state:'windup',startedAt:0,until:1,facing:0},clips=new Set();for(let attack=0;attack<8;attack++){b.attack=attack;clips.add(bossStrike(b,round,.5).clip);}assert.equal(clips.size,3);
+  const b={state:'windup',startedAt:0,until:1,facing:0},clips=new Set();for(let attack=0;attack<8;attack++){b.attack=attack;clips.add(bossStrike(b,round,.5).clip);}assert.equal(clips.size,4);
   assert.equal(bossStrike(b,round,1).progress,.5);b.state='execute';assert.equal(bossStrike(b,round,0).progress,.5);assert.equal(bossStrike(b,round,1).progress,.75);b.state='recover';assert.equal(bossStrike(b,round,0).progress,.75);assert.ok(bossStrike(b,round,1).progress<1);b.state='chase';assert.equal(bossStrike(b,round,.5),null);
  }
 });

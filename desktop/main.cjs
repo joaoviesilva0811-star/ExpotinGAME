@@ -7,7 +7,7 @@ const {readFile,writeFile}=require('node:fs/promises');
 
 const applicationRoot=existsSync(join(__dirname,'server','index.js'))?__dirname:resolve(__dirname,'..');
 let launcher,game,serverProcess,launching=false,quitting=false,serverStopping=Promise.resolve();
-let gameOrigin=null,preferencesWrite=Promise.resolve();
+let gameOrigin=null,launchError=null,preferencesWrite=Promise.resolve();
 const launcherUrl=pathToFileURL(join(__dirname,'launcher.html')).href;
 function privateAddress(text){
   if(text==='localhost')return'127.0.0.1';
@@ -65,10 +65,11 @@ app.whenReady().then(()=>{
     launcher.setTitle('Shadows of the Iron Crown');launcher.setSize(1120,820);
     await launcher.loadFile(join(__dirname,'launcher.html'));return{ok:true};
   });
+  ipcMain.handle('iron:launch-error',event=>{if(!trusted(event))throw new Error('Origem não autorizada.');const message=launchError;launchError=null;return message;});
   ipcMain.handle('iron:launch',async(event,request)=>{
     if(!trusted(event))throw new Error('Origem não autorizada.');
     if(launching||game&&!game.isDestroyed())return{ok:false,error:'Uma expedição já está aberta.'};
-    launching=true;
+    launching=true;launchError=null;
     try{
       const mode=request?.mode;if(!['solo','couch','host','join'].includes(mode))throw new Error('Escolha um modo de jogo.');
       const name=typeof request.name==='string'?request.name.trim().normalize('NFC'):'';
@@ -88,7 +89,7 @@ app.whenReady().then(()=>{
       game=launcher;
       game.setTitle('Shadows of the Iron Crown — '+(mode==='solo'?'Solo com companheiros':mode==='couch'?'Coop no mesmo PC':'Rede local'));
       game.setSize(1440,960);await game.loadURL(target.href);return{ok:true};
-    }catch(error){game=null;gameOrigin=null;await stopServer();await launcher.loadFile(join(__dirname,'launcher.html'));return{ok:false,error:error.message?.includes('fetch')?'Não foi possível alcançar o anfitrião. Confira o IP, a mesma rede e a liberação do jogo no firewall do anfitrião.':error.message};}
+    }catch(error){game=null;gameOrigin=null;await stopServer();const message=error.message?.includes('fetch')?'Não foi possível alcançar o anfitrião. Confira o IP, a mesma rede e a liberação do jogo no firewall do anfitrião.':error.message;if(launcher.webContents.getURL()!==launcherUrl){launchError=message;await launcher.loadFile(join(__dirname,'launcher.html'));}return{ok:false,error:message};}
     finally{launching=false;}
   });
 });

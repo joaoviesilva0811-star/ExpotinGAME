@@ -4,7 +4,7 @@ Jogo 2D cooperativo para PC Windows, com até 3 controles no mesmo PC ou até 4 
 
 ## Baixar o jogo pelo GitHub
 
-**[Baixar a versão Windows portátil](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/download/v1.7.0/IronCrown-Windows-x64.zip)** · **[Página da release](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/tag/v1.7.0)**
+**[Baixar a versão Windows portátil](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/download/v1.8.0/IronCrown-Windows-x64.zip)** · **[Página da release](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/tag/v1.8.0)**
 
 Extraia o ZIP completo e abra **Shadows of the Iron Crown.exe**. Não precisa instalar Node.js. A release é publicada pela automação do GitHub após a tag; o andamento aparece na aba **Actions**.
 
@@ -14,7 +14,20 @@ O pacote pronto excede o limite de 100 MB por arquivo do GitHub. Por isso, o rep
 
 [Prévia atual do aplicativo com controle](preview/previa-pc.mp4) · [Passagem pela masmorra](preview/corredor-2.png) · [Cutscene final](preview/pc-10-final.png)
 
-![Coop no mesmo PC com três controles e HUD individual](preview/16-couch-battle.png)
+![Menu da edição PC 1.8](preview/pc-01-menu.png)
+
+[Ver as novas poses](preview/18-motion-contact.png) · [Zoom do emote no aplicativo](preview/18-emote-zoom.png) · [Coop com três controles](preview/16-couch-battle.png)
+
+## Novidades da versão 1.8 — Movimento e nitidez
+
+- Sem mistura de corpos inteiros entre poses: contornos, armas e rostos ficam nítidos. Movimento, recuo, câmera e partículas continuam acompanhando o loop de renderização.
+- **686 poses adicionais utilizáveis**: 213 de emotes, 224 de caminhada dos chefes, 95 de apresentação/despertar e 154 em três novas sequências de ataque. Acervo de atores: **3.702 poses desenhadas**, sem contar espelhamentos ou imagens intermediárias como desenhos novos.
+- Caminhada dos chefes com 16–24 poses por ciclo e quatro vistas. Emotes com 11–24 poses por ciclo e movimentos de corpo; o emote local aproxima a câmera e devolve o enquadramento ao terminar, mover ou sofrer dano. Emotes de outros PCs não roubam sua câmera.
+- **12 novos modelos / 91 quadros de efeitos**: correntes, estacas, lâminas, raízes, esporos, sementes, folhas, fissuras, lanças e nova. São 21 modelos / 145 quadros no total; seleção visual determinística conserva a área real de dano e os espaços seguros.
+- Preparação dos recursos no lobby antes do botão pronto, reduzindo a travada na entrada das cutscenes. Não existe limite intencional de 14 FPS nas apresentações.
+- Menus sem desfoque do cenário, formulários com rolagem em janelas menores, logo sem recarregar a sessão, erros de IP visíveis e respostas atrasadas sem substituir outro menu.
+
+Os danos básicos continuam **25 / 32 / 18** e o cooperativo local com três controles e a rede local foram preservados. Veja [validação e limites](docs/VALIDACAO.md). Loop a 60 Hz e vídeo codificado a 60 FPS não significam 60 desenhos novos por segundo nem garantia de desempenho em todo PC.
 
 ## Jogar no PC sem pagar hospedagem
 
@@ -94,13 +107,13 @@ Quando um controle está ativo, teclado e mouse deixam de comandar o combate. Es
 
 Ataques básicos: **25 no cavaleiro, 32 no arqueiro e 18 no ladino**, com os mesmos intervalos, energia e habilidades. Chefes têm 15% mais vida para compensar parte do aumento e manter seus três estágios. O limite continua em cinco minutos por rodada.
 
-**192 novas poses desenhadas** em três folhas: ajoelhar, estender a mão, canalizar ajuda, apoiar e levantar. São quatro vistas por ação, oito poses por vista; 3.016 quadros de atores no acervo. Mistura de poses acontece no renderizador e não conta como sprite novo. O movimento ou ataque pode interromper a apresentação de levantar, preservando a resposta dos controles.
+**192 novas poses desenhadas** em três folhas: ajoelhar, estender a mão, canalizar ajuda, apoiar e levantar. São quatro vistas por ação, oito poses por vista; 3.016 quadros de atores até a versão 1.7. Na 1.8, a apresentação usa uma pose inteira nítida por quadro. O movimento ou ataque pode interromper a apresentação de levantar, preservando a resposta dos controles.
 
 Bots coordenam um resgatador por aliado, preservam a ajuda iniciada por humanos, contornam pilares e procuram um lugar seguro para os quatro segundos de canalização. Outros companheiros priorizam lacaios próximos ao resgate; o cavaleiro usa sua proteção quando disponível. Humanos e bots podem ajudar uns aos outros. Dano interrompe o canal, paredes impedem ajuda através de obstáculos e o aliado retorna com 40% da vida e uma breve proteção de 0,65s contra impactos da arena/projéteis.
 
 **Poções e coroas redesenhadas:** 32 poses de objetos, frascos distintos de rubi e gelo, líquido/reflexos animados e coroas com metal e gemas. Arte integrada ao loot, inventário, menu e desfechos.
 
-[Poções e coroas novas](preview/17-potions-crowns.png) · [Menu atual](preview/17-menu.png) · [Ver poses de auxílio e recuperação](preview/17-rescue-poses.png) · [Validação desta versão](docs/VALIDACAO.md)
+[Poções e coroas novas](preview/17-potions-crowns.png) · [Menu atual](preview/pc-01-menu.png) · [Ver poses de auxílio e recuperação](preview/17-rescue-poses.png) · [Validação desta versão](docs/VALIDACAO.md)
 
 ## Atualização 1.6 — Aço em Movimento
 
@@ -110,7 +123,7 @@ O aplicativo mantém uma única janela ao navegar entre menu e partida. A músic
 
 Chefes continuam caminhando sob hits repetidos, com reação aditiva de corpo e brilho. Chaves maiores recebem apresentação de pelo menos 8,5 segundos, com destaque após a coleta. Combos contam acertos reais, expiram após 3,5 segundos e quebram ao sofrer dano; o multiplicador de pontos cresce a cada cinco hits, até ×1,75. O bônus é somado no resultado final.
 
-O renderizador mistura poses alinhadas aos pés a cada quadro, mantendo preparação, liberação e recuperação ligadas ao tempo oficial do servidor. Armas e magia usam caches com margem. Caminhadas compartilham subposes em um cache limitado a 32 MiB, evitando redesenhar cópias iguais por lacaio a cada quadro. Partículas semelhantes são desenhadas em lote, fissuras são guardadas em caminhos reutilizáveis e os volumes usam texturas no tamanho necessário.
+A versão 1.6 misturava poses alinhadas aos pés. A versão 1.8 substitui essa mistura por poses de origem inteiras, mantendo preparação, liberação e recuperação ligadas ao tempo oficial do servidor. Armas e magia usam caches com margem; as poses de caminhada são reutilizadas sem criar imagens intermediárias. Partículas semelhantes são desenhadas em lote, fissuras são guardadas em caminhos reutilizáveis e os volumes usam texturas no tamanho necessário.
 
 Na engrenagem, **Ajustar efeitos para priorizar 60 FPS** reduz gradualmente a densidade de fumaça, fragmentos e volumes quando o tempo de quadro sobe. O jogador, HUD e os contornos das áreas de perigo permanecem completos. A opção pode ser desligada. O alvo é 60 FPS; não há garantia para todo computador nem para os cenários extremos. Veja medições e limites em [Validação](docs/VALIDACAO.md).
 
@@ -127,7 +140,7 @@ São 252 quadros adicionais de caminhada dos chefes e reação a dano, 984 quadr
 - Corrigidas as poses desenhadas do arqueiro: as vistas leste, nordeste e sudeste usam as vistas opostas verificadas, espelhadas. Capuz, corpo e arco acompanham a direção do disparo.
 - Ondas de quatro lacaios para equipes de três/quatro integrantes, chegando a cinco na fase final. Equipes menores recebem dois. Limite simultâneo ajustado pelo grupo, até dez; primeira onda aos oito segundos, seguintes a cada 20/17/14s conforme a fase.
 - Cada chefe tem oito padrões (24 no total), com seleção por distância: pressão de perto, projéteis, faixas e marcas para alcançar jogadores afastados. Varkhul usa estilhaços e execução circular; Tharazul lança sementes e prende com raízes; Azrakiel combina lanças do vazio e golpes da foice.
-- Efeitos intensos com 54 quadros originais de erupção, rochas, fumaça, raízes e cristais, sobrepostos em volume. Até 1.800 partículas, 96 nuvens e 160 erupções desenhadas por quadro, com cache de texturas e aviso de perigo por cima dos efeitos.
+- Efeitos intensos com 145 quadros utilizáveis em 21 modelos de erupção, rochas, fumaça, raízes e cristais, sobrepostos em volume. Até 1.800 partículas, 96 nuvens e 160 erupções desenhadas por quadro, com cache de texturas e aviso de perigo por cima dos efeitos.
 - Impactos dos chefes cobrem o interior e a largura da área atingida: fissuras e fragmentos no castelo, raízes na floresta e estilhaços do vazio na catedral. Frentes de choque respeitam cones, faixas e o centro seguro dos anéis.
 - Partículas, superfícies e dano usam a mesma geometria. Os efeitos de impacto são desenhados no chão, abaixo dos personagens, com limites de quantidade.
 
@@ -147,7 +160,7 @@ São 252 quadros adicionais de caminhada dos chefes e reação a dano, 984 quadr
 ## Atualização 1.2 — Combate e direção artística
 
 - Caminhada 35–37% mais lenta, ataques básicos com antecipação e câmera próxima (155%), suave e ajustável até 200%.
-- 3.016 quadros nos atlas dos personagens: caminhada, reação a dano, golpes, invocação e quatro emotes. Ataques de heróis, chefes e lacaios escolhem oito direções; onde necessário, uma direção usa espelhamento de uma pose compatível.
+- 3.702 poses utilizáveis no acervo dos personagens: caminhada, reação a dano, golpes, invocação e quatro emotes. Ataques de heróis, chefes e lacaios escolhem oito direções; onde necessário, uma direção usa espelhamento de uma pose compatível.
 - Oito padrões por chefe, três fases, projéteis hostis, investidas, ondas com centro seguro, cruzes e ataques em sequência. Vida base para quatro jogadores: 5.600 / 7.200 / 9.200, ajustada ao grupo.
 - Lacaios mortais com preparação visível, colisões, invocação limitada e drops. Primeiro abate sempre derruba poção; depois há chance de 46%. Três espaços de inventário; coleta por proximidade. Cura +45 ou gelo em raio de 230 com lentidão de 4s; tecla 4 usa a primeira guardada.
 - Dash no E: custa 20, recarga de 2,4s e proteção de 0,24s. Reviver passa para R. Tab abre quatro danças próprias; interrompidas ao mover, atacar ou sofrer dano.
@@ -230,7 +243,7 @@ dist/          Pacotes gerados por npm run build
 
 ## Limites desta entrega
 
-Esta versão tem balanceamento inicial reforçado por simulações de equipe, mas ainda não houve teste de carga em larga escala nem avaliação com jogadores externos. A base até a versão 1.5 tem 984 quadros desenhados: 108 novas poses de caminhada dos chefes e 144 reações direcionais de dano, somadas à base de 732: 216 de movimentos/reações, 288 de ataques direcionais dos heróis/chefes, 72 de emotes e 156 de lacaios. O acólito reutiliza uma direção espelhada para completar os oito sentidos. A versão 1.6 acrescenta 1.464 poses de ataque e 376 de caminhada, totalizando 2.824; a versão 1.7 acrescenta 192 poses de auxílio e recuperação, chegando a 3.016. Não há animação por esqueleto: o Canvas mistura poses completas alinhadas e acrescenta transformações de impacto. Trilha e efeitos são composição e síntese próprias renderizadas em Ogg, sem gravações orquestrais ou músicas do TikTok.
+Esta versão tem balanceamento inicial reforçado por simulações de equipe, mas ainda não houve teste de carga em larga escala nem avaliação com jogadores externos. A base até a versão 1.5 tem 984 quadros desenhados: 108 novas poses de caminhada dos chefes e 144 reações direcionais de dano, somadas à base de 732: 216 de movimentos/reações, 288 de ataques direcionais dos heróis/chefes, 72 de emotes e 156 de lacaios. O acólito reutiliza uma direção espelhada para completar os oito sentidos. A versão 1.6 acrescenta 1.464 poses de ataque e 376 de caminhada, totalizando 2.824; a versão 1.7 acrescenta 192 poses de auxílio e recuperação, chegando a 3.016. A versão 1.8 acrescenta 686 poses utilizáveis, chegando a 3.702. Não há animação por esqueleto: o Canvas apresenta poses nítidas e acrescenta transformações contínuas de impacto. Trilha e efeitos são composição e síntese próprias renderizadas em Ogg, sem gravações orquestrais ou músicas do TikTok.
 
 O servidor opera como uma instância única. Não há coordenação multi-instância, chat, matchmaking automático, cadastro por e-mail ou restauração de partidas após reinício. O ranking agrupa a formação por seus nomes de exibição ordenados; não é um sistema competitivo com identidade verificada. HTTPS, domínio, disco persistente e publicação dependem da hospedagem escolhida e não são fornecidos pelo código. Para a edição PC/LAN, a hospedagem não é necessária. O Dockerfile é uma opção de empacotamento e exige validação na hospedagem de destino.
 

@@ -6,11 +6,11 @@ try{
  const result=await page.evaluate(async()=>{
   const {volumeAssetsReady,volumeFrameDiagnostics,drawVolume}=await import('/volumes.js'),fx=await import('/vfx.js');if(!await volumeAssetsReady)throw new Error('Missing effect atlas');
   const diagnostics=volumeFrameDiagnostics(),failures=[];let poses=0;
-  const names=['redEruption','steelSweep','stoneWave','rootEruption','poisonCloud','ironChains','crystalEruption','voidSweep','voidRift'];
-  const canvas=document.createElement('canvas');canvas.width=1440;canvas.height=2520;const c=canvas.getContext('2d');c.fillStyle='#111922';c.fillRect(0,0,canvas.width,canvas.height);c.imageSmoothingEnabled=false;
+  const names=[...new Set(diagnostics.map(d=>d.model))],{baseEffect}=await import('/effect-variants.js');
+  const canvas=document.createElement('canvas');canvas.width=1440;canvas.height=names.length*280;const c=canvas.getContext('2d');c.fillStyle='#111922';c.fillRect(0,0,canvas.width,canvas.height);c.imageSmoothingEnabled=false;
   const probe=document.createElement('canvas');probe.width=probe.height=1024;const p=probe.getContext('2d');
-  for(const [row,name]of names.entries())for(let col=0;col<6;col++){
-   const progress=(col+.1)/6,flat=['steelSweep','stoneWave','voidSweep'].includes(name);
+  for(const [row,name]of names.entries())for(let col=0;col<diagnostics.filter(d=>d.model===name).length;col++){
+   const progress=(col+.1)/diagnostics.filter(d=>d.model===name).length,flat=['steelSweep','stoneWave','voidSweep'].includes(baseEffect(name));
    for(let dir=0;dir<8;dir++){
     p.clearRect(0,0,1024,1024);if(!drawVolume(p,'red',512,flat?512:700,180,progress,1,false,name,dir*Math.PI/4))throw new Error('Missing pose '+name+col);
     const data=p.getImageData(0,0,1024,1024).data;let count=0,edge=0;
@@ -24,6 +24,6 @@ try{
   fx.resetFX();fx.hazardImpact({x:512,y:700,r:250,inner:140},'green');fx.stepFX(.36);let airClips=0;const native=p.clip.bind(p);p.clip=(...args)=>{airClips++;native(...args);};fx.drawFX(p);
   Object.assign(canvas.style,{position:'fixed',inset:0,width:'100vw',height:'100vh',zIndex:100});document.body.append(canvas);return{diagnostics,failures,poses,airClips};
  });
- assert.equal(result.diagnostics.length,54);assert.deepEqual(result.diagnostics.filter(d=>d.edgePixels||d.bounds.right<d.bounds.left),[],'Frames must have transparent gutters and contain artwork');assert.deepEqual(result.failures,[]);assert.equal(result.poses,432);assert.equal(result.airClips,0,'Airborne annular effects must keep their complete silhouettes');
- await page.screenshot({path:'artifacts/141-all-effect-frames.png'});console.log('PASS: all 54 source frames have clear gutters; 432 rendered poses stay complete; annular air effects are unmasked.');
+ assert.equal(result.diagnostics.length,145);assert.deepEqual(result.diagnostics.filter(d=>d.sourceEdgeMax>4||d.bounds.right<d.bounds.left),[],'Frames must have transparent gutters and contain artwork');assert.deepEqual(result.failures,[]);assert.equal(result.poses,1160);assert.equal(result.airClips,0,'Airborne annular effects must keep their complete silhouettes');
+ await page.screenshot({path:'artifacts/141-all-effect-frames.png'});console.log('PASS: all 145 source frames retain their silhouettes; 1,160 directional effects stay complete; annular air effects are unmasked.');
 }finally{await browser.close();}

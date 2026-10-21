@@ -1,4 +1,30 @@
-# Validação da versão 1.7.0
+# Validação da versão 1.8.0
+
+Executada em Linux com Node 24.19.0, Chromium e Electron 44.9.0 em 20/10/2026 (America/Sao_Paulo; 21/10 UTC). Aplicativo Linux equivalente; não houve execução física do Windows nem controles USB/Bluetooth.
+
+- `npm test`: **72 testes passaram**. Mantidos dano básico 25/32/18, energia, recargas, combate, salas/rede, resgates e chaves. Novos testes cobrem câmera de emote por dono local, variações visuais determinísticas sem alterar hitboxes e prontidão após reconexão no lobby.
+- `scripts/clarity-review.js`: 532 poses utilizáveis de movimento/apresentação/emotes, todas distintas por grupo, sem tocar bordas de origem ou do cache; 1.994 poses nas 33 folhas de ataques/caminhada; oito direções disponíveis; 145 quadros de 21 modelos de efeitos. Os pixels de `drawPose` são os da pose de origem selecionada, sem mistura de silhuetas.
+- `scripts/strike-review.js`: todas as poses de ataque por direção distintas e completas. `scripts/walk-smoothing-review.js`: chefes usam 24/16/16 poses reais por ciclo; os seis heróis/lacaios mantêm 7–8 por vista, com posição/recuo contínuos. Não são 60 desenhos inéditos por segundo.
+- `scripts/effect-clipping-review.js`: **1.160 poses de efeitos renderizadas em oito ângulos**, sem corte nas bordas do destino; efeitos aéreos anulares preservam a silhueta inteira. As folhas novas descartam células com mais de quatro pixels fortes encostando em qualquer margem; brilho fraco isolado não conta como silhueta cortada. Os avisos e espaços seguros seguem a geometria autoritativa.
+- `scripts/couch-smoke.js`: três dispositivos virtuais, sessões reais independentes, movimento/mira/habilidades, dash com energia, bloqueio de teclado/mouse na batalha, liderança após queda, reconexão, cinco ciclos de menu, uma janela e no máximo uma trilha ativa passaram.
+- `scripts/emote-camera-smoke.js`: no aplicativo empacotado, zoom do emote de 1,55 para aproximadamente 2,03 e retorno para 1,57 ao mover. Logo preservou URL/sala/sessão; endereço inválido voltou a um menu utilizável com mensagem de erro. Sem erros de JavaScript.
+- `scripts/menu-race-smoke.js`: respostas atrasadas de salas/ranking não substituem o menu aberto posteriormente nem reabrem diálogos fechados. O teste revelou e corrigiu também um rodapé que cobria o botão de salas em janela baixa.
+- `scripts/ready-smoke.js`: preparação completa dos recursos em aproximadamente 5,5s no ambiente de teste. O botão pronto aguarda esse preparo; pedidos de controles durante o carregamento são guardados por sala e cancelados ao trocar classe/voltar.
+
+- `scripts/rescue-review.js`: 192 poses de auxílio/levantar, oito distintas por vista, margens completas. A recuperação exibe cinco poses de origem em meio segundo; não usa mais as trinta misturas artificiais da versão anterior.
+- Pacote Windows: 484.081.692 bytes, 15 partes, SHA-256 `80b6d85cb1a8c6e1240336aad90ab249bdae82146d248c2ff23b4f9e4fcdffb1`. CRC de 293 entradas passou, executável PE x64 e 196 arquivos de `public/server/desktop` conferidos byte a byte com o código atual.
+
+- `scripts/desktop-smoke.js`: duas instâncias empacotadas via TCP 127.0.0.1, sala real, dano compartilhado do chefe e reconexão. Menu com áudio, solo com troca de classes/bots, diálogos, despertar, emote e dash com energia também passaram. Não representa teste entre dois PCs físicos na rede.
+
+## Medição das cutscenes
+
+`scripts/cinematic-baseline.js` usa o aplicativo nativo, entradas normais, perfil de CPU e 24 amostras de um segundo, sem gravar vídeo ou alterar estado do servidor. Qualidade alta, ambiente headless sem GPU física. A reprodução inicial mostrou **14 FPS na primeira amostra** durante criação/decodificação dos caches; a mediana da apresentação já era 60 FPS. Não havia limite intencional de 14 FPS.
+
+Após preparar recursos no lobby, remover mistura de silhuetas e evitar leituras repetidas de layout, a execução isolada registrou **54 FPS na primeira amostra**, mediana da apresentação **60 FPS**, com uma queda pontual para 44 FPS. O custo JavaScript médio da primeira amostra caiu de aproximadamente 16,9ms para 0,61ms. As primeiras sete amostras de batalha ficaram em aproximadamente 53–60 FPS. Isso mede este ambiente; não garante 60 FPS em todos os PCs. Uma execução concorrente com outro aplicativo nativo ficou mais lenta e está preservada como dado adicional, não como comparação principal.
+
+As amostras completas, verificações e limites ficam em `docs/benchmarks/v1.8.0.json`. A prévia usa entradas virtuais pelo Gamepad API e o fluxo normal de combate; sua codificação em 60 FPS não mede a cadência original da captura. A trilha do jogo é mixada no arquivo de demonstração; não é captura do dispositivo de áudio.
+
+# Histórico: validação da versão 1.7.0
 
 Executada em Linux com Node 24.19.0, Chromium e Electron 44.9.0, em 20/10/2026. Os dados abaixo distinguem cenários controlados, simulações e execução do aplicativo.
 

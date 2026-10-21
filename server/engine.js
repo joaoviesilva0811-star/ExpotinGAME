@@ -73,7 +73,7 @@ export class Room {
     if(id!==this.owner||this.state!=='lobby')throw new Error('Só o líder pode configurar os companheiros na preparação.');
     this.botsEnabled=this.solo||enabled===true;this.syncBots();
   }
-  reconnect(id) { const p = this.players.get(id); if (p) { p.connected = true; p.disconnectedAt = null; p.input = { x: 0, y: 0 }; this.emit('notice', { text: `${p.name} reconectou.` }); } }
+  reconnect(id) { const p = this.players.get(id); if (p) { p.connected = true; p.disconnectedAt = null;if(this.state==='lobby'&&!p.isBot)p.ready=false; p.input = { x: 0, y: 0 }; this.emit('notice', { text: `${p.name} reconectou.` }); } }
   disconnect(id) {
     const p = this.players.get(id); if (!p) return;
     p.connected = false; p.disconnectedAt = this.now; p.input = { x: 0, y: 0 }; p.block = false;
