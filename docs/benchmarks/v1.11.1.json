@@ -1,0 +1,2926 @@
+{
+  "version": "1.11.1",
+  "unitTests": 98,
+  "method": "Packaged Linux equivalent with virtual controller; source PNGs unchanged; visual/metadata QA fixtures explicitly distinguished from gameplay.",
+  "cropReview": [
+    {
+      "name": "varkhul-riposte",
+      "frames": 48,
+      "foreignBodyLeaks": 0,
+      "loaded": true
+    },
+    {
+      "name": "varkhul-chains",
+      "frames": 64,
+      "foreignBodyLeaks": 0,
+      "loaded": true
+    },
+    {
+      "particleCounts": {
+        "knight": 67,
+        "archer": 26,
+        "rogue": 33
+      },
+      "bounded": true
+    }
+  ],
+  "windows": {
+    "version": "1.11.1",
+    "size": 522525512,
+    "sha256": "1e763872f1375af26cf50de7096af89eb1a1e9fff08fb289d88e11943687d852",
+    "parts": 16,
+    "entries": 330,
+    "sourceFilesVerified": 233,
+    "crc": "all entries passed",
+    "executable": "PE x64",
+    "sourceMatches": true
+  },
+  "preserved": {
+    "actorPoses": 3881,
+    "basicDamage": [
+      25,
+      32,
+      18
+    ],
+    "couchPlayers": 3,
+    "lanPlayers": 4
+  },
+  "limitations": [
+    "No physical Windows/GPU/USB/Bluetooth test.",
+    "Full campaign and three-controller validation from 1.11.0; this patch tests crop registration, actual incoming damage, performance and normal gameplay preview.",
+    "HQ panels retained; source PNGs not edited."
+  ],
+  "performance": {
+    "method": "Packaged Linux, headless software rendering, high quality with adaptive FX/lights, normal virtual gamepad, no video/screenshot capture",
+    "introSamples": [
+      {
+        "state": "lobby",
+        "age": null,
+        "fps": 60,
+        "p95": 16.700000000000728,
+        "cpu": 0.33666666597127914,
+        "particles": 0,
+        "pooled": 0,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 2
+        },
+        "camera": {
+          "x": 600,
+          "y": 380,
+          "zoom": 1.55,
+          "motion": {
+            "x": 0,
+            "y": 0,
+            "envelope": 0
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "countdown",
+        "age": 1.0011294209999995,
+        "fps": 56.074766355140184,
+        "p95": 33.29999999999927,
+        "cpu": 0.6824561362726647,
+        "particles": 0,
+        "pooled": 0,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 2
+        },
+        "camera": {
+          "x": 503.9117134131068,
+          "y": 380,
+          "zoom": 1.1565026627027377,
+          "motion": {
+            "x": 0,
+            "y": 0,
+            "envelope": 0
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "countdown",
+        "age": 2.0011152779999986,
+        "fps": 60,
+        "p95": 16.800000000000182,
+        "cpu": 0.6416666631897291,
+        "particles": 0,
+        "pooled": 0,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 2
+        },
+        "camera": {
+          "x": 534.6654104396313,
+          "y": 380,
+          "zoom": 1.120585192286251,
+          "motion": {
+            "x": 0,
+            "y": 0,
+            "envelope": 0
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "countdown",
+        "age": 3.0176967049999988,
+        "fps": 59.99803285138193,
+        "p95": 16.700000000000728,
+        "cpu": 0.6180327886440715,
+        "particles": 0,
+        "pooled": 0,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 2
+        },
+        "camera": {
+          "x": 535.6943205903391,
+          "y": 380,
+          "zoom": 1.1200093815077183,
+          "motion": {
+            "x": 0,
+            "y": 0,
+            "envelope": 0
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "countdown",
+        "age": 4.019403432999999,
+        "fps": 47.02829806210981,
+        "p95": 16.80000000000109,
+        "cpu": 0.6672413760218127,
+        "particles": 0,
+        "pooled": 0,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 2
+        },
+        "camera": {
+          "x": 535.7134896134187,
+          "y": 380,
+          "zoom": 1.1200003578435096,
+          "motion": {
+            "x": 0,
+            "y": 0,
+            "envelope": 0
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "countdown",
+        "age": 5.019379126999999,
+        "fps": 60,
+        "p95": 16.799999999999272,
+        "cpu": 0.6299999972184499,
+        "particles": 0,
+        "pooled": 0,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 2
+        },
+        "camera": {
+          "x": 535.7142726223386,
+          "y": 380,
+          "zoom": 1.1200000057367667,
+          "motion": {
+            "x": 0,
+            "y": 0,
+            "envelope": 0
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "countdown",
+        "age": 6.019115571000002,
+        "fps": 60.00983767830792,
+        "p95": 16.700000000000728,
+        "cpu": 0.5999999984365995,
+        "particles": 0,
+        "pooled": 0,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 2
+        },
+        "camera": {
+          "x": 535.7142855025239,
+          "y": 380,
+          "zoom": 1.1200000000919692,
+          "motion": {
+            "x": 0,
+            "y": 0,
+            "envelope": 0
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "countdown",
+        "age": 7.0191164390000065,
+        "fps": 60,
+        "p95": 16.700000000000728,
+        "cpu": 0.704999998708566,
+        "particles": 0,
+        "pooled": 0,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 2
+        },
+        "camera": {
+          "x": 535.7142857108787,
+          "y": 380,
+          "zoom": 1.1200000000014751,
+          "motion": {
+            "x": 0,
+            "y": 0,
+            "envelope": 0
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "countdown",
+        "age": 8.019112324000004,
+        "fps": 60.00393468424157,
+        "p95": 16.799999999999272,
+        "cpu": 0.7016393464119708,
+        "particles": 0,
+        "pooled": 0,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 2
+        },
+        "camera": {
+          "x": 535.7142857142309,
+          "y": 380,
+          "zoom": 1.1200000000000239,
+          "motion": {
+            "x": 7.771905737898532e-19,
+            "y": 0.01269248528360934,
+            "envelope": 0
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "countdown",
+        "age": 9.019430187000006,
+        "fps": 60,
+        "p95": 16.700000000000728,
+        "cpu": 0.6883333389957745,
+        "particles": 0,
+        "pooled": 0,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 2
+        },
+        "camera": {
+          "x": 468.25417537653703,
+          "y": 305.6455628302313,
+          "zoom": 1.4204864888777535,
+          "motion": {
+            "x": -5.641564208784048e-19,
+            "y": -0.009213373542007255,
+            "envelope": 0
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "countdown",
+        "age": 10.020652454000007,
+        "fps": 58,
+        "p95": 16.80000000000109,
+        "cpu": 0.8310344815254211,
+        "particles": 0,
+        "pooled": 0,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 2
+        },
+        "camera": {
+          "x": 389.1910088670205,
+          "y": 265.2323331189048,
+          "zoom": 1.547923704681732,
+          "motion": {
+            "x": 0,
+            "y": 0,
+            "envelope": 0
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "countdown",
+        "age": 11.02602675000001,
+        "fps": 58.03659256344676,
+        "p95": 16.80000000000109,
+        "cpu": 0.7050847446514388,
+        "particles": 0,
+        "pooled": 0,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 2
+        },
+        "camera": {
+          "x": 387.13463057294456,
+          "y": 265.00132534419987,
+          "zoom": 1.549966713880187,
+          "motion": {
+            "x": 0,
+            "y": 0,
+            "envelope": 0
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "countdown",
+        "age": 12.036938643000013,
+        "fps": 60.00393468424167,
+        "p95": 16.700000000000728,
+        "cpu": 0.685245905254708,
+        "particles": 0,
+        "pooled": 0,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 2
+        },
+        "camera": {
+          "x": 387.0974054251829,
+          "y": 265.0000075604255,
+          "zoom": 1.5499994663737078,
+          "motion": {
+            "x": 0,
+            "y": 0,
+            "envelope": 0
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "countdown",
+        "age": 13.094896726000014,
+        "fps": 60,
+        "p95": 16.799999999999272,
+        "cpu": 0.7266666650772095,
+        "particles": 0,
+        "pooled": 0,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 2
+        },
+        "camera": {
+          "x": 387.0967837839913,
+          "y": 265.0000000396933,
+          "zoom": 1.5499999919947645,
+          "motion": {
+            "x": 0,
+            "y": 0,
+            "envelope": 0
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "countdown",
+        "age": 14.097698388000008,
+        "fps": 60,
+        "p95": 16.799999999999272,
+        "cpu": 0.7266666650772095,
+        "particles": 0,
+        "pooled": 0,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 2
+        },
+        "camera": {
+          "x": 387.09677541172397,
+          "y": 265.0000000029972,
+          "zoom": 1.5499999989866153,
+          "motion": {
+            "x": 0,
+            "y": 0,
+            "envelope": 0
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "countdown",
+        "age": 15.097765766999995,
+        "fps": 59.020263623844066,
+        "p95": 16.700000000000728,
+        "cpu": 0.6983333294590314,
+        "particles": 0,
+        "pooled": 0,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 2
+        },
+        "camera": {
+          "x": 387.09677421314046,
+          "y": 265.00000000001705,
+          "zoom": 1.549999999983754,
+          "motion": {
+            "x": 0,
+            "y": 0,
+            "envelope": 0
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "countdown",
+        "age": 16.10130941999999,
+        "fps": 60,
+        "p95": 16.80000000000291,
+        "cpu": 0.7416666676600774,
+        "particles": 0,
+        "pooled": 0,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 2
+        },
+        "camera": {
+          "x": 387.0967741938628,
+          "y": 265.00000000000034,
+          "zoom": 1.5499999999997398,
+          "motion": {
+            "x": 0,
+            "y": 0,
+            "envelope": 0
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "countdown",
+        "age": 17.10216751099999,
+        "fps": 60.00393468424167,
+        "p95": 16.700000000000728,
+        "cpu": 0.6360655778744182,
+        "particles": 26,
+        "pooled": 34,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 2
+        },
+        "camera": {
+          "x": 725.0236776108818,
+          "y": 374.7331517513446,
+          "zoom": 1.275456789226145,
+          "motion": {
+            "x": 0,
+            "y": 0,
+            "envelope": 0
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "countdown",
+        "age": 18.10217647599999,
+        "fps": 60,
+        "p95": 16.799999999999272,
+        "cpu": 0.861666668454806,
+        "particles": 0,
+        "pooled": 60,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 2
+        },
+        "camera": {
+          "x": 720.5155058964373,
+          "y": 379.96994023978704,
+          "zoom": 1.2504082736880817,
+          "motion": {
+            "x": 0,
+            "y": 0,
+            "envelope": 0
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "countdown",
+        "age": 19.103127171999994,
+        "fps": 60.003934684241464,
+        "p95": 16.700000000000728,
+        "cpu": 0.6573770500597407,
+        "particles": 0,
+        "pooled": 60,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 2
+        },
+        "camera": {
+          "x": 720.0107680455542,
+          "y": 379.99982860982436,
+          "zoom": 1.2500065426203715,
+          "motion": {
+            "x": 0,
+            "y": 0,
+            "envelope": 0
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "countdown",
+        "age": 20.155165116999996,
+        "fps": 60.00983767830792,
+        "p95": 16.700000000000728,
+        "cpu": 0.5409836065573771,
+        "particles": 0,
+        "pooled": 60,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 2
+        },
+        "camera": {
+          "x": 720.0001870086494,
+          "y": 379.9999990218159,
+          "zoom": 1.250000104929955,
+          "motion": {
+            "x": 0,
+            "y": 0,
+            "envelope": 0
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "countdown",
+        "age": 21.156288444999998,
+        "fps": 59.994000599940094,
+        "p95": 16.700000000000728,
+        "cpu": 0.5183333332339922,
+        "particles": 0,
+        "pooled": 60,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 2
+        },
+        "camera": {
+          "x": 480.1230747134834,
+          "y": 291.3969657466973,
+          "zoom": 1.4709103156589842,
+          "motion": {
+            "x": 0,
+            "y": 0,
+            "envelope": 0
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "countdown",
+        "age": 22.157135343000004,
+        "fps": 60.00393468424167,
+        "p95": 16.700000000000728,
+        "cpu": 0.5278688522635914,
+        "particles": 0,
+        "pooled": 60,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 2
+        },
+        "camera": {
+          "x": 388.7282333505841,
+          "y": 265.1636949031676,
+          "zoom": 1.5486444836479216,
+          "motion": {
+            "x": 0,
+            "y": 0,
+            "envelope": 0
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "countdown",
+        "age": 23.15716782600001,
+        "fps": 60.003934684241464,
+        "p95": 16.700000000000728,
+        "cpu": 0.5262295076104461,
+        "particles": 0,
+        "pooled": 60,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 2
+        },
+        "camera": {
+          "x": 387.12479436213965,
+          "y": 265.0010146100472,
+          "zoom": 1.5499767771262056,
+          "motion": {
+            "x": 0,
+            "y": 0,
+            "envelope": 0
+          },
+          "emote": null
+        }
+      }
+    ],
+    "samples": [
+      {
+        "state": "battle",
+        "phase": 1,
+        "remaining": 298.2942037390002,
+        "fps": 60.00393468424167,
+        "p95": 16.700000000000728,
+        "cpu": 1.057377051623141,
+        "particles": 312,
+        "pooled": 0,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 8,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 5
+        },
+        "camera": {
+          "x": 437.2497030865891,
+          "y": 306.7064347341773,
+          "zoom": 1.5499999940315154,
+          "motion": {
+            "x": -0.6346814994820386,
+            "y": 0.5925268328443432,
+            "envelope": 0.9999999394873923
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 1,
+        "remaining": 297.29383669600014,
+        "fps": 60.003934684241464,
+        "p95": 16.799999999999272,
+        "cpu": 1.6704918053306517,
+        "particles": 249,
+        "pooled": 359,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 10,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 5
+        },
+        "camera": {
+          "x": 599.5767229202513,
+          "y": 432.78005572263726,
+          "zoom": 1.5499999999043164,
+          "motion": {
+            "x": 1.3901120848344366,
+            "y": -1.6544295852762256,
+            "envelope": 0.9687632128298973
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 1,
+        "remaining": 296.2907716800001,
+        "fps": 54.101908321857245,
+        "p95": 33.400000000001455,
+        "cpu": 2.261818183010275,
+        "particles": 1038,
+        "pooled": 82,
+        "smoke": 18,
+        "fields": 1,
+        "budget": {
+          "particles": 1800,
+          "smoke": 96,
+          "volumes": 160,
+          "detail": 1
+        },
+        "effectDetail": 100,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 10,
+          "limit": 24,
+          "adaptiveLimit": 24,
+          "density": 1,
+          "textures": 7
+        },
+        "camera": {
+          "x": 646.2159230928263,
+          "y": 435.93663425670474,
+          "zoom": 1.5499999999984662,
+          "motion": {
+            "x": 0.940189399632851,
+            "y": -0.12011836348030265,
+            "envelope": 0.9815211502744055
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 1,
+        "remaining": 295.2746893970002,
+        "fps": 42.58201877479907,
+        "p95": 33.400000000001455,
+        "cpu": 3.445454543287104,
+        "particles": 169,
+        "pooled": 951,
+        "smoke": 13,
+        "fields": 1,
+        "budget": {
+          "particles": 1169,
+          "smoke": 41,
+          "volumes": 68,
+          "detail": 0.649519052838329
+        },
+        "effectDetail": 42,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 10,
+          "limit": 24,
+          "adaptiveLimit": 16,
+          "density": 0.421875,
+          "textures": 8
+        },
+        "camera": {
+          "x": 670.3696191967546,
+          "y": 428.16581482769874,
+          "zoom": 1.5499999999999698,
+          "motion": {
+            "x": 1.0306502960014337,
+            "y": -1.108160750464761,
+            "envelope": 0.00014770392483429775
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 1,
+        "remaining": 294.22371125600023,
+        "fps": 60.00393468424167,
+        "p95": 16.700000000004366,
+        "cpu": 1.2934426235370948,
+        "particles": 206,
+        "pooled": 914,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1169,
+          "smoke": 41,
+          "volumes": 68,
+          "detail": 0.649519052838329
+        },
+        "effectDetail": 42,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 9,
+          "limit": 24,
+          "adaptiveLimit": 16,
+          "density": 0.421875,
+          "textures": 8
+        },
+        "camera": {
+          "x": 671.108713448179,
+          "y": 428.48546416112,
+          "zoom": 1.5499999999999985,
+          "motion": {
+            "x": 0.004276699811470942,
+            "y": -0.004596613147090826,
+            "envelope": 7.436130180422797e-10
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 1,
+        "remaining": 293.2207889920002,
+        "fps": 60,
+        "p95": 16.700000000004366,
+        "cpu": 1.1083333333333334,
+        "particles": 238,
+        "pooled": 882,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1169,
+          "smoke": 41,
+          "volumes": 68,
+          "detail": 0.649519052838329
+        },
+        "effectDetail": 42,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 15,
+          "limit": 24,
+          "adaptiveLimit": 16,
+          "density": 0.421875,
+          "textures": 8
+        },
+        "camera": {
+          "x": 671.1133199338077,
+          "y": 428.4874587946108,
+          "zoom": 1.5499999999999985,
+          "motion": {
+            "x": -5.028985438713013e-15,
+            "y": -5.086360470180841e-15,
+            "envelope": 3.739216290438623e-15
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 1,
+        "remaining": 292.21787382500025,
+        "fps": 60.00393468424167,
+        "p95": 16.700000000004366,
+        "cpu": 1.1737704917055662,
+        "particles": 167,
+        "pooled": 953,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1169,
+          "smoke": 41,
+          "volumes": 68,
+          "detail": 0.649519052838329
+        },
+        "effectDetail": 42,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 9,
+          "limit": 24,
+          "adaptiveLimit": 16,
+          "density": 0.421875,
+          "textures": 8
+        },
+        "camera": {
+          "x": 671.1133484999224,
+          "y": 428.4874711639068,
+          "zoom": 1.5499999999999985,
+          "motion": {
+            "x": -2.0720609224506242e-20,
+            "y": -2.0957007921773664e-20,
+            "envelope": 1.5406455338616858e-20
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 1,
+        "remaining": 291.2104631680002,
+        "fps": 60,
+        "p95": 16.700000000004366,
+        "cpu": 1.3833333323399226,
+        "particles": 188,
+        "pooled": 932,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1169,
+          "smoke": 41,
+          "volumes": 68,
+          "detail": 0.649519052838329
+        },
+        "effectDetail": 42,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 15,
+          "limit": 24,
+          "adaptiveLimit": 16,
+          "density": 0.421875,
+          "textures": 9
+        },
+        "camera": {
+          "x": 683.7063155314125,
+          "y": 422.5343198746404,
+          "zoom": 1.5499999999999985,
+          "motion": {
+            "x": -0.0003737224064309187,
+            "y": 0.0001336250091177621,
+            "envelope": 0.00047242727976877453
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 1,
+        "remaining": 290.20552407200023,
+        "fps": 60.00393468424167,
+        "p95": 16.700000000004366,
+        "cpu": 1.1770491824775446,
+        "particles": 154,
+        "pooled": 966,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1169,
+          "smoke": 41,
+          "volumes": 68,
+          "detail": 0.649519052838329
+        },
+        "effectDetail": 42,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 11,
+          "limit": 24,
+          "adaptiveLimit": 16,
+          "density": 0.421875,
+          "textures": 9
+        },
+        "camera": {
+          "x": 683.8387264863877,
+          "y": 421.94359717631164,
+          "zoom": 1.5499999999999985,
+          "motion": {
+            "x": 0.022673407335964506,
+            "y": -0.028034371786238042,
+            "envelope": 2.3755825571120523e-09
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 1,
+        "remaining": 289.2035047520002,
+        "fps": 60,
+        "p95": 16.80000000000291,
+        "cpu": 1.2666666661699613,
+        "particles": 239,
+        "pooled": 881,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1169,
+          "smoke": 41,
+          "volumes": 68,
+          "detail": 0.649519052838329
+        },
+        "effectDetail": 42,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 11,
+          "limit": 24,
+          "adaptiveLimit": 16,
+          "density": 0.421875,
+          "textures": 9
+        },
+        "camera": {
+          "x": 684.5295499409754,
+          "y": 417.8405590935612,
+          "zoom": 1.5499999999999985,
+          "motion": {
+            "x": 0.46474301450162625,
+            "y": 0.09458175125168823,
+            "envelope": 0.5542133429597144
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 2,
+        "remaining": 288.1515514860003,
+        "fps": 55.08557938225466,
+        "p95": 33.30000000000291,
+        "cpu": 1.5839285722800664,
+        "particles": 328,
+        "pooled": 792,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1169,
+          "smoke": 41,
+          "volumes": 68,
+          "detail": 0.649519052838329
+        },
+        "effectDetail": 42,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 10,
+          "limit": 24,
+          "adaptiveLimit": 16,
+          "density": 0.421875,
+          "textures": 9
+        },
+        "camera": {
+          "x": 649.5374531751789,
+          "y": 422.6685881992247,
+          "zoom": 1.5499999999999994,
+          "motion": {
+            "x": -0.13857496530456692,
+            "y": 0.755893196410272,
+            "envelope": 0.6897240330266796
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 2,
+        "remaining": 287.1507247590004,
+        "fps": 60.00393468424125,
+        "p95": 16.700000000004366,
+        "cpu": 1.4426229527739227,
+        "particles": 140,
+        "pooled": 980,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1169,
+          "smoke": 41,
+          "volumes": 68,
+          "detail": 0.649519052838329
+        },
+        "effectDetail": 42,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 8,
+          "limit": 24,
+          "adaptiveLimit": 16,
+          "density": 0.421875,
+          "textures": 10
+        },
+        "camera": {
+          "x": 678.3306320959354,
+          "y": 426.89108535578873,
+          "zoom": 1.5499999999999994,
+          "motion": {
+            "x": -0.042653256247568085,
+            "y": 0.6430283183659281,
+            "envelope": 0.5620865641517133
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 2,
+        "remaining": 286.14681969400056,
+        "fps": 59.01445854234304,
+        "p95": 16.799999999995634,
+        "cpu": 1.489999998609225,
+        "particles": 388,
+        "pooled": 732,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 1169,
+          "smoke": 41,
+          "volumes": 68,
+          "detail": 0.649519052838329
+        },
+        "effectDetail": 42,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 9,
+          "limit": 24,
+          "adaptiveLimit": 16,
+          "density": 0.421875,
+          "textures": 10
+        },
+        "camera": {
+          "x": 698.3810295616961,
+          "y": 420.0346565009902,
+          "zoom": 1.5102876365444846,
+          "motion": {
+            "x": -0.06916150638597206,
+            "y": -2.3302702590398274,
+            "envelope": 0.8901285395248754
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 2,
+        "remaining": 285.1455805100007,
+        "fps": 48.204623708804725,
+        "p95": 33.400000000001455,
+        "cpu": 1.6244897957967253,
+        "particles": 560,
+        "pooled": 560,
+        "smoke": 14,
+        "fields": 1,
+        "budget": {
+          "particles": 1013,
+          "smoke": 30,
+          "volumes": 51,
+          "detail": 0.5625
+        },
+        "effectDetail": 32,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 10,
+          "limit": 24,
+          "adaptiveLimit": 14,
+          "density": 0.31640625,
+          "textures": 10
+        },
+        "camera": {
+          "x": 678.7478366543322,
+          "y": 420.7039341920953,
+          "zoom": 1.4116077608307673,
+          "motion": {
+            "x": 0.4525699597513779,
+            "y": 0.6328955732899428,
+            "envelope": 0.7431126738317844
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 2,
+        "remaining": 284.0939754720008,
+        "fps": 41,
+        "p95": 33.400000000001455,
+        "cpu": 1.7414634133257516,
+        "particles": 488,
+        "pooled": 632,
+        "smoke": 11,
+        "fields": 1,
+        "budget": {
+          "particles": 658,
+          "smoke": 13,
+          "volumes": 21,
+          "detail": 0.36535446722156006
+        },
+        "effectDetail": 13,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 8,
+          "limit": 24,
+          "adaptiveLimit": 9,
+          "density": 0.13348388671875,
+          "textures": 10
+        },
+        "camera": {
+          "x": 702.0110359379865,
+          "y": 409.6693655371697,
+          "zoom": 1.5105658976839005,
+          "motion": {
+            "x": 0.4519434486522273,
+            "y": 0.1632288282962724,
+            "envelope": 0.5721173182282591
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 2,
+        "remaining": 283.08641428800075,
+        "fps": 37,
+        "p95": 33.400000000001455,
+        "cpu": 2.1810810799534255,
+        "particles": 344,
+        "pooled": 776,
+        "smoke": 12,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 8,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 756.7129845038165,
+          "y": 414.24805261648225,
+          "zoom": 1.5493244100819001,
+          "motion": {
+            "x": 0.5845541161920211,
+            "y": 0.5389842676602957,
+            "envelope": 0.9170842887098193
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 2,
+        "remaining": 282.08480312600074,
+        "fps": 55.08557938225466,
+        "p95": 33.30000000000291,
+        "cpu": 1.4392857131149088,
+        "particles": 59,
+        "pooled": 1061,
+        "smoke": 4,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 812.5347868028066,
+          "y": 406.58324832575596,
+          "zoom": 1.54998916928302,
+          "motion": {
+            "x": 0.007826224720123167,
+            "y": -0.008497580801708598,
+            "envelope": 0.005663149168931505
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 2,
+        "remaining": 281.0818763480007,
+        "fps": 60,
+        "p95": 16.700000000004366,
+        "cpu": 1.1633333330353102,
+        "particles": 80,
+        "pooled": 1040,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 750.3719851185506,
+          "y": 424.97835281164953,
+          "zoom": 1.5499998263674055,
+          "motion": {
+            "x": 0.4521183288845593,
+            "y": 0.22989029060545146,
+            "envelope": 0.536957912194692
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 2,
+        "remaining": 280.0813889810007,
+        "fps": 60,
+        "p95": 16.700000000004366,
+        "cpu": 1.1633333330353102,
+        "particles": 88,
+        "pooled": 1032,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 747.8188005108242,
+          "y": 424.72411059345865,
+          "zoom": 1.5499999780110174,
+          "motion": {
+            "x": 0.0009600392275358554,
+            "y": 0.0003700570647567245,
+            "envelope": 0.001226916649272723
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 2,
+        "remaining": 279.08047733900065,
+        "fps": 60.00393468424167,
+        "p95": 16.799999999995634,
+        "cpu": 1.1508196729128477,
+        "particles": 199,
+        "pooled": 921,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 745.3872841819276,
+          "y": 399.51372141722794,
+          "zoom": 1.5499999996474836,
+          "motion": {
+            "x": 0.13298613721055358,
+            "y": 0.3306031320246051,
+            "envelope": 0.23771279066454465
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 2,
+        "remaining": 278.07608742400055,
+        "fps": 60,
+        "p95": 16.700000000004366,
+        "cpu": 1.486666664481163,
+        "particles": 64,
+        "pooled": 1056,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 8,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 744.1739039809057,
+          "y": 396.97541475444876,
+          "zoom": 1.5499999999943466,
+          "motion": {
+            "x": 1.2312054460602468,
+            "y": 0.3006923438349764,
+            "envelope": 1.0045279141799838e-06
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 2,
+        "remaining": 277.0605954300006,
+        "fps": 60.00983767830792,
+        "p95": 16.700000000004366,
+        "cpu": 1.375409835186161,
+        "particles": 458,
+        "pooled": 662,
+        "smoke": 12,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 8,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 809.1798565144854,
+          "y": 507.07208279972696,
+          "zoom": 1.5499999999999208,
+          "motion": {
+            "x": 1.4138492168777679,
+            "y": -1.6130148818295345,
+            "envelope": 0.9851066275443985
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 2,
+        "remaining": 276.0038814070005,
+        "fps": 49.99500049994971,
+        "p95": 33.400000000001455,
+        "cpu": 1.9779999995231627,
+        "particles": 146,
+        "pooled": 974,
+        "smoke": 3,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 812.8819964648831,
+          "y": 514.7944271037909,
+          "zoom": 1.5499999999999985,
+          "motion": {
+            "x": -0.00020403838312217225,
+            "y": -9.721798056783904e-05,
+            "envelope": 0.00018578043402755592
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 2,
+        "remaining": 275.0001495090006,
+        "fps": 60.00983767830792,
+        "p95": 16.700000000004366,
+        "cpu": 1.1836065562044988,
+        "particles": 65,
+        "pooled": 1055,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 8,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 812.9031046431129,
+          "y": 514.838456941156,
+          "zoom": 1.5499999999999985,
+          "motion": {
+            "x": -8.416962107271073e-10,
+            "y": -4.010422187250432e-10,
+            "envelope": 7.663787810437926e-10
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 2,
+        "remaining": 273.99919839800054,
+        "fps": 60,
+        "p95": 16.700000000004366,
+        "cpu": 1.0950000017881394,
+        "particles": 124,
+        "pooled": 996,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 8,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 812.903225115275,
+          "y": 514.8387082356851,
+          "zoom": 1.5499999999999985,
+          "motion": {
+            "x": -3.4316374016129276,
+            "y": 1.6335510311650454,
+            "envelope": 0.8568534105961082
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 2,
+        "remaining": 272.9951302260005,
+        "fps": 60.00393468424167,
+        "p95": 16.700000000004366,
+        "cpu": 1.050819669102059,
+        "particles": 34,
+        "pooled": 1086,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 759.7235899636288,
+          "y": 514.8387096684829,
+          "zoom": 1.5499999999999985,
+          "motion": {
+            "x": -0.4305280243013233,
+            "y": 1.1308801281881926,
+            "envelope": 0.9998393731144363
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 2,
+        "remaining": 271.99318410400065,
+        "fps": 60.00393468424167,
+        "p95": 16.700000000004366,
+        "cpu": 1.0836065602107126,
+        "particles": 444,
+        "pooled": 676,
+        "smoke": 8,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 8,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 748.2581543074215,
+          "y": 514.838709677368,
+          "zoom": 1.5499999999999985,
+          "motion": {
+            "x": -0.03809146478355519,
+            "y": -0.008214884871225849,
+            "envelope": 7.665811802969448e-06
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 2,
+        "remaining": 270.98987396000064,
+        "fps": 60,
+        "p95": 16.799999999995634,
+        "cpu": 1.1883333310484887,
+        "particles": 65,
+        "pooled": 1055,
+        "smoke": 6,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 748.1588276200225,
+          "y": 514.8387096774184,
+          "zoom": 1.5499999999999985,
+          "motion": {
+            "x": 1.3295636758859536e-11,
+            "y": 2.8612569959396475e-11,
+            "envelope": 3.1584957504791035e-11
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 2,
+        "remaining": 269.98984591500067,
+        "fps": 60,
+        "p95": 16.80000000000291,
+        "cpu": 0.9549999962250392,
+        "particles": 221,
+        "pooled": 899,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 748.1582606978434,
+          "y": 514.8387096774184,
+          "zoom": 1.5499999999999985,
+          "motion": {
+            "x": 5.484694435884515e-17,
+            "y": 1.180321079004263e-16,
+            "envelope": 1.302937526243277e-16
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 2,
+        "remaining": 268.9860975830007,
+        "fps": 57.09861608438966,
+        "p95": 16.80000000000291,
+        "cpu": 1.1135593213267245,
+        "particles": 49,
+        "pooled": 1071,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 748.1582574638248,
+          "y": 507.1723548914799,
+          "zoom": 1.4615237271335075,
+          "motion": {
+            "x": -3.0961937154124293,
+            "y": -0.668239508107537,
+            "envelope": 6.559614978072389e-22
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 2,
+        "remaining": 267.9784415440007,
+        "fps": 56.13627564847093,
+        "p95": 33.30000000000291,
+        "cpu": 1.475862066807418,
+        "particles": 97,
+        "pooled": 1023,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 744.8392185395992,
+          "y": 491.0794414250101,
+          "zoom": 1.41082600241859,
+          "motion": {
+            "x": 0.41735989768952536,
+            "y": -0.7996537982165688,
+            "envelope": 0.5243725683185162
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 2,
+        "remaining": 266.9769850330007,
+        "fps": 55.08557938225466,
+        "p95": 33.30000000000291,
+        "cpu": 1.382142858845847,
+        "particles": 470,
+        "pooled": 650,
+        "smoke": 12,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 8,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 737.5713631478087,
+          "y": 506.17883443343027,
+          "zoom": 1.5283572603696711,
+          "motion": {
+            "x": -0.33145570569839417,
+            "y": 0.12452429660753385,
+            "envelope": 0.42198092016048055
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 2,
+        "remaining": 265.9246670760005,
+        "fps": 43.277269597717925,
+        "p95": 33.400000000001455,
+        "cpu": 1.593181816691702,
+        "particles": 399,
+        "pooled": 721,
+        "smoke": 6,
+        "fields": 4,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 8,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 797.2834461406175,
+          "y": 514.6069608755565,
+          "zoom": 1.549629213907873,
+          "motion": {
+            "x": 1.350171088817675,
+            "y": -1.5559109500918578,
+            "envelope": 0.9537599524284461
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 2,
+        "remaining": 264.9182212350005,
+        "fps": 57.05292150304946,
+        "p95": 33.30000000000291,
+        "cpu": 1.4551724123543706,
+        "particles": 97,
+        "pooled": 1023,
+        "smoke": 0,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 812.809453590642,
+          "y": 514.834458075975,
+          "zoom": 1.5499940533661185,
+          "motion": {
+            "x": -0.0003235752689828441,
+            "y": -0.00037410614934813154,
+            "envelope": 0.00022826255104268248
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 3,
+        "remaining": 263.91595416500047,
+        "fps": 59.01445854234304,
+        "p95": 16.799999999995634,
+        "cpu": 1.2516666665673255,
+        "particles": 250,
+        "pooled": 870,
+        "smoke": 7,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 812.9026167894457,
+          "y": 514.8386384983202,
+          "zoom": 1.5499999046665636,
+          "motion": {
+            "x": -1.0900020074063776,
+            "y": -1.2006757209443737,
+            "envelope": 0.8017681282273688
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 3,
+        "remaining": 262.9118246560005,
+        "fps": 57.05292150304946,
+        "p95": 33.39999999999418,
+        "cpu": 1.308620690271772,
+        "particles": 89,
+        "pooled": 1031,
+        "smoke": 1,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 748.2511810946174,
+          "y": 514.8387085201138,
+          "zoom": 1.5499999984722739,
+          "motion": {
+            "x": 0.10494461127297643,
+            "y": -0.0062770979087256725,
+            "envelope": 3.4525305037983295e-05
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 3,
+        "remaining": 261.8604201330005,
+        "fps": 60,
+        "p95": 16.80000000000291,
+        "cpu": 1.0516666680574418,
+        "particles": 123,
+        "pooled": 997,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 747.4370621586378,
+          "y": 514.8387096587387,
+          "zoom": 1.5499999999754985,
+          "motion": {
+            "x": -3.731996120069253e-11,
+            "y": 1.504894056763069e-10,
+            "envelope": 1.4242323873576992e-10
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 3,
+        "remaining": 260.90734701400055,
+        "fps": 60.00393468424125,
+        "p95": 16.70000000001164,
+        "cpu": 1.0590163943220356,
+        "particles": 125,
+        "pooled": 995,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 747.4324156559488,
+          "y": 514.8387096771193,
+          "zoom": 1.5499999999996075,
+          "motion": {
+            "x": -1.5376706529325691e-16,
+            "y": 6.200519379999437e-16,
+            "envelope": 5.868174227778635e-16
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 3,
+        "remaining": 259.8979882940004,
+        "fps": 52.13969503197245,
+        "p95": 33.30000000000291,
+        "cpu": 1.7452830166186926,
+        "particles": 477,
+        "pooled": 643,
+        "smoke": 12,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 8,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 747.4323891499754,
+          "y": 514.8387096774145,
+          "zoom": 1.5499999999999934,
+          "motion": {
+            "x": -6.335566706981948e-22,
+            "y": 2.5547606098224393e-21,
+            "envelope": 2.417826548056919e-21
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 3,
+        "remaining": 258.84579036200046,
+        "fps": 52.13969503197245,
+        "p95": 33.30000000000291,
+        "cpu": 1.7452830166186926,
+        "particles": 479,
+        "pooled": 641,
+        "smoke": 11,
+        "fields": 2,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 8,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 747.4323890093932,
+          "y": 514.8387096774185,
+          "zoom": 1.5499999999999987,
+          "motion": {
+            "x": -1.2867883363509522e-24,
+            "y": 5.188858877084391e-24,
+            "envelope": 4.910738289489836e-24
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 3,
+        "remaining": 257.84441299900044,
+        "fps": 53,
+        "p95": 33.30000000000291,
+        "cpu": 1.7226415079719615,
+        "particles": 165,
+        "pooled": 955,
+        "smoke": 5,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 812.4861227200039,
+          "y": 514.8387096774185,
+          "zoom": 1.5499999999999987,
+          "motion": {
+            "x": 0.08158785203857381,
+            "y": -1.3847344588995953,
+            "envelope": 0.7347905161397937
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 3,
+        "remaining": 256.84281600300045,
+        "fps": 60,
+        "p95": 16.79999999998836,
+        "cpu": 1.2483333339293798,
+        "particles": 45,
+        "pooled": 1075,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 794.2037407553345,
+          "y": 514.723411349992,
+          "zoom": 1.5409535162715076,
+          "motion": {
+            "x": -0.07779935428103919,
+            "y": -0.07738832651030746,
+            "envelope": 0.05820227720976043
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 3,
+        "remaining": 255.8418052350004,
+        "fps": 60.003934684242104,
+        "p95": 16.80000000000291,
+        "cpu": 1.2245901627618758,
+        "particles": 42,
+        "pooled": 1078,
+        "smoke": 0,
+        "fields": 0,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 6,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 776.4645225104372,
+          "y": 491.8629605550583,
+          "zoom": 1.412100220675142,
+          "motion": {
+            "x": -0.3912631214885855,
+            "y": 0.09882927935713365,
+            "envelope": 0.992918600935856
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 3,
+        "remaining": 254.83956723000045,
+        "fps": 57.052921503049056,
+        "p95": 33.29999999998836,
+        "cpu": 1.2913793099337612,
+        "particles": 512,
+        "pooled": 608,
+        "smoke": 12,
+        "fields": 1,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 7,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 792.6516372727675,
+          "y": 502.01328601438684,
+          "zoom": 1.513125149534914,
+          "motion": {
+            "x": -0.019732973500686275,
+            "y": 0.11979230597269419,
+            "envelope": 0.10522808215205083
+          },
+          "emote": null
+        }
+      },
+      {
+        "state": "battle",
+        "phase": 3,
+        "remaining": 253.7894218880004,
+        "fps": 52.12943837906968,
+        "p95": 33.30000000000291,
+        "cpu": 1.1301886771085128,
+        "particles": 464,
+        "pooled": 656,
+        "smoke": 7,
+        "fields": 5,
+        "budget": {
+          "particles": 624,
+          "smoke": 12,
+          "volumes": 19,
+          "detail": 0.34641016151377546
+        },
+        "effectDetail": 12,
+        "adaptiveEffects": true,
+        "quality": "high",
+        "lights": {
+          "enabled": true,
+          "active": 8,
+          "limit": 24,
+          "adaptiveLimit": 8,
+          "density": 0.12,
+          "textures": 10
+        },
+        "camera": {
+          "x": 812.402768739094,
+          "y": 514.521756346129,
+          "zoom": 1.5494827713506956,
+          "motion": {
+            "x": 0.6992151146950353,
+            "y": -0.22997183981259176,
+            "envelope": 0.6743943613168409
+          },
+          "emote": null
+        }
+      }
+    ],
+    "errors": []
+  },
+  "damageAcceptance": {
+    "method": "Packaged Linux; ordinary virtual controller; stood still briefly to receive a real server attack; no HP/time changes",
+    "events": [
+      {
+        "id": 54,
+        "type": "hurt",
+        "angle": 0,
+        "owner": "afd7e831e2c27819a690306815a3dc1b",
+        "x": 265,
+        "y": 265,
+        "amount": 14,
+        "maxHp": 160,
+        "hp": 146,
+        "blocked": false,
+        "mitigated": false,
+        "guardBroken": false,
+        "downed": false,
+        "observed": 32534.90000000596
+      },
+      {
+        "id": 167,
+        "type": "hurt",
+        "angle": 3.0402785864719926,
+        "owner": "afd7e831e2c27819a690306815a3dc1b",
+        "x": 614.9271177698967,
+        "y": 364.6970597836319,
+        "amount": 15,
+        "maxHp": 160,
+        "hp": 131,
+        "blocked": false,
+        "mitigated": false,
+        "guardBroken": false,
+        "downed": false,
+        "observed": 39103.09999999404
+      }
+    ],
+    "bars": {
+      "my-health": {
+        "x": 105,
+        "y": 835.203125,
+        "width": 152.375,
+        "height": 13,
+        "z": "1",
+        "position": "relative",
+        "text": ""
+      },
+      "my-health-memory": {
+        "x": 105,
+        "y": 835.203125,
+        "width": 155.234375,
+        "height": 13,
+        "z": "0",
+        "position": "absolute",
+        "text": ""
+      },
+      "boss-health-fill": {
+        "x": 538.5,
+        "y": 104.796875,
+        "width": 335.546875,
+        "height": 10,
+        "z": "1",
+        "position": "relative",
+        "text": ""
+      },
+      "boss-health-memory": {
+        "x": 538.5,
+        "y": 104.796875,
+        "width": 356.875,
+        "height": 10,
+        "z": "0",
+        "position": "absolute",
+        "text": ""
+      },
+      "my-hp": {
+        "x": 105,
+        "y": 835.203125,
+        "width": 167,
+        "height": 13,
+        "z": "2",
+        "position": "absolute",
+        "text": "146 / 160"
+      },
+      "boss-hp": {
+        "x": 538.5,
+        "y": 105.796875,
+        "width": 363,
+        "height": 9,
+        "z": "2",
+        "position": "absolute",
+        "text": "4836 / 5233"
+      }
+    },
+    "errors": []
+  },
+  "performanceSummary": {
+    "samples": 45,
+    "medianFPS": 60,
+    "minimumSampleFPS": 37,
+    "medianJSCpuMs": 1.2934426235370948
+  },
+  "preview": {
+    "filename": "previa-pc.mp4",
+    "size": 69274327,
+    "sha256": "f355a345e897fddf7d13f4fa5536cc82045c911f6896d751d6dbdca1edc55d22",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_type": "video",
+          "width": 1440,
+          "height": 960,
+          "r_frame_rate": "60/1"
+        },
+        {
+          "codec_type": "audio",
+          "r_frame_rate": "0/0"
+        }
+      ],
+      "format": {
+        "duration": "80.316667",
+        "size": "69274327"
+      }
+    },
+    "streamedFrames": 2796,
+    "streamSeconds": 75,
+    "sourceJPEGQuality": 80,
+    "method": "Final packaged Linux, normal virtual controller; isolated CDP native screencast. Original battle track mixed in. Encoded 60 FPS includes repeated frames, not a gameplay FPS measurement."
+  }
+}

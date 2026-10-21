@@ -22,13 +22,13 @@ function spawn(x,y,colors,count,type,speed,angle=null,kind='red'){
 }
 export function impactFX(x,y,kind='gold',heavy=false){
  const colors=palette[kind]||palette.gold;
- spawn(x,y,colors,heavy?28:12,'spark',heavy?210:125);spawn(x,y,['#a3967c','#746956','#514f48'],heavy?15:5,'chip',heavy?150:70);spawn(x,y,['#82755c','#70675c','#56544d'],heavy?14:5,'dust',heavy?95:45);
+ spawn(x,y,colors,heavy?45:20,'spark',heavy?210:125);spawn(x,y,['#a3967c','#746956','#514f48'],heavy?22:8,'chip',heavy?150:70);spawn(x,y,['#82755c','#70675c','#56544d'],heavy?20:8,'dust',heavy?95:45);
  if(heavy){decals.push({x,y,r:35+Math.random()*20,life:22,total:22,seed:Math.random()*30});if(decals.length>80)decals.shift();}
 }
 export function weaponImpact(x,y,classId,angle=0){
- if(classId==='knight'){spawn(x,y,['#fff4d0','#e2b875','#8d7865'],25,'spark',220,angle);spawn(x,y,['#918a7b','#655f5c'],9,'chip',110,angle);spawn(x,y,['#aaa08b','#827b70'],5,'dust',65);}
- else if(classId==='archer'){spawn(x,y,['#e7d6a8','#ad8356','#7e6145'],8,'chip',120,angle);spawn(x,y,['#f6f5db','#b7de9a'],8,'spark',135,angle);}
- else{spawn(x,y,['#ffffff','#c8b5ed','#8777b4'],13,'spark',180,angle);spawn(x+Math.sin(angle)*7,y-Math.cos(angle)*7,['#d5c3ef','#a395bf'],7,'mote',85,angle+.8);}
+ if(classId==='knight'){spawn(x,y,['#fff4d0','#e2b875','#8d7865'],42,'spark',250,angle);spawn(x,y,['#918a7b','#655f5c'],15,'chip',130,angle);spawn(x,y,['#aaa08b','#827b70'],10,'dust',75);}
+ else if(classId==='archer'){spawn(x,y,['#e7d6a8','#ad8356','#7e6145'],12,'chip',135,angle);spawn(x,y,['#f6f5db','#b7de9a'],14,'spark',160,angle);}
+ else{spawn(x,y,['#ffffff','#c8b5ed','#8777b4'],22,'spark',205,angle);spawn(x+Math.sin(angle)*7,y-Math.cos(angle)*7,['#d5c3ef','#a395bf'],11,'mote',100,angle+.8);}
 }
 export function magicFX(x,y,kind='violet',count=22){spawn(x,y,palette[kind]||palette.violet,count,'mote',90);}
 export function footFX(x,y){spawn(x,y,['#8c8271','#6e6a60'],2,'dust',14);}
@@ -133,9 +133,9 @@ export function hazardImpact(h,kind){
  if(fields.length>=16)fields.shift();fields.push({h:{...h},kind,model,points,volumes:createVolumes(h,points,model),life:1.45,total:1.45});
  // Emit throughout the interior as well as along the perimeter. A bounded subset
  // feeds the airborne simulation; the surface layer still covers every cell.
- const stride=Math.max(1,Math.ceil(points.length/42));
+ const stride=Math.max(1,Math.ceil(points.length/48));
  for(let i=0;i<points.length;i+=stride){const p=points[i],a=Math.atan2(p.y-h.y,p.x-h.x);
-  spawn(p.x,p.y,colors,7,'spark',170,a);spawn(p.x,p.y,['#a29173','#746b60'],4,'chip',95);spawn(p.x,p.y,['#8c7b66','#655f53'],5,'dust',65);if(i%(stride*3)===0)spawn(p.x,p.y,colors,2,'smoke',35,a,kind);
+  spawn(p.x,p.y,colors,10,'spark',200,a);spawn(p.x,p.y,['#a29173','#746b60'],6,'chip',115);spawn(p.x,p.y,['#8c7b66','#655f53'],10,'dust',75);if(i%(stride*3)===0)spawn(p.x,p.y,colors,2,'smoke',35,a,kind);
  }
  if(!h.inner)impactFX(h.x,h.y,kind,true);
 }

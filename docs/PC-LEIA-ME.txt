@@ -1,4 +1,4 @@
-SHADOWS OF THE IRON CROWN — EDIÇÃO PC 1.11.0
+SHADOWS OF THE IRON CROWN — EDIÇÃO PC 1.11.1
 
 WINDOWS 10/11 DE 64 BITS
 
@@ -259,3 +259,7 @@ A entrada correndo foi substituída por uma cutscene em HQ em camadas:
 apresentação da arena, gestos do grupo, close no portão e impacto ao fechar.
 Cada arena possui ilustração própria; depois vêm diálogo, despertar e a
 contagem de 3 segundos. O relógio de combate só começa após a apresentação.
+
+1.11.1: corrigidos recortes que mostravam duas poses de Varkhul juntas.
+Mais faiscas, poeira e fragmentos, com tremor de impacto reforcado.
+A intensidade continua ajustavel em Graficos e audio.

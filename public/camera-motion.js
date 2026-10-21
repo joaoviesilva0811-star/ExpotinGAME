@@ -11,9 +11,9 @@ export class CameraMotion{
  step(dt,actors=[],strength=.45){
   dt=Math.max(0,Math.min(.1,dt));const living=actors.filter(p=>p.hp>0),speed=living.length?living.reduce((n,p)=>n+Math.hypot(p.vx||0,p.vy||0),0)/living.length:0;
   this.phase+=speed*dt/84*TAU;this.envelope+=(clamp(speed/115,0,1)-this.envelope)*(1-Math.exp(-dt*12));
-  const shared=actors.length>1?.58:1;let x=Math.sin(this.phase)*2.1*this.envelope,y=(Math.cos(this.phase*2)-.2)*2.7*this.envelope;
-  for(const p of this.pulses){p.age+=dt;const k=Math.sin(p.age*(p.gate?29:38))*Math.exp(-p.age*(p.gate?8:14))*p.power*(p.gate?12:10);x+=Math.cos(p.angle)*k;y+=Math.sin(p.angle)*k;}
+  const shared=actors.length>1?.58:1;let x=Math.sin(this.phase)*3.2*this.envelope,y=(Math.cos(this.phase*2)-.2)*3.2*this.envelope;
+  for(const p of this.pulses){p.age+=dt;const k=Math.sin(p.age*(p.gate?29:38))*Math.exp(-p.age*(p.gate?8:14))*p.power*(p.gate?18:15);x+=Math.cos(p.angle)*k;y+=Math.sin(p.angle)*k;}
   this.pulses=this.pulses.filter(p=>p.age<(p.gate?.9:.36));
-  return{x:clamp(x*strength*shared,-11,11),y:clamp(y*strength*shared,-13,13),stride:this.phase,envelope:this.envelope};
+  return{x:clamp(x*strength*shared,-16,16),y:clamp(y*strength*shared,-18,18),stride:this.phase,envelope:this.envelope};
  }
 }

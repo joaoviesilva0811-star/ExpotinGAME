@@ -15,7 +15,7 @@ test('damage severity considers class health; actual guard is lighter, broken gu
 test('camera spring follows impact direction, has a return stroke and bounded multi-hit amplitude',()=>{
  const c=new HurtCamera();c.hit(Math.PI/2,32);const a=c.step(.025,1);assert.ok(a.y>0);assert.ok(Math.abs(a.x)<1e-8);
  const back=c.step(.095,1);assert.ok(back.y<0);
- for(let i=0;i<40;i++)c.hit(0,80);assert.equal(c.hits.length,4);const burst=c.step(.025,1);assert.ok(Math.abs(burst.x)<=8);assert.equal(c.step(.01,0).x,0);
+ for(let i=0;i<40;i++)c.hit(0,80);assert.equal(c.hits.length,4);const burst=c.step(.025,1);assert.ok(Math.abs(burst.x)<=14);assert.equal(c.step(.01,0).x,0);
  c.step(1,1);assert.equal(c.hits.length,0);assert.equal(c.step(.01).flash,0);
 });
 test('camera time does not depend on render FPS or accept invalid/zero hits',()=>{

@@ -18,7 +18,7 @@ export function impactShake(event,players=[]){
  const radius=Math.max(40,event.r||event.width||100);
  const d=Math.min(...players.filter(p=>p.hp>0).map(p=>Math.hypot(p.x-event.x,p.y-event.y)));
  if(!Number.isFinite(d))return 0;
- return(event.minor?2:9)*clamp(1-Math.max(0,d-radius*.7)/470,.08,1);
+ return(event.minor?4:18)*clamp(1-Math.max(0,d-radius*.7)/470,.08,1);
 }
 // Hold recently lost health, then let its gold segment catch the red bar.
 export class HealthMemory{

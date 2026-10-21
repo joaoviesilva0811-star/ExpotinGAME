@@ -69,3 +69,7 @@ for file in sorted(root.glob('strike-*.png')):
  print(file.stem,len(frames),'poses','edge:',warnings)
 (root/'strike-frames.json').write_text(json.dumps(result,separators=(',',':'))+'\n')
 print('TOTAL',sum(len(s['frames']) for s in result.values()),'DRAWN POSES IN',len(result),'ATLASES')
+
+# Reapply the irregular Varkhul body registration after a full atlas rebuild.
+import subprocess
+subprocess.run([sys.executable,str(Path(__file__).with_name("repair-boss-crops.py"))],check=True)

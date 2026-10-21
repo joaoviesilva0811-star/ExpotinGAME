@@ -1,3 +1,18 @@
+# Validação da versão 1.11.1
+
+- **98 testes aprovados**, incluindo regressão dos 112 recortes de Varkhul: cada pose contém seu marcador de corpo, sem admitir o marcador de outra pose. Também conferidos pulso reforçado de dano/acerto e intensidade zero.
+- `scripts/boss-crop-review.js`: cache real do renderizador, comparação visual antes/depois de recortes que continham dois corpos, 112 fontes carregadas sem marcador de outro corpo. PNGs originais preservados. A comparação `preview/111-boss-crops.png` é fixture de arte, não captura de combate.
+- Impactos em qualidade alta: cavaleiro **67 partículas** (antes 39), arqueiro **26** (antes 16), ladino **33** (antes 20). Teste de 100 impactos respeitou o orçamento máximo; pool, qualidade e ajuste adaptativo preservados.
+- `scripts/feedback-review.js`: aplicativo Linux empacotado, controle virtual e dano real por ataque autoritativo. Conferidos metadados de direção, vida, opções de desligar reação/tremor, uma janela e nenhum erro de JavaScript. Não altera HP, dano ou relógio para provocar o resultado.
+
+Medição isolada de 45 amostras na primeira batalha: **mediana 60 FPS, menor amostra 37 FPS, CPU JavaScript mediana 1,29 ms**, em renderização por software com qualidade alta e adaptação de efeitos/luzes. Isso não garante 60 FPS em todo PC.
+
+Prévia final do aplicativo empacotado: 2.796 quadros recebidos em aproximadamente 75s, mais menu/preparação; codificação 1440×960 a 60 FPS com quadros repetidos. Trilha original mixada no vídeo, não captura do dispositivo de áudio.
+
+Dados de desempenho, pacote e prévia em `docs/benchmarks/v1.11.1.json`. Esta correção altera apresentação/recortes; não modifica regras, dano, salas ou controles. Campanha e coop completos foram conferidos na 1.11.0, abaixo; não foram repetidos integralmente nesta correção. Sem teste físico de Windows/GPU/USB/Bluetooth.
+
+---
+
 # Validação da versão 1.11.0
 
 Executada em Linux com Node 24.19.0 e Electron 44.9.0, em 21/10/2026. Sem teste físico de Windows ou controles USB/Bluetooth.

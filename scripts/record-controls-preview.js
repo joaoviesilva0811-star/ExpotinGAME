@@ -14,7 +14,7 @@ try{
  await page.screenshot({path:'artifacts/pc-02-solo.png'});
  const cdp=await app.context().newCDPSession(page);const frames=[],writes=[];
  cdp.on('Page.screencastFrame',event=>{cdp.send('Page.screencastFrameAck',{sessionId:event.sessionId}).catch(()=>{});if(frames.length>6000)return;const file=resolve(framesDir,String(frames.length).padStart(5,'0')+'.jpg');frames.push({file,time:event.metadata.timestamp});writes.push(writeFile(file,Buffer.from(event.data,'base64')));});
- await cdp.send('Page.startScreencast',{format:'jpeg',quality:90,maxWidth:1440,maxHeight:960,everyNthFrame:1});
+ await cdp.send('Page.startScreencast',{format:'jpeg',quality:Number(process.env.PREVIEW_JPEG_QUALITY)||90,maxWidth:1440,maxHeight:960,everyNthFrame:1});
  await page.getByRole('button',{name:'Iniciar expedição'}).click();await page.waitForTimeout(1600);await page.screenshot({path:'artifacts/pc-08-chegada.png'});await page.waitForTimeout(9000);await page.screenshot({path:'artifacts/pc-06-dialogo.png'});
  await page.waitForFunction(()=>window.__room?.state==='battle',null,{timeout:25000});await page.evaluate(()=>{window.__driverPauseUntil=Date.now()+4200;window.__driverEmoteUntil=Date.now()+250;});await page.waitForTimeout(1300);await page.screenshot({path:'artifacts/18-preview-emote.png'});await page.waitForTimeout(3000);await page.waitForTimeout(18000);await page.screenshot({path:'artifacts/16-controller-combat.png'});await page.waitForTimeout(27000);
  await cdp.send('Page.stopScreencast');await Promise.all(writes);if(frames.length<40)throw new Error('Screencast did not deliver enough frames');

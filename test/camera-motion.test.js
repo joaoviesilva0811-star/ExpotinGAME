@@ -12,7 +12,7 @@ test('walking phase is frame-rate independent and shared-screen motion is attenu
 test('attack sway has class weight and gate contact is heavier than starting travel, bounded and expiring',()=>{
  const a=new CameraMotion(),b=new CameraMotion();a.attack('knight',0,1);b.attack('archer',0,1);assert.ok(a.step(.025,[],1).x>b.step(.025,[],1).x);
  const start=new CameraMotion(),land=new CameraMotion();start.gate(true,false);land.gate(true,true);assert.ok(land.step(.03,[],1).y>start.step(.03,[],1).y);
- for(let i=0;i<100;i++)land.gate(true,true);assert.equal(land.pulses.length,6);assert.ok(land.step(.03,[],1).y<=13);for(let i=0;i<100;i++)land.step(.02,[],1);assert.equal(land.pulses.length,0);
+ for(let i=0;i<100;i++)land.gate(true,true);assert.equal(land.pulses.length,6);assert.ok(land.step(.03,[],1).y<=18);for(let i=0;i<100;i++)land.step(.02,[],1);assert.equal(land.pulses.length,0);
 });
 test('gate timeline schedules one start/contact per movement and ignores duplicate or late snapshots',()=>{
  const r={code:'IRON-X',round:0,intro:{started:0,gateAt:3.55},gateUnlocked:false},t=new GateTimeline();t.step(r,3);assert.equal(t.step(r,3.56)[0].id,'close');assert.equal(t.step(r,3.56).length,0);assert.equal(t.step(r,4.41)[0].id,'closed');assert.equal(t.step(r,4.39).length,0);

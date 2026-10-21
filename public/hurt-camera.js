@@ -10,9 +10,9 @@ export class HurtCamera{
  }
  step(dt,strength=.45){
   let x=0,y=0,flash=0;const latest=this.hits.at(-1);
-  for(const h of this.hits){h.age+=Math.max(0,dt);const kick=Math.sin(h.age*35)*Math.exp(-h.age*12)*h.power*28*strength;x+=Math.cos(h.angle)*kick;y+=Math.sin(h.angle)*kick;flash=Math.max(flash,Math.max(0,1-h.age/.36)*h.power);}
+  for(const h of this.hits){h.age+=Math.max(0,dt);const kick=Math.sin(h.age*35)*Math.exp(-h.age*12)*h.power*58*strength;x+=Math.cos(h.angle)*kick;y+=Math.sin(h.angle)*kick;flash=Math.max(flash,Math.max(0,1-h.age/.36)*h.power);}
   this.hits=this.hits.filter(h=>h.age<.55);
-  return{x:clamp(x,-8,8),y:clamp(y,-8,8),flash,angle:latest?.angle||0,blocked:latest?.profile.blocked||false};
+  return{x:clamp(x,-14,14),y:clamp(y,-14,14),flash,angle:latest?.angle||0,blocked:latest?.profile.blocked||false};
  }
  reset(){this.hits=[];}
 }
