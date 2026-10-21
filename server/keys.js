@@ -1,3 +1,4 @@
+import {ROUND_OUTRO_TIME} from '../public/narrative-timing.js';
 import {KEYS} from '../public/keys.js';
 import {clamp} from '../public/shared.js';
 export function dropBossKey(room){
@@ -27,7 +28,7 @@ export function tickBossKeys(room,dt,solids){
     room.secretUnlocked=room.wins===3&&[0,1,2].every(round=>room.keys.some(k=>k.round===round));
     room.keySceneUntil=Math.max(room.keySceneUntil,room.now+4.5);
     if(room.state==='ending'){room.endingAt=Math.max(room.endingAt,room.keySceneUntil);room.transitionAt=room.endingAt+(room.secretUnlocked?18:14);}
-    if(room.state==='round_end'){room.outroStarted=Math.max(room.outroStarted,room.keySceneUntil-6);room.transitionAt=Math.max(room.transitionAt,room.outroStarted+11);}
+    if(room.state==='round_end'){room.outroStarted=Math.max(room.outroStarted,room.keySceneUntil-6);room.transitionAt=Math.max(room.transitionAt,room.outroStarted+ROUND_OUTRO_TIME);}
     room.emit('keyPickup',{round:key.round,owner:carrier.id,name:key.name,color:key.color,x:key.x,y:key.y});
    }
   }

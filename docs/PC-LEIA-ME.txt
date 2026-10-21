@@ -1,4 +1,4 @@
-SHADOWS OF THE IRON CROWN — EDIÇÃO PC 1.11.1
+SHADOWS OF THE IRON CROWN — EDIÇÃO PC 1.12.0
 
 WINDOWS 10/11 DE 64 BITS
 
@@ -263,3 +263,14 @@ contagem de 3 segundos. O relógio de combate só começa após a apresentação
 1.11.1: corrigidos recortes que mostravam duas poses de Varkhul juntas.
 Mais faiscas, poeira e fragmentos, com tremor de impacto reforcado.
 A intensidade continua ajustavel em Graficos e audio.
+
+1.12.0 — COROA VIVA
+Efeitos de metal, madeira, folhas, brasas e cristais; rastros de projéteis
+seguem o caminho real. Iluminação por arena e sombras compactas estáveis.
+HQs com foco e revelação por painel; duas novas páginas entre vitórias e
+um epílogo ilustrado após as três chaves abrirem a Câmara da Coroa.
+Entre vitórias: 6s de resultados + 9,6s de HQ; derrotas mantêm a transição
+anterior de 11s. O limite de batalha segue em cinco minutos por arena.
+Comandos de habilidade/dash nos últimos 0,14s da recarga podem ser
+guardados uma única vez pelo servidor. Energia, defesa e estados continuam
+validados; spam não renova o comando. Dano básico continua 25/32/18.

@@ -1,3 +1,4 @@
+import {ROUND_OUTRO_TIME} from '../public/narrative-timing.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {Room,obstacles} from '../server/engine.js';
@@ -78,7 +79,7 @@ test('arrival, gate and awakening are shared presentation stages; combat stays l
  r.command('a',{type:'input',seq:1,x:1,y:0,ax:1,ay:0,attack:true});const x=p.x;r.tick(r.intro.gateAt-r.now+.05);assert.equal(p.x,x);assert.equal(r.skill(p,0),false);assert.equal(r.events.filter(e=>e.type==='gate').length,1);
  r.tick(.1);assert.equal(r.events.filter(e=>e.type==='gate').length,1);r.tick(r.intro.awakeningAt-r.now+.01);assert.equal(r.boss.state,'awakening');assert.equal(r.events.filter(e=>e.type==='awaken').length,1);assert.ok(r.snapshot().intro.awakeningAt>r.snapshot().intro.gateAt);assert.equal(r.remaining,300);
  r.tick(r.transitionAt-r.now+.01);assert.equal(r.state,'battle');assert.equal(r.boss.state,'idle');assert.equal(r.remaining,300);r.tick(.1);assert.ok(r.remaining<300);
- r.hitBoss(p,999999);assert.equal(r.state,'round_end');assert.equal(r.transitionAt-r.outroStarted,11);for(let i=0;i<100&&!r.keyDrop.collectedAt;i++)r.tick(.05);assert.ok(r.gateUnlocked);r.tick(6.1);assert.equal(r.round,0);r.tick(5);assert.equal(r.round,1);assert.equal(r.state,'countdown');assert.equal(r.boss.state,'dormant');
+ r.hitBoss(p,999999);assert.equal(r.state,'round_end');assert.ok(Math.abs(r.transitionAt-r.outroStarted-ROUND_OUTRO_TIME)<1e-9);for(let i=0;i<100&&!r.keyDrop.collectedAt;i++)r.tick(.05);assert.ok(r.gateUnlocked);r.tick(6.1);assert.equal(r.round,0);r.tick(r.transitionAt-r.now+.01);assert.equal(r.round,1);assert.equal(r.state,'countdown');assert.equal(r.boss.state,'dormant');
 });
 
 test('the final cutscene locks combat and preserves the score before showing final results',()=>{

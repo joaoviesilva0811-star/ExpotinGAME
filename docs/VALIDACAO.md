@@ -1,3 +1,23 @@
+# Validação da versão 1.12.0 — Coroa Viva
+
+Aplicativo Linux empacotado equivalente, Node 24.19.0 e Electron 44.9.0, em 21/10/2026. Sem teste físico de Windows, GPU ou controles USB/Bluetooth.
+
+- **128 testes aprovados.** Novos casos conferem a margem de 140 ms para habilidade/dash, execução única após a recarga, limite do tick de 20 Hz, recursos/cancelamento, geometria dos resíduos, rastros limitados, duração real de EXPOSTO, sombras compactas, apresentação das HQs, chaves conquistadas, derrota e reconexão tardia.
+- `scripts/couch-smoke.js`: três sessões autenticadas com controles virtuais, movimento/mira independentes, habilidades, energia, dash, bloqueio de teclado/mouse, HUD PS/Xbox, reconexão e cinco ciclos de menu. Uma janela e uma trilha ativa. A segunda pressão de habilidade, com cerca de 49 ms restantes, executou uma vez após a recarga; nenhum recurso foi concedido pelo cliente.
+- `scripts/desktop-smoke.js`: duas instâncias nativas por TCP `127.0.0.1`, mesma vida do chefe, mesma cobertura destruída e identidade preservada na reconexão. Áudio, seleção/bots, HQ de abertura, diálogo, despertar, emote e dash passaram. A interface privada de rede deste ambiente não permite testar dois PCs físicos na LAN.
+- Campanha final por entradas normais de controle virtual: **três vitórias, três chaves e Câmara da Coroa**, fases I/II/III dos três chefes, aproximadamente **61 / 70 / 82 s** de combate e sete eventos de quebra de cobertura. Cavaleiro e dois bots mortais, sem editar HP, dano ou relógio, sem erros de JavaScript. Capturas ocasionais e outros testes nativos durante partes da campanha: ela não é benchmark isolado.
+- As três páginas novas têm **nove quadros ilustrados**, com PNGs originais preservados. HQs de travessia e epílogo foram vistas no aplicativo, seguindo o relógio autoritativo; a última termina na passagem aos resultados. As imagens `preview/22-hq-*-fixture.png` são apresentações de arte, não screenshots de gameplay. `preview/22-native-*` vem da campanha.
+- Fixtures de VFX: metal, madeira, folhas, brasas e cristal; 67/26/33 partículas por impacto de classe, como na 1.11.1. Espaços seguros de ataques em anel continuaram com alfa zero. Contatos limitados a 36, resíduos a oito e rastros a 180 IDs; filas expiram e partículas voltam ao pool. Sem erros de JavaScript. Não são medições de FPS.
+- ZIP Windows: **533.463.454 bytes**, 16 partes, CRC de **340 entradas** íntegro, executável PE x64 e **243 arquivos de fonte/arte conferidos byte a byte**, além do guia e versão. SHA-256: `5ae00a46f84c643b13b6737837ace11cd5dd2bcf37fde2dddd6e54c97fd5eea8`.
+
+Medição isolada sem vídeo, screenshots ou outros testes nativos: **45 amostras de batalha, mediana 60 FPS, menor amostra 26,56 FPS e CPU JavaScript mediana 1,28 ms**. Abertura em HQ: nove amostras, mediana **60 FPS**, menor amostra **45,94 FPS**. Qualidade alta com efeitos/luzes adaptativos e renderização por software. Há quedas reais em ataques pesados; esses números não garantem 60 FPS em todas as máquinas nem em todas as cenas.
+
+Prévia editada da campanha real: **7.364 quadros recebidos**, 9 trechos do aplicativo e vídeo final de **180.83s**, 1440×960 codificado a 60 FPS. Inclui aberturas, combate nas três arenas, chaves, travessias e epílogo; corta intervalos de gameplay. Entradas normais de controle virtual, sem editar vida ou relógio. Trilha original mixada, não capturada do dispositivo de áudio. Quadros repetidos na codificação não medem a cadência da partida.
+
+Resultados, limites dos efeitos e dados do pacote estão em `docs/benchmarks/v1.12.0.json`. Permanecem três controles no mesmo PC, LAN, dano básico 25/32/18, energia e bots mortais. As novas páginas não aumentam a contagem de poses de atores, que continua em 3.881. Publicação/certificação na Steam não faz parte desta entrega.
+
+---
+
 # Validação da versão 1.11.1
 
 - **98 testes aprovados**, incluindo regressão dos 112 recortes de Varkhul: cada pose contém seu marcador de corpo, sem admitir o marcador de outra pose. Também conferidos pulso reforçado de dano/acerto e intensidade zero.

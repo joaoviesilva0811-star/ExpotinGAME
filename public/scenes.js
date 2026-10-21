@@ -2,7 +2,7 @@ import {paintGate,gatesReady} from './gate-art.js';
 import {drawItemSprite} from './item-art.js';
 import {WORLD,clamp} from './shared.js';
 const images=new Map(),loads=[];
-for(const name of ['arena-throne','arena-forest','arena-cathedral','corridor','secret-chamber','secret-chamber-open','comic-throne','comic-forest','comic-cathedral']){const img=new Image();loads.push(new Promise((resolve,reject)=>{img.onload=()=>{images.set(name,img);resolve(true);};img.onerror=()=>reject(Error('Missing scene '+name));}));img.src=new URL(`./assets/${name}.png`,import.meta.url).href;}
+for(const name of ['arena-throne','arena-forest','arena-cathedral','corridor','secret-chamber','secret-chamber-open','comic-throne','comic-forest','comic-cathedral','comic-bridge-forest','comic-bridge-cathedral','comic-ending-crown']){const img=new Image();loads.push(new Promise((resolve,reject)=>{img.onload=()=>{images.set(name,img);resolve(true);};img.onerror=()=>reject(Error('Missing scene '+name));}));img.src=new URL(`./assets/${name}.png`,import.meta.url).href;}
 export const sceneAssetsReady=Promise.all([...loads,gatesReady]).then(values=>values.every(v=>v!==false));
 export const sceneImage=round=>images.get(typeof round==='string'?round:['arena-throne','arena-forest','arena-cathedral'][round]);
 export function cinematicPlayer(room,p,index,now){

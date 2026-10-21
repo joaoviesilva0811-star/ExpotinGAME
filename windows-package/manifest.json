@@ -1,88 +1,88 @@
 {
-  "version": "1.11.1",
+  "version": "1.12.0",
   "filename": "IronCrown-Windows-x64.zip",
-  "size": 522525512,
-  "sha256": "1e763872f1375af26cf50de7096af89eb1a1e9fff08fb289d88e11943687d852",
+  "size": 533463454,
+  "sha256": "5ae00a46f84c643b13b6737837ace11cd5dd2bcf37fde2dddd6e54c97fd5eea8",
   "parts": [
     {
       "name": "IronCrown-PC.zip.001",
       "size": 33554432,
-      "sha256": "b49a832c658cc1e420826851b6f885b2023d6cda5663a463fd5fff34469ef0ee"
+      "sha256": "e9e438ed7f7b4f140ed34410cb65b8964abea1717de3f49209a908255e8164d8"
     },
     {
       "name": "IronCrown-PC.zip.002",
       "size": 33554432,
-      "sha256": "4e8e6381751f28ab8cc319ea570e5b881d89e87a50ad1530f20a2377f9d6276e"
+      "sha256": "6fc91656bd7e4d4acb2501f306f0f8502a8338c7df053265b1fab500adc4d692"
     },
     {
       "name": "IronCrown-PC.zip.003",
       "size": 33554432,
-      "sha256": "c04b56ccaa468ce5cef70ace93898b6ee3ff84d7d35db35b45f51f849ce598a3"
+      "sha256": "93a59fd860b82e4213f0bafed117a54a51d5ea5df765016ea4111372b1f7c8d0"
     },
     {
       "name": "IronCrown-PC.zip.004",
       "size": 33554432,
-      "sha256": "835fe5f8a8dca2758b688e7b6f008757181f236ae26e2f09cb8eb62bdcfe4a69"
+      "sha256": "83bc2aacf49268543f1e32d011311acaedc331be32a5300dca8cbb51e07f757a"
     },
     {
       "name": "IronCrown-PC.zip.005",
       "size": 33554432,
-      "sha256": "5bf95db03875111911508ca732c2320dce8e5e5d3cec2dfd74af038bccbd6c61"
+      "sha256": "cdba5f75c7b7e8d5ce32938078b288040249d594be3881c285ab285076e7ae31"
     },
     {
       "name": "IronCrown-PC.zip.006",
       "size": 33554432,
-      "sha256": "ee984efe0906bf12f30c43361b0f1805fb6bb2f81697182e73436e640aca42ec"
+      "sha256": "9642be756c0ec9cc40a52d09b7174750c9c89751beacdb5184c98613bcc75b32"
     },
     {
       "name": "IronCrown-PC.zip.007",
       "size": 33554432,
-      "sha256": "60fff04f346be4326b6195407f4e6724ff77e6414b95edbacd3e4096899f93ad"
+      "sha256": "9b1cabf48981cd8147acd1b7125ca9aad06dcb631b37f48196ca106233afc8b6"
     },
     {
       "name": "IronCrown-PC.zip.008",
       "size": 33554432,
-      "sha256": "8f41e9534d30648d216c3f171bf3688f88aae5e24ed77f7909a56cad2f7ed60c"
+      "sha256": "06a8c101ce070610a995b5defbe9f77805a3f8927d53b148308a4844e22f9753"
     },
     {
       "name": "IronCrown-PC.zip.009",
       "size": 33554432,
-      "sha256": "6bea741e7e974d62073f61dc7a175065b4b30e336c1fba0003219ee1fb8dc7ee"
+      "sha256": "077ed4c80e3e6b0fd0ed86803cf69b56aaa89ad16631f26fa2156bebf49831f7"
     },
     {
       "name": "IronCrown-PC.zip.010",
       "size": 33554432,
-      "sha256": "9b92fa756bd22974746a8637e9bf7d37f25811b5ddfb8e5554972a32edb103b4"
+      "sha256": "1452dfdb165acea0dc95cf865062539c91a8569474cb9b7c10e072eaa8f54d87"
     },
     {
       "name": "IronCrown-PC.zip.011",
       "size": 33554432,
-      "sha256": "48a23e1b74d1d75e665f523b6a848e4a35db02fab89c9fc8d4bf7f3f5d69ad69"
+      "sha256": "894d338c1bfbbc1cc1268f07efbacc978d94d094163252e58c5b7ecbbcd6eaca"
     },
     {
       "name": "IronCrown-PC.zip.012",
       "size": 33554432,
-      "sha256": "9b25909b9b4683d09d96e434cc4a2ecf3ada0d5b397615a11c4e751086843b04"
+      "sha256": "d61462f96b6bc9de5858513be97e56ec1bfeec375fcae059ab4d96ae546c5f38"
     },
     {
       "name": "IronCrown-PC.zip.013",
       "size": 33554432,
-      "sha256": "6e10ea98ab446994248b0950b87cea23d6b9c697060dfafc0e63bfa8a90a693b"
+      "sha256": "e7ee6991367fb7cea1bfdd37fd4632eed0e76ea2849b20ecf46aadea8587b6ec"
     },
     {
       "name": "IronCrown-PC.zip.014",
       "size": 33554432,
-      "sha256": "e7cf97031c7105542caa23022f218982088ad888685e4620b7da61ea76ee8233"
+      "sha256": "1835dff46fcff2f5ba0330bc2fde1569a5ff0af3eb032a5edb6bd7b9a188d55f"
     },
     {
       "name": "IronCrown-PC.zip.015",
       "size": 33554432,
-      "sha256": "33a4a67cbc64ac5ee12fe1a2b5593a3b566c4e919b8f12f266c01201db5da560"
+      "sha256": "3ebf8c08f34a75b1f26e03d887a89edefbaca59f7cec344284b95f24fefdf684"
     },
     {
       "name": "IronCrown-PC.zip.016",
-      "size": 19209032,
-      "sha256": "dbe253aaa865e95612dad36b2d0fd515e0d85d1f95125c782aa2b3b052739821"
+      "size": 30146974,
+      "sha256": "04b83088a22a8452de0d62fdff3dd133c1fefde53c0f240f3de2daff339f8a92"
     }
   ]
 }

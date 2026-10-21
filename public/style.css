@@ -105,3 +105,7 @@ body:not(.in-game):not(.in-lobby):not(.in-results) #stage:before{content:'';posi
 @media(prefers-reduced-motion:reduce){body:not(.in-game):not(.in-lobby):not(.in-results) #stage:before{animation:none}.topbar .icon-btn:active{translate:none}}
 
 .in-arrival-film #story-card,.in-arrival-film #dialogue,.in-arrival-film #cinema-caption{visibility:hidden}
+
+.in-arrival-film #results{visibility:hidden;pointer-events:none}
+
+.in-arrival-film #stage:before,.in-arrival-film #stage:after{display:none}.in-arrival-film .vignette{visibility:hidden}

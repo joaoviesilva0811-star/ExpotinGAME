@@ -9,7 +9,7 @@ on:
       tag:
         description: 'Tag existente para publicar'
         required: true
-        default: 'v1.11.1'
+        default: 'v1.12.0'
 
 permissions:
   contents: read
@@ -35,6 +35,6 @@ jobs:
           RELEASE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
         run: |
           if ! gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
-            gh release create "$RELEASE_TAG" --verify-tag --title "Iron Crown $RELEASE_TAG — Recortes e Impacto" --notes-file "docs/RELEASE-$RELEASE_TAG.md"
+            gh release create "$RELEASE_TAG" --verify-tag --title "Iron Crown $RELEASE_TAG — Coroa Viva" --notes-file "docs/RELEASE-$RELEASE_TAG.md"
           fi
           gh release upload "$RELEASE_TAG" release/IronCrown-Windows-x64.zip release/IronCrown-Windows-x64.zip.sha256 preview/previa-pc.mp4 docs/PC-LEIA-ME.txt artwork/IronCrown-Poster.png --clobber

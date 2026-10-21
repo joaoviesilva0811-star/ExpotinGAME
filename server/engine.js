@@ -1,4 +1,6 @@
 import {INTRO_GATE_AT,INTRO_DIALOGUE_AT} from '../public/intro-timing.js';
+import {ACTION_BUFFER_WINDOW,withinActionBuffer} from '../public/action-buffer.js';
+import {ROUND_OUTRO_TIME} from '../public/narrative-timing.js';
 import {arenaObstacles} from '../public/arena-state.js';
 import {resetArena,damageCover,damageCoversInHazard,tickArena} from './arena.js';
 import {comboState,recordCombo,resetCombo,expireCombo} from './combos.js';
@@ -13,6 +15,9 @@ import { tickMinions } from './minions.js';
 import { dropPotion, tickLoot, usePotion, roundDialogue } from './loot.js';
 
 const uid = () => randomBytes(6).toString('hex');
+// The official server publishes/simulates at 20 Hz. A valid early press may
+// cross readiness between ticks; service it on that tick, never a later one.
+const BUFFER_DISPATCH_GRACE = .05;
 const stats = () => ({ damage: 0, taken: 0, avoided: 0, revives: 0, skills: 0, comboPoints:0, maxCombo:0 });
 export const normalize = (x, y) => { const d = Math.hypot(x, y); return d > 0 ? { x: x / d, y: y / d } : { x: 1, y: 0 }; };
 export function aimDirection(p) {
@@ -31,7 +36,7 @@ export const makePlayer = (session, name) => ({
   attackAt: -10, attackFor: .45, attackSlot: -1, dodgeAt: -10, dodgeUntil: 0, dodgeReady: 0, hitSafeUntil: 0,
   shadowBonus: 0, poisonUntil: 0, downAt: null, eliminated: false, revive: 0, reviveTarget: null, reviveStartedAt: -10, aidUntil: 0, aidAt: -10, revivedAt: -10, revivedBy: null,
   input: { x: 0, y: 0, ax: 1, ay: 0, block: false, attack: false, revive: false },
-  combo:comboState(), potions: [], potionReady: 0, stats: stats(), roundStats: stats(), lastSeq: -1
+  combo:comboState(), potions: [], potionReady: 0, stats: stats(), roundStats: stats(), lastSeq: -1, bufferedAction: null
 });
 export const obstacles=round=>ARENA_OBSTACLES[round]||ARENA_OBSTACLES[0];
 export class Room {
@@ -76,17 +81,17 @@ export class Room {
     if(id!==this.owner||this.state!=='lobby')throw new Error('Só o líder pode configurar os companheiros na preparação.');
     this.botsEnabled=this.solo||enabled===true;this.syncBots();
   }
-  reconnect(id) { const p = this.players.get(id); if (p) { p.connected = true; p.disconnectedAt = null;if(this.state==='lobby'&&!p.isBot)p.ready=false; p.input = { x: 0, y: 0 }; this.emit('notice', { text: `${p.name} reconectou.` }); } }
+  reconnect(id) { const p = this.players.get(id); if (p) { p.bufferedAction = null; p.connected = true; p.disconnectedAt = null;if(this.state==='lobby'&&!p.isBot)p.ready=false; p.input = { x: 0, y: 0 }; this.emit('notice', { text: `${p.name} reconectou.` }); } }
   disconnect(id) {
     const p = this.players.get(id); if (!p) return;
-    p.connected = false; p.disconnectedAt = this.now; p.input = { x: 0, y: 0 }; p.block = false;
+    p.bufferedAction = null; p.connected = false; p.disconnectedAt = this.now; p.input = { x: 0, y: 0 }; p.block = false;
     this.emit('notice', { text: `${p.name} desconectou. Vaga reservada por 60s.` });
     if (this.owner === id) this.owner = [...this.players.values()].find(x => x.connected && !x.isBot)?.id || id;
   }
   remove(id) { this.players.delete(id); if (this.owner === id) this.owner = [...this.players.values()].find(p=>!p.isBot)?.id || null;this.syncBots(); }
   select(id, classId) {
     const p = this.players.get(id); if (!p || this.state !== 'lobby' || !CLASSES[classId]) return;
-    p.classId = classId; p.hp = p.maxHp = CLASSES[classId].hp; p.ready = false;
+    p.bufferedAction = null; p.classId = classId; p.hp = p.maxHp = CLASSES[classId].hp; p.ready = false;
     this.syncBots();
   }
   start(id) {
@@ -102,7 +107,7 @@ export class Room {
     if (id !== this.owner || this.state !== 'finished') return;
     this.keys=[];this.keyDrop=null;this.keySceneUntil=0;this.secretUnlocked=false;this.vaultOpenedAt=null;
     this.state = 'lobby'; this.boss = null; this.hazards = []; this.projectiles = [];
-    for (const p of this.players.values()) { p.ready = !!p.isBot; p.hp = p.maxHp; p.downAt = null; p.eliminated = false; }
+    for (const p of this.players.values()) { p.bufferedAction = null; p.ready = !!p.isBot; p.hp = p.maxHp; p.downAt = null; p.eliminated = false; }
   }
   prepareRound() {
     this.keyDrop=null;this.keySceneUntil=0;this.gateUnlocked=false;
@@ -116,6 +121,7 @@ export class Room {
     let i = 0;
     for (const p of this.players.values()) {
       p.x = 265; p.y = 265 + i++ * 72; p.vx = 0; p.vy = 0;
+      p.bufferedAction = null;
       p.hp = p.hp > 0 ? Math.min(p.maxHp, p.hp + (p.maxHp - p.hp) * .5) : p.maxHp;
       p.attackAt = -10; p.dodgeAt = -10; p.dodgeUntil = p.dodgeReady = p.hitSafeUntil = 0;
       p.energy = 100; p.cds = [0, 0, 0]; p.basicAt = 0; p.blockAt = 0; p.block = false;
@@ -132,18 +138,48 @@ export class Room {
     if (msg.type === 'input') {
       if (![msg.x, msg.y, msg.ax, msg.ay].every(Number.isFinite)) return;
       p.input = { x: clamp(msg.x, -1, 1), y: clamp(msg.y, -1, 1), ax: clamp(msg.ax, -1, 1), ay: clamp(msg.ay, -1, 1), block: msg.block === true, attack: msg.attack === true, revive: msg.revive === true };
+      if (p.input.block || p.input.revive) p.bufferedAction = null;
       p.lastInput = this.now;
       if (msg.ax || msg.ay) p.facing = Math.atan2(msg.ay, msg.ax);
     } else if(msg.type==='emote'&&Object.hasOwn(EMOTES,msg.emote)&&this.active(p)&&this.now>=p.emoteReady&&['countdown','battle'].includes(this.state)){
-      p.emote=msg.emote;p.emoteAt=this.now;p.emoteUntil=this.now+3.6;p.emoteReady=this.now+5;p.vx=p.vy=0;p.input={x:0,y:0,ax:Math.cos(p.facing),ay:Math.sin(p.facing)};this.emit('emote',{owner:p.id,kind:msg.emote,x:p.x,y:p.y});
-    } else if (msg.type === 'skill' && Number.isInteger(msg.slot) && msg.slot >= 0 && msg.slot < 3) this.skill(p, msg.slot);
-    else if (msg.type === 'dodge') this.dodge(p);
-    else if (msg.type === 'potion') usePotion(this,p);
+      p.bufferedAction=null;p.emote=msg.emote;p.emoteAt=this.now;p.emoteUntil=this.now+3.6;p.emoteReady=this.now+5;p.vx=p.vy=0;p.input={x:0,y:0,ax:Math.cos(p.facing),ay:Math.sin(p.facing)};this.emit('emote',{owner:p.id,kind:msg.emote,x:p.x,y:p.y});
+    } else if (msg.type === 'skill' && Number.isInteger(msg.slot) && msg.slot >= 0 && msg.slot < 3) this.requestAction(p, 'skill', msg.slot);
+    else if (msg.type === 'dodge') this.requestAction(p, 'dodge');
+    else if (msg.type === 'potion') { p.bufferedAction = null; usePotion(this,p); }
   }
   staticSolids(){return arenaObstacles(this);}
   solids(){return [...this.staticSolids(),...this.hazards.filter(h=>h.solid&&h.at<=this.now)];}
   active(p) { return p && p.connected && p.hp > 0 && !p.eliminated; }
   canAct(p) { return this.state === 'battle' && this.active(p) && !p.block && !p.input.block && !p.input.revive && this.now >= p.dodgeUntil; }
+  actionReadyAt(p, type, slot) {
+    return Math.max(p.dodgeUntil, type === 'skill' ? p.cds[slot] : Math.max(p.dodgeReady, p.rootUntil));
+  }
+  canBufferAction(p, type, slot) {
+    return this.state === 'battle' && this.active(p) && !p.isBot && !p.block && !p.input.block && !p.input.revive && p.energy >= (type === 'skill' ? COSTS[slot] : DODGE.cost);
+  }
+  requestAction(p, type, slot) {
+    const pending = p.bufferedAction;
+    // A different explicit press supersedes the old intent. Repeated presses
+    // of the same action cannot refresh its original 140 ms deadline.
+    if (pending && (this.now - pending.expiresAt > 1e-9 || pending.type !== type || pending.slot !== slot)) p.bufferedAction = null;
+    if (type === 'skill' ? this.skill(p, slot) : this.dodge(p)) return true;
+    const readyAt = this.actionReadyAt(p, type, slot);
+    if (!this.canBufferAction(p, type, slot) || !withinActionBuffer(readyAt, this.now)) { p.bufferedAction = null; return false; }
+    if (!p.bufferedAction) p.bufferedAction = { type, slot, round: this.round, queuedAt: this.now, expiresAt: this.now + ACTION_BUFFER_WINDOW };
+    return true;
+  }
+  consumeBufferedAction(p, previousNow) {
+    const action = p.bufferedAction;
+    if (!action) return false;
+    const readyAt = this.actionReadyAt(p, action.type, action.slot);
+    const crossedOnTime = previousNow < readyAt && readyAt <= this.now && this.now - readyAt <= BUFFER_DISPATCH_GRACE + 1e-9;
+    if (action.round !== this.round || (this.now - action.expiresAt > 1e-9 && !crossedOnTime) || readyAt - action.expiresAt > 1e-9 || !this.canBufferAction(p, action.type, action.slot)) { p.bufferedAction = null; return false; }
+    if (readyAt > this.now) return false;
+    // Clear before execution: a command can never execute twice, even when its
+    // damage ends a round. The action uses the latest accepted aim/movement.
+    p.bufferedAction = null;
+    return action.type === 'skill' ? this.skill(p, action.slot) : this.dodge(p);
+  }
   hitBoss(p, amount) {
     if (this.state !== 'battle' || !this.boss || this.boss.hp <= 0 || this.now < this.boss.immuneUntil) return 0;
     if(this.boss.state==='recover'&&this.now<(this.boss.exposedUntil||0))amount*=1.12;
@@ -192,6 +228,7 @@ export class Room {
   }
   skill(p, slot) {
     if (!this.canAct(p) || p.energy < COSTS[slot] || this.now < p.cds[slot]) return false;
+    p.bufferedAction = null;
     p.emoteUntil=0;p.energy -= COSTS[slot]; p.cds[slot] = this.now + COOLDOWNS[slot]; p.stats.skills++; p.roundStats.skills++;
     p.reviveTarget = null; p.attackAt = this.now; p.attackFor = slot===1?.62:.5; p.attackSlot = slot;
     if (p.classId === 'knight') {
@@ -226,6 +263,7 @@ export class Room {
   }
   dodge(p) {
     if (!this.canAct(p) || p.energy<DODGE.cost || this.now<p.dodgeReady || this.now<p.rootUntil) return false;
+    p.bufferedAction = null;
     const moving=p.input.x||p.input.y; const n=moving?normalize(p.input.x||0,p.input.y||0):aimDirection(p);
     p.emoteUntil=0;p.energy-=DODGE.cost; p.dodgeAt=this.now; p.dodgeUntil=this.now+DODGE.duration; p.dodgeReady=this.now+DODGE.cooldown;
     p.dodgeVX=n.x*DODGE.distance/DODGE.duration; p.dodgeVY=n.y*DODGE.distance/DODGE.duration;
@@ -258,14 +296,15 @@ export class Room {
     const origin=source||this.boss||{x:p.x-1,y:p.y};
     p.hurtAngle=Math.atan2(p.y-origin.y,p.x-origin.x);p.hurtAmount=taken;p.hurtBlocked=guarded;
     this.emit('hurt', {angle:p.hurtAngle, owner:p.id,x:p.x,y:p.y,amount:taken,maxHp:p.maxHp,hp:p.hp,blocked:guarded,mitigated:factor<1,guardBroken,downed:p.hp<=0});
-    if (p.hp <= 0) { p.downAt = this.now; p.block = false; p.vx = p.vy = 0; this.emit('notice', { text: `${p.name} caiu! Segure R perto para reviver.` }); }
+    if (p.hp <= 0) { p.bufferedAction = null; p.downAt = this.now; p.block = false; p.vx = p.vy = 0; this.emit('notice', { text: `${p.name} caiu! Segure R perto para reviver.` }); }
   }
   endRound(won, reason = '') {
     if (this.state !== 'battle') return;
+    for (const p of this.players.values()) p.bufferedAction = null;
     const reward = won ? BOSSES[this.round].reward + Math.floor(this.remaining / 3) : 0;
     this.score += reward; if (won) this.wins++;
     const result = { round: this.round, won, reason, remaining: Math.ceil(this.remaining), reward, players: [...this.players.values()].map(p => ({ id: p.id, name: p.name, ...p.roundStats })) };
-    this.results.push(result); this.state = this.round === 2 ? 'ending' : 'round_end'; this.outroStarted=this.now;this.transitionAt = this.now + 11;
+    this.results.push(result); this.state = this.round === 2 ? 'ending' : 'round_end'; this.outroStarted=this.now;this.transitionAt = this.now + (won?ROUND_OUTRO_TIME:11);
     if (this.state === 'ending') {
       this.endingAt=this.now+(won?4:0);this.transitionAt=this.endingAt+(this.wins===3&&this.keys.length===2?18:14);this.boss.state=won?'fallen':'awakening';this.boss.startedAt=this.now;
       if (this.wins === 3) this.score += 150;
@@ -296,7 +335,7 @@ export class Room {
     if(this.state!=='battle')return;
     for (const p of this.players.values()) {
       if (p.downAt !== null && this.now - p.downAt > 20) p.eliminated = true;
-      if (!this.active(p)) continue;
+      if (!this.active(p)) { p.bufferedAction = null; continue; }
       if (this.now - (p.lastInput || 0) > .6) p.input = { x: 0, y: 0 };
       const input = p.input;
       if(input.x||input.y||input.attack||input.block||input.revive)p.emoteUntil=0;
@@ -307,6 +346,8 @@ export class Room {
         p.energy = Math.max(0, p.energy - 15 * dt);
         if (p.energy <= 0) { p.block = false; p.blockAt = this.now + .4; }
       } else p.energy = Math.min(100, p.energy + 12 * dt);
+      const bufferedActionExecuted = this.consumeBufferedAction(p, this.now - dt);
+      if (this.state !== 'battle') return;
       const dir = normalize(input.x || 0, input.y || 0), moving = !!(input.x || input.y);
       const speed = (this.now < p.rootUntil ? 0 : CLASSES[p.classId].speed) * (p.block ? .42 : 1);
       if(this.now<p.rootUntil){p.vx=0;p.vy=0;}
@@ -314,7 +355,7 @@ export class Room {
       if(this.now<p.dodgeUntil){p.vx=p.dodgeVX;p.vy=p.dodgeVY;}
       this.move(p, p.vx * dt, p.vy * dt);
       if (input.ax || input.ay) p.facing = Math.atan2(input.ay, input.ax);
-      if (input.attack) this.basic(p);
+      if (input.attack && !bufferedActionExecuted) this.basic(p);
       if (input.revive && !p.block && !input.attack && !moving && Math.hypot(p.vx,p.vy)<22 && this.now>=p.dodgeUntil) {
         const solids=this.solids();
         const down = [...this.players.values()].filter(a => a.id !== p.id && a.connected && a.hp <= 0 && !a.eliminated && a.downAt !== null && this.now-a.downAt<=20 && distance(a, p) < REVIVE.range && routeClear(p,a,solids,2))

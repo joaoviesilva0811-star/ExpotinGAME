@@ -88,3 +88,11 @@ Cutscenes em HQ: `comic-throne.png` (`exec-e0eac2cb-4412-4a71-aed2-bd2ca5a560b8.
 ## 1.11.1 — Recortes de Varkhul
 
 PNGs originais de correntes e contra-ataque preservados. `repair-boss-crops.py` registra as quantidades reais por linha (a folha de contra-ataque tem sete poses nas primeiras duas linhas), separa corpos por watershed mascarado e salva intervalos exatos de pixels por linha. Isso impede que o intervalo mínimo/máximo incorpore um segundo corpo entre partes de uma arma. São 112 recortes revisados, sem novos desenhos ou alterações no combate. QA Python requer Pillow, NumPy, SciPy e scikit-image; essas ferramentas não são dependências do jogo.
+
+## 1.12 — Coroa Viva
+
+Três páginas HQ originais, sem modificar os PNGs de origem, usando `cast-portraits.png` e a HQ aprovada de Varkhul como referências de estilo/personagens:
+- `comic-bridge-forest.png`: exec-cef1ccfb-743c-4a75-83a4-382adf823c8a.png.
+- `comic-bridge-cathedral.png`: exec-1d76c737-3a7a-4df7-838b-bb20123601a9.png.
+- `comic-ending-crown.png`: exec-b31ce878-245b-47b3-8a09-4cd2ebe6f1f2.png.
+São nove quadros de ilustração, separados de poses de atores (acervo permanece 3.881). Canvas revela os painéis, acrescenta enquadramento/motes e texto sem misturar silhuetas. Iluminação, materiais de partículas, contatos e resíduos são desenho procedural/cache; não se contam como novos sprites gerados.

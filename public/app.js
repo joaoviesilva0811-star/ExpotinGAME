@@ -1,3 +1,6 @@
+import {ACTION_BUFFER_WINDOW} from './action-buffer.js';
+import {narrativeFilmShot} from './narrative-timing.js';
+import {drawNarrativeFilm} from './narrative-film.js';
 import {drawIntroFilm} from './intro-film.js';
 import {introFilmShot} from './intro-timing.js';
 import {CameraMotion} from './camera-motion.js';
@@ -44,7 +47,7 @@ document.addEventListener('pointerdown',e=>{if(e.target.closest('#audio-toggle')
 document.addEventListener('keydown',enableAudio,{once:true});
 let room=null,session=null,token=null,ws=null,connected=false,connecting=null,reconnectTimer=null,retry=0;
 let screen='home',lobbySignature='',resultsSignature='',lastEvent=0,snapshotAt=0,seq=Date.now()*1000,latency=0;
-let warningUntil=0,shake=0,flash=0,frameTime=0,previousFrame=performance.now(),pointer=null,pointerClient=null,attacking=false;
+let lastComicCue='',warningUntil=0,shake=0,flash=0,frameTime=0,previousFrame=performance.now(),pointer=null,pointerClient=null,attacking=false;
 const pendingReadySlots=new Map();
 let lastStep=0,dialogueKey='',assetsReady=false;
 renderAssetsReady.then(()=>{assetsReady=true;window.IRON_ASSETS_READY=true;for(const[slot,wanted]of pendingReadySlots){if(room?.state==='lobby'&&room.code===wanted.code)localSeats.send(slot,'ready',{ready:wanted.ready});}pendingReadySlots.clear();lobbySignature='';if(room?.state==='lobby')renderLobby();}).catch(error=>{console.error(error);toast('Não foi possível preparar a arte. Reabra o jogo com o pacote completo.',true);});
@@ -177,7 +180,7 @@ function useSkill(slot){if(gamepads.locked)return;
   if(screen!=='battle'||$('modal').open)return;const p=me();if(!p||p.hp<=0||p.eliminated)return;
   if(p.block||input.block){toast('Solte a defesa para usar uma habilidade.');return;}
   if(p.energy<COSTS[slot]){toast('Energia insuficiente.');return;}
-  if(p.cds[slot]>room.now)return;
+  if(p.cds[slot]-room.now>ACTION_BUFFER_WINDOW)return;
   sendInput();send('skill',{slot,seq:++seq});
 }
 function updateHud(){updateLocalHUD();
@@ -193,7 +196,7 @@ function updateHud(){updateLocalHUD();
   if(room.state==='countdown'){$('boss-action').textContent=room.now<room.intro.gateAt?'O GRUPO CHEGA À ARENA':room.now<room.intro.awakeningAt?'OS PORTÕES SE FECHARAM':room.transitionAt-room.now>3?'O PODER ESTÁ DESPERTANDO':'PREPARE-SE PARA A BATALHA';$('boss-phase').textContent=room.now<room.intro.awakeningAt?'DORMENTE':'DESPERTAR';}
   $('minion-count').textContent=(room.minions?.filter(m=>m.hp>0).length||0)+' LACAIOS';
   $('hud').dataset.class=p.classId;const potion=p.potions?.[0],pot=$('potion-slot');paintItemIcon($('potion-icon'),potion==='ice'?'ice':'heal',room.now);$('potion-icon').style.opacity=potion?'1':'.18';pot.disabled=!potion||p.hp<=0||p.potionReady>room.now;pot.classList.toggle('has-potion',!!potion);pot.querySelector('strong').textContent=potion==='ice'?'❄':potion==='heal'?'✚':'◇';pot.querySelector('small').textContent=potion?(potion==='ice'?'GELO':'CURA')+' ×'+p.potions.length:'SEM POÇÃO';
-  $('dash-slot').disabled=p.energy<DODGE.cost||p.hp<=0||p.dodgeReady>room.now;$('dash-cd').textContent=p.dodgeReady>room.now?(p.dodgeReady-room.now).toFixed(1)+'s':'20 ⚡';
+  $('dash-slot').disabled=p.energy<DODGE.cost||p.hp<=0||p.dodgeReady-room.now>ACTION_BUFFER_WINDOW;$('dash-cd').textContent=p.dodgeReady>room.now?(p.dodgeReady-room.now).toFixed(1)+'s':'20 ⚡';
   $('arena-name').textContent=info.arena.toUpperCase();$('my-name').textContent=p.name;$('my-class').textContent=CLASSES[p.classId].name;
   $('my-health-memory').style.width=healthMemory.sample(p.id,p.hp,p.maxHp,frameTime)+'%';
   $('my-health').style.width=(p.hp/p.maxHp*100)+'%';$('my-hp').textContent=`${Math.ceil(p.hp)} / ${p.maxHp}`;
@@ -386,7 +389,7 @@ function render(time){
   const sway=cameraMotion.step(dt,room?.state==='battle'?localSeats.players().map(s=>s.player.id===session?.id?(localVisual||s.player):(seatVisual.get(s.player.id)||s.player)):[],reducedMotion?0:settings.shake);ctx.translate(sway.x,sway.y);
   const keyScene=gameplay&&room.keyDrop&&now<room.keySceneUntil;const keyBanner=$('key-announcement');keyBanner.hidden=!keyScene;if(keyScene){keyBanner.style.setProperty('--key-color',room.keyDrop.color);$('reward-name').textContent=room.keyDrop.name;$('reward-caption').textContent=room.keyDrop.collectedAt?'CHAVE CONQUISTADA · PASSAGEM LIBERADA':'UM SELO MÁGICO FOI REVELADO';const kc=$('reward-key').getContext('2d');kc.clearRect(0,0,128,128);drawMagicalKey(kc,round,64,64+Math.sin(now*3)*3,104,now);}const ending=gameplay&&room.state==='ending'&&!keyScene;
   const corridor=gameplay&&room.state==='round_end'&&now-room.outroStarted>=6&&!keyScene,awakening=room?.state==='countdown'&&now>=room.intro?.awakeningAt&&now<room.intro.awakeningAt+4.4;
-  const introShot=introFilmShot(room,now);document.body.classList.toggle('in-arrival-film',!!introShot);
+  const introShot=introFilmShot(room,now),narrativeShot=narrativeFilmShot(room,now),comicShot=introShot||narrativeShot;document.body.classList.toggle('in-arrival-film',!!comicShot);const comicCue=comicShot?room.code+':'+round+':'+room.state+':'+(comicShot.kind||'intro')+':'+comicShot.index:'';if(comicCue&&comicCue!==lastComicCue)audio.fx('page',round);lastComicCue=comicCue;
   const emoteShot=localEmoteShot(room,localSeats.players().map(s=>s.player.id),now,zoom);
   const gateShot=room?.state==='countdown'&&now<room.intro.gateAt+1.4;
   const broadCast=settings.autoCamera&&room?.boss?.state==='windup'&&room.hazards.some(h=>h.r>220||h.length>400);viewZoom+=((ending?(room.secretUnlocked?1:1.1):keyScene?Math.min(zoom,1.3):gateShot?Math.min(zoom,1.12):corridor?1:awakening?Math.min(zoom,1.25):emoteShot?emoteShot.zoom:sharedCamera?sharedZoom:broadCast?Math.max(1.1,zoom-.14):zoom)-viewZoom)*(1-Math.exp(-dt*4));
@@ -402,7 +405,7 @@ function render(time){
   const cameraLeft=viewX-visibleW/2,cameraWidth=visibleW;
   // Keep simulation/presentation clocks advancing; discard the hidden world raster
   // while the illustrated film is opaque. Its final fade reveals the live arena.
-  if(introShot?.opacity>=1){ctx.beginPath();ctx.rect(0,0,0,0);ctx.clip();}
+  if(comicShot?.opacity>=1){ctx.beginPath();ctx.rect(0,0,0,0);ctx.clip();}
   setRenderBounds(gameplay?{left:viewX-WORLD.w/viewZoom/2,right:viewX+WORLD.w/viewZoom/2,top:viewY-WORLD.h/viewZoom/2,bottom:viewY+WORLD.h/viewZoom/2}:null);
   stepFX(dt);setLightingDensity(effectsSurface.scale);stepLighting(dt,round,frameTime,room?.projectiles||[],room?.boss?.phase||1);
   if(corridor)drawCorridor(ctx,frameTime);else ctx.drawImage(ending&&room.secretUnlocked&&sceneImage('secret-chamber')||terrain(round),0,0,WORLD.w,WORLD.h);if(!corridor){drawGroundLighting(ctx,round);if(gameplay&&!ending)drawArenaGround(ctx,room,frameTime,settings.quality);drawGroundFX(ctx);}
@@ -460,6 +463,7 @@ function render(time){
   if(flash>0){ctx.fillStyle=`rgba(170,30,45,${flash})`;ctx.fillRect(0,0,1200,760);flash=Math.max(0,flash-dt);}
   ctx.restore();
   drawIntroFilm(ctx,room,now,frameTime,{x:sway.x,y:sway.y,reduced:reducedMotion});
+  drawNarrativeFilm(ctx,room,now,frameTime,{x:sway.x,y:sway.y,reduced:reducedMotion});
   hurtEffects.overlay(ctx,hurtView,dt,frameTime,room?.state==='battle'&&own?own.hp/own.maxHp:0,{enabled:settings.hurtEffects&&room?.state==='battle',reducedMotion,shared:sharedCamera});
   audio.criticalPulse(frameTime,settings.hurtEffects&&!reducedMotion&&!sharedCamera&&room?.state==='battle'&&own?.hp>0?Math.max(0,(.25-own.hp/own.maxHp)/.25):0);
   if(screen==='battle'&&room){
@@ -474,7 +478,7 @@ function render(time){
   }
   if(screen==='results'&&room?.state==='round_end'&&$('next-round'))$('next-round').textContent=`Próxima arena em ${Math.max(0,Math.ceil(room.transitionAt-now))} segundos · ${BOSSES[Math.min(2,room.round+1)].arena}`;
   if(screen==='battle'&&room?.state==='battle'&&frameTime-lastStep>.43){const p=me();if(p&&p.hp>0&&Math.hypot(p.vx,p.vy)>25){audio.fx('step');footFX(p.x,p.y+3);lastStep=frameTime;}}
-  audio.music(frameTime,round,screen==='battle'&&room?.state==='battle');const perf=monitor.record(frameInterval,performance.now()-cpuStart);if(time-perfLast>500){perfLast=time;const el=$('performance');el.hidden=!settings.showPerf;if(settings.showPerf){const fx=effectsStats();el.textContent=Math.round(perf.fps)+' FPS · P95 '+perf.p95.toFixed(1)+'ms · CPU '+perf.cpu.toFixed(1)+'ms · '+fx.particles+' partículas';}window.IRON_PERF={...perf,...effectsStats(),...effectsSurface.stats(),quality:settings.quality,lights:lightingStats(),camera:{x:viewX,y:viewY,zoom:viewZoom,motion:{x:sway.x,y:sway.y,envelope:sway.envelope},emote:emoteShot?.owner||null}};}requestAnimationFrame(render);
+  audio.music(frameTime,round,screen==='battle'&&room?.state==='battle');const perf=monitor.record(frameInterval,performance.now()-cpuStart);if(time-perfLast>500){perfLast=time;const el=$('performance');el.hidden=!settings.showPerf;if(settings.showPerf){const fx=effectsStats();el.textContent=Math.round(perf.fps)+' FPS · P95 '+perf.p95.toFixed(1)+'ms · CPU '+perf.cpu.toFixed(1)+'ms · '+fx.particles+' partículas';}window.IRON_PERF={...perf,...effectsStats(),...effectsSurface.stats(),quality:settings.quality,lights:lightingStats(),cinematic:comicShot?{kind:comicShot.kind||'intro',index:comicShot.index,progress:comicShot.progress}:null,camera:{x:viewX,y:viewY,zoom:viewZoom,motion:{x:sway.x,y:sway.y,envelope:sway.envelope},emote:emoteShot?.owner||null}};}requestAnimationFrame(render);
 }
 document.querySelector('.brand').addEventListener('click',event=>{event.preventDefault();if(room)help();else showScreen('home');});
 window.IRON_ART={exportAtlas,bossSprite,playerSprite};

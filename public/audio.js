@@ -45,6 +45,7 @@ export class AudioEngine {
     const source=this.ctx.createBufferSource(),filter=this.ctx.createBiquadFilter(),g=this.ctx.createGain();source.buffer=b;filter.type='lowpass';filter.frequency.value=cutoff;g.gain.value=gain;source.connect(filter);filter.connect(g);g.connect(this.master);source.start();
   }
   fx(kind,round=0){
+    if(kind==='page'){this.noise(.075,.065,1850);this.tone([196,247,294][round]||196,.13,'sine',.045,-22);return;}
     if(kind==='sword'){this.sample('slash',.8);this.tone(125,.17,'triangle',.13,-65);return;}
     if(kind==='dagger'){this.sample('slash',.4);this.tone(520,.065,'triangle',.1,-270);return;}
     if(kind==='arrowImpact'){this.sample('hit',.28);this.tone(980,.055,'triangle',.08,-630);this.noise(.045,.08,2800);return;}
@@ -65,9 +66,9 @@ export class AudioEngine {
     if(kind==='boss'){const now=this.ctx?.currentTime||0;if(now-(this.lastBossImpact??-10)<.25)return;this.lastBossImpact=now;this.noise(.65,.55,620);this.tone(52,.65,'sine',.5,-29);this.tone(98,.35,'triangle',.22,-55);if(round===1)this.noise(.5,.2,1400);if(round===2)this.tone(190,.5,'sawtooth',.09,-110);}
     if(kind==='magic'){this.tone(330,.3,'sine',.3,440);this.tone(440,.5,'triangle',.14,440);}
     if(kind==='warning'){this.tone(146,.4,'triangle',.3);this.tone(155,.5,'sine',.2);}
-    if(kind==='heal'){[330,440,660].forEach((f,i)=>setTimeout(()=>this.tone(f,.4,'sine',.25),i*100));}
-    if(kind==='victory'){[220,277,330,440,554].forEach((f,i)=>setTimeout(()=>this.tone(f,.65,'triangle',.22),i*150));}
-    if(kind==='defeat'){[220,196,146,110].forEach((f,i)=>setTimeout(()=>this.tone(f,.7,'sine',.25),i*220));}
+    if(kind==='heal'){[330,440,660].forEach((f,i)=>this.tone(f,.4,'sine',.25,0,i*.1));}
+    if(kind==='victory'){[220,277,330,440,554].forEach((f,i)=>this.tone(f,.65,'triangle',.22,0,i*.15));}
+    if(kind==='defeat'){[220,196,146,110].forEach((f,i)=>this.tone(f,.7,'sine',.25,0,i*.22));}
     if(kind==='ui')this.tone(550,.06,'sine',.15);
   }
   music(time,round,battle){

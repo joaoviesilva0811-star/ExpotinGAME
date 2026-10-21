@@ -1,0 +1,28 @@
+// An edited preview of a real packaged campaign. Only normal controller input;
+// record selected scenes without changing HP, timers, keys or battle outcomes.
+import {installCombatDriver} from './combat-driver.js';
+import {_electron as electron} from 'playwright-core';
+import {mkdir,writeFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+import {spawnSync} from 'node:child_process';
+import assert from 'node:assert/strict';
+const root=resolve('artifacts/campaign-recording-'+Date.now()),framesDir=resolve(root,'frames');await mkdir(framesDir,{recursive:true});
+const app=await electron.launch({executablePath:resolve('dist/IronCrown-Linux-x64/iron-crown'),args:['--no-sandbox','--ozone-platform=headless','--disable-gpu'],env:{...process.env,XDG_CONFIG_HOME:resolve(root,'config'),XDG_CACHE_HOME:resolve(root,'cache')},timeout:25000});
+try{
+ await installCombatDriver(app.context(),{gamepad:true});const page=await app.firstWindow(),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:1120,height:820});await page.waitForTimeout(800);await page.screenshot({path:'artifacts/pc-01-menu.png'});await page.locator('#nickname').fill('Aldric');await page.locator('[data-class=knight]').click();
+ const next=page.waitForURL(/^http:/);await page.locator('#solo').click();await next;await page.setViewportSize({width:1440,height:960});await page.getByRole('button',{name:'Estou pronto'}).click();await page.screenshot({path:'artifacts/pc-02-solo.png'});
+ const cdp=await app.context().newCDPSession(page),segments=[],writes=[];let active=null,frameCount=0;
+ cdp.on('Page.screencastFrame',event=>{cdp.send('Page.screencastFrameAck',{sessionId:event.sessionId}).catch(()=>{});if(!active||frameCount>=12000)return;const file=resolve(framesDir,String(frameCount++).padStart(5,'0')+'.jpg');active.frames.push({file,time:event.metadata.timestamp});writes.push(writeFile(file,Buffer.from(event.data,'base64')));});
+ async function record(label,r){if(active?.label===label)return;if(active){await cdp.send('Page.stopScreencast');active=null;}if(label){active={label,round:r.round,state:r.state,started:r.now,frames:[]};segments.push(active);await cdp.send('Page.startScreencast',{format:'jpeg',quality:80,maxWidth:1440,maxHeight:960,everyNthFrame:1});}}
+ function scene(r){if(r.state==='countdown'&&(r.round===0||r.now-r.intro.started<9.6))return 'abertura-'+(r.round+1);if(r.state==='battle'){const elapsed=300-r.remaining;if(r.round===0&&elapsed<26||r.round>0&&elapsed>=12&&elapsed<32)return 'combate-'+(r.round+1);}if(r.state==='round_end'&&r.results.at(-1)?.won)return 'chave-e-travessia-'+(r.round+1);if(r.state==='ending')return 'chave-final-e-epilogo';return null;}
+ await page.getByRole('button',{name:'Iniciar expedição'}).click();let final=null,emote=false;
+ for(const deadline=Date.now()+1000000;Date.now()<deadline;){const r=await page.evaluate(()=>window.__room);if(r){if(r.state==='battle'&&r.round===0&&!emote){emote=true;await page.evaluate(()=>{window.__driverPauseUntil=Date.now()+3000;window.__driverEmoteUntil=Date.now()+250;});}await record(scene(r),r);if(r.state==='finished'){final=r;break;}}await page.waitForTimeout(160);}
+ await record(null,final||{});await Promise.all(writes);assert.ok(final,'campaign preview timed out');assert.equal(final.wins,3);assert.equal(final.keys.length,3);assert.equal(final.secretUnlocked,true);assert.deepEqual(errors,[]);
+ const timeline=[];
+ for(const [name,duration]of[['pc-01-menu',2.5],['pc-02-solo',1.5]]){const file=resolve(root,name+'.jpg'),encoded=spawnSync('ffmpeg',['-y','-loglevel','error','-i',resolve('artifacts/'+name+'.png'),'-vf','scale=1440:960:force_original_aspect_ratio=decrease,pad=1440:960:(ow-iw)/2:(oh-ih)/2','-frames:v','1','-q:v','2',file],{encoding:'utf8'});if(encoded.status!==0)throw Error(encoded.stderr);timeline.push(`file '${file}'\nduration ${duration}`);}
+ for(const segment of segments){for(let i=0;i<segment.frames.length;i++){const frame=segment.frames[i],delta=i+1<segment.frames.length?Math.max(.015,Math.min(3,segment.frames[i+1].time-frame.time)):.1;timeline.push(`file '${frame.file}'\nduration ${delta.toFixed(4)}`);}}
+ assert.ok(frameCount>200);const list=resolve(root,'frames.txt');await writeFile(list,timeline.join('\n')+'\n');const output=resolve('artifacts/previa-controles.mp4');
+ const encoded=spawnSync('ffmpeg',['-y','-loglevel','error','-f','concat','-safe','0','-i',list,'-stream_loop','-1','-i',resolve('public/assets/audio/battle-throne.ogg'),'-vf','scale=1440:960:force_original_aspect_ratio=decrease,pad=1440:960:(ow-iw)/2:(oh-ih)/2,fps=60','-c:v','libx264','-threads','2','-preset','veryfast','-crf','20','-maxrate','4M','-bufsize','8M','-c:a','aac','-b:a','128k','-shortest','-pix_fmt','yuv420p','-movflags','+faststart',output],{encoding:'utf8'});if(encoded.status!==0)throw Error(encoded.stderr);
+ const report={method:'Edited real packaged Linux campaign, normal virtual controller. Selected native screencast segments, no state/HP/time edits. Original game music mixed in; encoded60FPS includes repeated frames, not a performance benchmark.',recordingRoot:root,streamedFrames:frameCount,sourceJPEGQuality:80,wins:final.wins,keys:final.keys.map(k=>k.id),secretUnlocked:final.secretUnlocked,segments:segments.map(s=>({label:s.label,round:s.round,state:s.state,started:s.started,frames:s.frames.length,seconds:s.frames.length>1?s.frames.at(-1).time-s.frames[0].time:0})),errors};await writeFile('artifacts/preview-v1.12.json',JSON.stringify(report,null,2)+'\n');console.log('PASS: native campaign preview,',frameCount,'frames,',segments.length,'segments, three wins and the crown ending.');
+}finally{await app.close();}

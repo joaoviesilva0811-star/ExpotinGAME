@@ -4,11 +4,13 @@ const review=process.env.REVIEW_VERSION||'19';const root=resolve('artifacts/camp
 const app=await electron.launch({executablePath:resolve('dist/IronCrown-Linux-x64/iron-crown'),args:['--no-sandbox','--ozone-platform=headless','--disable-gpu'],env:{...process.env,XDG_CONFIG_HOME:resolve(root,'config'),XDG_CACHE_HOME:resolve(root,'cache')}});
 try{
  await installCombatDriver(app.context(),{gamepad:true});const page=await app.firstWindow(),errors=[],samples=[],broken=new Set(),phases=[new Set(),new Set(),new Set()],shots=new Set();page.on('pageerror',e=>errors.push(e.message));
- await page.locator('#nickname').fill('Lyra');await page.locator('[data-class='+ (process.env.CAMPAIGN_CLASS||'archer')+']').click();const next=page.waitForURL(/^http:/);await page.locator('#solo').click();await next;await page.getByRole('button',{name:'Estou pronto'}).click();await page.getByRole('button',{name:'Iniciar expedição'}).click();let previous='',final=null;
+ await page.locator('#nickname').fill(process.env.CAMPAIGN_NAME||'Lyra');await page.locator('[data-class='+ (process.env.CAMPAIGN_CLASS||'archer')+']').click();const next=page.waitForURL(/^http:/);await page.locator('#solo').click();await next;await page.getByRole('button',{name:'Estou pronto'}).click();await page.getByRole('button',{name:'Iniciar expedição'}).click();let previous='',final=null;
  for(const deadline=Date.now()+1000000;Date.now()<deadline;){
   const r=await page.evaluate(()=>window.__room);if(!r){await page.waitForTimeout(100);continue;}
   const key=r.round+':'+r.state+':'+r.boss?.phase;if(key!==previous){console.log('Native campaign',key,'time',Math.round(r.now),'boss HP',Math.round(r.boss?.hp||0));previous=key;}
   for(const e of r.events)if(e.type==='coverBreak')broken.add(r.round+':'+e.id);
+  const film=await page.evaluate(()=>window.IRON_PERF?.cinematic),filmMatches=film&&(film.kind==='interlude'&&r.state==='round_end'||film.kind==='victory'&&r.state==='ending');if(filmMatches&&film.index===2&&film.progress>.45&&film.progress<.72){const id='film:'+r.round+':'+film.kind;if(!shots.has(id)){shots.add(id);await page.screenshot({path:`artifacts/${review}-native-${film.kind}-${r.round+1}.png`});}}
+
   if(r.state==='battle'){phases[r.round].add(r.boss.phase);samples.push({round:r.round,remaining:r.remaining,...await page.evaluate(()=>window.IRON_PERF)});const shot=r.round+':'+r.boss.phase;if(!shots.has(shot)&&300-r.remaining>8){shots.add(shot);await page.screenshot({path:`artifacts/${review}-native-arena-${r.round+1}-phase-${r.boss.phase}.png`});}}
   if(r.state==='finished'){final=r;await page.screenshot({path:`artifacts/${review}-native-results.png`});break;}
   await page.waitForTimeout(1000);
