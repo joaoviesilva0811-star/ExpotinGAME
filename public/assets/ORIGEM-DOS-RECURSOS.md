@@ -52,3 +52,19 @@ alfa de corpos inteiros usada na 1.6/1.7, que causava contornos duplos. Um quadr
 apresenta uma pose de origem inteira, com movimentação/recuo/câmera contínuos;
 não são 60 desenhos originais por segundo. As descrições de mistura anteriores
 registram o histórico dessas versões, não o renderizador atual.
+
+Versão 1.9: quatro PNGs originais gerados e preservados sem edição: `transit-knight.png`,
+`transit-archer.png`, `transit-rogue.png` e `cast-portraits.png`. Os três atlas de postura
+fornecem 159 poses integradas: 63 do cavaleiro, 40 do arqueiro e 56 do ladino. O acervo
+de atores passa a 3.861; os seis retratos, 145 quadros de efeitos e 32 quadros de objetos
+são contados separadamente. As folhas nem sempre seguem a grade pedida. Poses cortadas
+ou com direção inconsistente foram excluídas. Oeste do arqueiro e guarda oeste do
+ladino usam fontes leste espelhadas; norte do arqueiro mantém os sprites direcionais
+anteriores. Espelhamentos não são contados como novas poses.
+
+`analyze-transitions.py` e `analyze-portraits.py` apenas leem PNGs e gravam recortes,
+contornos e registro de pés/escala nos JSONs. O cache Canvas preserva margem e os
+originais. Os seis bustos são separados pelo contorno de cada silhueta, preservando
+coroas, chifres e ombros mesmo onde os retângulos se sobrepõem. Coberturas, destroços,
+feixes e névoa são desenho procedural em superfícies Canvas reutilizadas; não são
+novos sprites gerados nem imagens editadas por scripts.

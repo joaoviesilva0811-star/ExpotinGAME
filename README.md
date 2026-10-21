@@ -4,7 +4,7 @@ Jogo 2D cooperativo para PC Windows, com até 3 controles no mesmo PC ou até 4 
 
 ## Baixar o jogo pelo GitHub
 
-**[Baixar a versão Windows portátil](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/download/v1.8.0/IronCrown-Windows-x64.zip)** · **[Página da release](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/tag/v1.8.0)**
+**[Baixar a versão Windows portátil](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/download/v1.9.0/IronCrown-Windows-x64.zip)** · **[Página da release](https://github.com/joaoviesilva0811-star/ExpotinGAME/releases/tag/v1.9.0)**
 
 Extraia o ZIP completo e abra **Shadows of the Iron Crown.exe**. Não precisa instalar Node.js. A release é publicada pela automação do GitHub após a tag; o andamento aparece na aba **Actions**.
 
@@ -14,9 +14,23 @@ O pacote pronto excede o limite de 100 MB por arquivo do GitHub. Por isso, o rep
 
 [Prévia atual do aplicativo com controle](preview/previa-pc.mp4) · [Passagem pela masmorra](preview/corredor-2.png) · [Cutscene final](preview/pc-10-final.png)
 
-![Menu da edição PC 1.8](preview/pc-01-menu.png)
+![Menu da edição PC 1.9](preview/pc-01-menu.png)
 
-[Ver as novas poses](preview/18-motion-contact.png) · [Zoom do emote no aplicativo](preview/18-emote-zoom.png) · [Coop com três controles](preview/16-couch-battle.png)
+[Retratos novos](public/assets/cast-portraits.png) · [Poses dos chefes e emotes](preview/18-motion-contact.png) · [Zoom do emote no aplicativo](preview/18-emote-zoom.png) · [Coop com três controles](preview/16-couch-battle.png)
+
+## Novidades da versão 1.9 — Arenas Vivas
+
+- **159 novas poses utilizáveis** de preparação, parada e defesa, com pés e escala registrados, sem misturar silhuetas. Acervo: **3.861 poses de atores**. O arqueiro mantém a mira correta nas oito direções; vistas de transição inconsistentes foram descartadas e usam fontes compatíveis.
+- **Seis retratos novos** para HUD, equipe e diálogos, painel do chefe menor e habilidades com identidade de classe. Retratos são desenhos separados das poses de atores.
+- Cada arma tem impacto próprio: espada com metal/fragmentos, flechas com farpas e som de impacto, adagas com faíscas curtas. Tremor de acerto varia por classe e respeita o ajuste da câmera; não pausa a simulação nem reinicia a caminhada do chefe.
+- **Três coberturas adicionais por arena**, com colisão e vida no servidor: pilares de pedra, raízes e cristais. Bloqueiam flechas/projéteis, podem ser quebradas, racham e deixam destroços. Os pilares pintados originais continuam permanentes. Quebrar cobertura não dá pontos nem combos.
+- Armadilhas em posições fixas com aviso de **2,4 segundos**. A passagem de fase acelera o ciclo; as áreas de perigo continuam completas em todas as qualidades.
+- Chefes escolhem sequências diferentes por fase e distância. A recuperação é sinalizada como **EXPOSTO**, com **12% de dano extra** somente durante essa janela. Básicos continuam **25 / 32 / 18**.
+- Luz dourada no castelo, verde na floresta e violeta na catedral, feixes em cache, névoa baixa, brasas/folhas e movimento secundário de energia nas fases de fúria. A silhueta local também se destaca atrás de coberturas. O ajuste automático limita luzes temporárias e camadas de brilho quando o tempo de quadro sobe.
+
+[Castelo](preview/19-native-arena-1-phase-2.png) · [Floresta](preview/19-native-arena-2-phase-2.png) · [Catedral](preview/19-native-arena-3-phase-3.png) · [Resultado da campanha nativa](preview/19-native-results.png)
+
+Mantidos três controles no mesmo PC, LAN, bots mortais/resgates, poções, emotes com zoom, três chaves e Câmara da Coroa. [Validação e limites](docs/VALIDACAO.md).
 
 ## Novidades da versão 1.8 — Movimento e nitidez
 
@@ -160,7 +174,7 @@ São 252 quadros adicionais de caminhada dos chefes e reação a dano, 984 quadr
 ## Atualização 1.2 — Combate e direção artística
 
 - Caminhada 35–37% mais lenta, ataques básicos com antecipação e câmera próxima (155%), suave e ajustável até 200%.
-- 3.702 poses utilizáveis no acervo dos personagens: caminhada, reação a dano, golpes, invocação e quatro emotes. Ataques de heróis, chefes e lacaios escolhem oito direções; onde necessário, uma direção usa espelhamento de uma pose compatível.
+- 3.861 poses utilizáveis no acervo dos personagens: caminhada, reação a dano, golpes, invocação e quatro emotes. Ataques de heróis, chefes e lacaios escolhem oito direções; onde necessário, uma direção usa espelhamento de uma pose compatível.
 - Oito padrões por chefe, três fases, projéteis hostis, investidas, ondas com centro seguro, cruzes e ataques em sequência. Vida base para quatro jogadores: 5.600 / 7.200 / 9.200, ajustada ao grupo.
 - Lacaios mortais com preparação visível, colisões, invocação limitada e drops. Primeiro abate sempre derruba poção; depois há chance de 46%. Três espaços de inventário; coleta por proximidade. Cura +45 ou gelo em raio de 230 com lentidão de 4s; tecla 4 usa a primeira guardada.
 - Dash no E: custa 20, recarga de 2,4s e proteção de 0,24s. Reviver passa para R. Tab abre quatro danças próprias; interrompidas ao mover, atacar ou sofrer dano.

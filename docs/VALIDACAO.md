@@ -1,4 +1,26 @@
-# Validação da versão 1.8.0
+# Validação da versão 1.9.0
+
+Executada em Linux com Node 24.19.0 e Electron 44.9.0, em 20/10/2026 (America/Sao_Paulo; 21/10 UTC). Sem teste físico de Windows ou controles USB/Bluetooth.
+
+- `npm test`: **79 testes**, cobrindo os anteriores mais cobertura autoritativa sem farm de pontos, colisão de flechas, reinício da geometria por rodada, aviso/esquiva das armadilhas, táticas por fase/distância, duração do bônus EXPOSTO, transições de postura, impacto de câmera por classe e limite de luzes adaptativo.
+- `scripts/arena-art-review.js`: 159 poses utilizáveis, distintas por grupo e sem cortes nas bordas de origem/cache, seis retratos completos e três arenas com coberturas inteiras/rachadas/destruídas e camadas em cache. Esses renders são fixtures de arte, não capturas de uma partida.
+- `scripts/ready-smoke.js`: recursos preparados em aproximadamente 7,7s no ambiente de teste, sem erros. A prontidão espera a preparação, preservando o carregamento fora da luta.
+- `scripts/campaign-review.js`, `CAMPAIGN_CLASS=knight`: campanha no aplicativo empacotado, entradas normais por Gamepad API virtual, cavaleiro e dois bots mortais. **Três vitórias, três chaves e Câmara da Coroa**; combates de aproximadamente **54 / 73 / 89s**, oito eventos de quebra de cobertura e nenhum erro de JavaScript. Sem mudar HP, dano ou relógio para o teste. Executada antes do último ajuste de densidade de luzes; a verificação curta de desempenho e a prévia verificam esse ajuste.
+- A primeira campanha, com arqueiro, venceu duas arenas e perdeu no chefe final com cerca de 1.053 HP restantes. O caminho de derrota foi exibido corretamente, sem erros. O driver de teste foi corrigido para verificar linha de visão e contornar coberturas ao tentar resgates. Isso altera a automação de QA, não os recursos dos jogadores ou a IA dos companheiros.
+- Simulação adicional com quatro fluxos da IA comum e loot determinístico: três vitórias em aproximadamente 61 / 58 / 72s. É verificação de regras, não benchmark de habilidade humana.
+- `scripts/couch-smoke.js`: três dispositivos virtuais Xbox/PlayStation, sessões independentes, movimento/mira, habilidades, dash com energia, bloqueio de teclado/mouse, reconexão, cinco ciclos de menu, uma janela e uma trilha passaram.
+- `scripts/desktop-smoke.js`: duas instâncias nativas conectadas por TCP 127.0.0.1 quebraram a mesma cobertura por disparos normais; ambas receberam o mesmo estado, compartilharam dano do chefe e a reconexão preservou a identidade. O teste também conferiu menu com áudio, diálogo, despertar, emote e dash com energia.
+- `scripts/menu-race-smoke.js`: buscas atrasadas de sala/ranking não substituem menus abertos posteriormente.
+
+ZIP Windows: 496,081,981 bytes, 15 partes, SHA-256 `526a4a3ce5857506815bf7de844596bdf4e8e9fb9cdd43cafa9b49cc3bc5e5e3`. CRC de 306 entradas passou; executável PE x64 e 209 arquivos de código/arte conferidos byte a byte.
+
+A simulação continua autoritativa. A apresentação não usa pausa global nos hits nem mistura de corpos. Os pilares pintados originais são permanentes; as três coberturas adicionais por arena são destrutíveis e não rendem dano/combos na pontuação. O bônus de 12% exige o chefe em recuperação dentro do prazo oficial.
+
+`scripts/performance-review.js`, após o ajuste de luzes: 45 amostras de batalha no aplicativo, qualidade alta/adaptativa, sem captura de vídeo/tela e com entradas normais. Mediana **60 FPS**, menor amostra **38 FPS**, custo JavaScript mediano de aproximadamente **1,2ms**; as luzes temporárias respeitaram o limite adaptativo. É uma rodada curta da primeira arena, não uma nova campanha completa nem garantia universal de 60 FPS.
+
+As campanhas nativas antes desse último ajuste de luzes, em renderização por software, tiveram medianas aproximadas de 54–59 FPS, com quedas pontuais para 28–34 FPS. O custo JavaScript mediano ficou em aproximadamente 1,2ms. Esses dados motivaram o limite adaptativo de luzes temporárias e a redução da camada extra de brilho em carga alta. Não são garantia de 60 FPS em todo PC nem teste de uma GPU física. Dados completos em `docs/benchmarks/v1.9.0.json`; vídeo codificado a 60 FPS não mede a cadência original de captura. A trilha da demonstração é mixada no vídeo, não captura do dispositivo de áudio.
+
+# Histórico: validação da versão 1.8.0
 
 Executada em Linux com Node 24.19.0, Chromium e Electron 44.9.0 em 20/10/2026 (America/Sao_Paulo; 21/10 UTC). Aplicativo Linux equivalente; não houve execução física do Windows nem controles USB/Bluetooth.
 

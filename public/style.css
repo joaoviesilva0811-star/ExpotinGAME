@@ -78,3 +78,11 @@ input:not([type=checkbox]){background:linear-gradient(#0c1016,#1c1b21);border:1p
 /* Footer takes its own grid row; it must never cover room buttons on short windows. */
 #home{overflow:auto;grid-template-rows:minmax(min-content,1fr) auto;padding-bottom:24px}.home-footer{position:static;grid-column:1/-1;min-width:0;gap:18px}.hero-copy,.entry-panel{min-width:0}
 @media(max-height:800px){#home{align-items:start;padding-top:24px;gap:20px}.hero-copy{padding-top:10px}}
+
+/* Compact carved HUD, shared portrait language across party and dialogue. */
+@media(min-width:1001px){.player-panel{width:276px;border-width:12px;padding:7px 9px 7px 0;bottom:25px}.boss-panel{width:min(405px,35vw);padding:5px 10px 6px}.boss-panel h2{font-size:19px}.boss-health{height:12px}.ability,.utility-slots button{border-width:6px}}
+.ally{position:relative;min-height:60px;padding-left:44px}.ally-face{position:absolute;left:0;top:2px;width:40px;height:40px;image-rendering:pixelated}.ally .ally-bar{margin-left:-32px}.couch-player header{position:relative;min-height:35px;padding-left:39px;align-items:center}.couch-face{position:absolute;left:0;top:-3px;width:38px;height:38px;image-rendering:pixelated}.couch-player{border:9px solid transparent;border-image:var(--frame) 170 stretch;padding:7px 9px 6px}.couch-player:before,.couch-player:after{display:none}.couch-player header strong{color:var(--seat);font-family:Pixelify,monospace}.couch-player small{max-width:95px;text-align:right}.couch-player footer{font-size:9px}.couch-resource{height:15px}.player-panel #portrait{width:64px;height:64px}#dialogue-portrait{background:radial-gradient(ellipse,#a78b4c22,transparent 70%)}
+
+#boss-portrait{position:absolute;left:-51px;top:0;width:46px;height:46px;image-rendering:pixelated;background:#171923;border:5px solid transparent;border-image:var(--frame) 170 stretch}@media(max-width:900px){#boss-portrait{display:none}}
+
+.ability.ready{border-color:var(--class-accent,#d7b47b)}.ability kbd{color:var(--class-accent,#d7b47b)}.ability:focus-visible{outline-color:var(--class-accent,#d7b47b)}

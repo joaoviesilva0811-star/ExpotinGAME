@@ -24,7 +24,7 @@ function ticks(c,h,color,progress){
 }
 export function drawTelegraph(c,h,now,time,round){
  const active=now>=h.at,start=h.started??h.at-1.6,progress=clamp((now-start)/Math.max(.01,h.at-start),0,1);
- const color=h.warningOnly?'#c4a5e7':h.cloud?'#b2d38c':h.breaks?'#f1bb77':'#ee8b78',accent=['#c9ab72','#a6c87b','#c1a3ed'][round];
+ const color=h.environment?['#f2cc8d','#b5df94','#c9b7f2'][round]:h.warningOnly?'#c4a5e7':h.cloud?'#b2d38c':h.breaks?'#f1bb77':'#ee8b78',accent=['#c9ab72','#a6c87b','#c1a3ed'][round];
  c.save();c.translate(h.x,h.y);
  if(h.solid&&active){
   for(let i=0;i<6;i++){const a=i*TAU/6+.4,x=Math.cos(a)*h.r,y=Math.sin(a)*h.r*.65;c.strokeStyle='#253b2d';c.lineWidth=8;c.beginPath();c.moveTo(x,y);c.quadraticCurveTo(x*.4,-26,Math.cos(a+.3)*h.r*.65,-47);c.stroke();c.strokeStyle=i%2?'#869269':'#516845';c.lineWidth=3;c.stroke();}c.restore();return;
@@ -66,6 +66,7 @@ export function drawTelegraph(c,h,now,time,round){
 export function drawTelegraphEdge(c,h,now){
  if(now>=h.at||h.solid)return;
  c.save();c.translate(h.x,h.y);outline(c,h);c.strokeStyle='#090d18d9';c.lineWidth=4;c.stroke();c.strokeStyle=h.warningOnly?'#dfc9ff':h.breaks?'#ffe0a0':'#ffc2aa';c.lineWidth=1.6;c.stroke();
+ if(h.environment){c.fillStyle='#ffe2ae';c.strokeStyle='#10141b';c.lineWidth=3;c.textAlign='center';c.font='bold 8px Pixelify';c.strokeText('ARMADILHA',0,-h.r-8);c.fillText('ARMADILHA',0,-h.r-8);}
  if(h.inner){c.strokeStyle='#d5f2cf';c.lineWidth=1;c.beginPath();c.arc(0,0,h.inner,0,TAU);c.stroke();}
  c.restore();
 }

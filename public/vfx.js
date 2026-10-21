@@ -25,6 +25,11 @@ export function impactFX(x,y,kind='gold',heavy=false){
  spawn(x,y,colors,heavy?28:12,'spark',heavy?210:125);spawn(x,y,['#a3967c','#746956','#514f48'],heavy?15:5,'chip',heavy?150:70);spawn(x,y,['#82755c','#70675c','#56544d'],heavy?14:5,'dust',heavy?95:45);
  if(heavy){decals.push({x,y,r:35+Math.random()*20,life:22,total:22,seed:Math.random()*30});if(decals.length>80)decals.shift();}
 }
+export function weaponImpact(x,y,classId,angle=0){
+ if(classId==='knight'){spawn(x,y,['#fff4d0','#e2b875','#8d7865'],25,'spark',220,angle);spawn(x,y,['#918a7b','#655f5c'],9,'chip',110,angle);spawn(x,y,['#aaa08b','#827b70'],5,'dust',65);}
+ else if(classId==='archer'){spawn(x,y,['#e7d6a8','#ad8356','#7e6145'],8,'chip',120,angle);spawn(x,y,['#f6f5db','#b7de9a'],8,'spark',135,angle);}
+ else{spawn(x,y,['#ffffff','#c8b5ed','#8777b4'],13,'spark',180,angle);spawn(x+Math.sin(angle)*7,y-Math.cos(angle)*7,['#d5c3ef','#a395bf'],7,'mote',85,angle+.8);}
+}
 export function magicFX(x,y,kind='violet',count=22){spawn(x,y,palette[kind]||palette.violet,count,'mote',90);}
 export function footFX(x,y){spawn(x,y,['#8c8271','#6e6a60'],2,'dust',14);}
 export function slashFX(x,y,angle,kind='gold',heavy=false,wait=.12,variant=0){
@@ -105,6 +110,7 @@ export function drawProjectile(c,p,time){
  const a=Math.atan2(p.vy,p.vx),speed=Math.hypot(p.vx,p.vy),color=p.enemy?(p.color==='seed'?'#b2d887':p.color==='blade'?'#ebbaa3':'#c6a5ee'):p.color==='ice'?'#c6efff':p.color==='pierce'?'#e9d4a2':'#d4bf95';
  const old=projectileTraces.get(p.id);if(!old||Math.hypot(p.x-old.x,p.y-old.y)>20){if(p.color!=='arrow')spawn(p.x,p.y-6,palette[p.color==='ice'?'ice':p.enemy?'violet':'gold'],1,'mote',12);projectileTraces.set(p.id,{x:p.x,y:p.y,time});}
  if(projectileTraces.size>180)for(const[id,v]of projectileTraces)if(time-v.time>2)projectileTraces.delete(id);
+ if(p.enemy){c.save();c.strokeStyle='#ffc0a8';c.lineWidth=1;c.globalAlpha=.7;c.beginPath();c.ellipse(p.x,p.y+1,9,4,0,0,Math.PI*2);c.stroke();c.restore();}
  c.save();c.translate(p.x,p.y-18);c.rotate(a);
  // Fine separated air trails replace the thick rectangular colored strip.
  for(let i=0;i<3;i++){c.globalAlpha=.12-i*.025;c.strokeStyle=color;c.lineWidth=i===0?1.4:.65;c.beginPath();c.moveTo(-18-speed*.04-i*5,(i-1)*3);c.quadraticCurveTo(-16,(i-1)*4,-5,(i-1));c.stroke();}c.globalAlpha=1;

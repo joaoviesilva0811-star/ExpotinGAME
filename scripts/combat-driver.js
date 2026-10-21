@@ -21,18 +21,19 @@ export async function installCombatDriver(context,{gamepad=false}={}){
         };
         const threats=r.hazards.filter(h=>h.end>r.now&&h.at<r.now+1.6&&!h.solid),unsafe=threats.some(h=>danger(p,h));
         const down=r.players.filter(a=>a.id!==p.id&&a.hp<=0&&!a.eliminated&&a.downAt!==null&&r.now-a.downAt<19.5).sort((a,b)=>distance(p,a)-distance(p,b))[0];
-        const reviving=!!(down&&distance(p,down)<73&&!unsafe);let mx=0,my=0;
-        if(down&&!reviving&&!unsafe){const n=normalize(down.x-p.x,down.y-p.y);mx=n.x;my=n.y;}
-        else if(!reviving){
-          let best=-Infinity;const speed={knight:116,archer:140,rogue:158}[p.classId];
-          const covers=[...window.__shared.ARENA_OBSTACLES[r.round],...r.hazards.filter(h=>h.solid&&h.at<=r.now)];
+        const covers=[...window.__shared.ARENA_OBSTACLES[r.round],...(r.covers||[]).filter(c=>c.hp>0),...r.hazards.filter(h=>h.solid&&h.at<=r.now)];
+        const clear=(from,to,padding)=>covers.every(o=>{const dx=to.x-from.x,dy=to.y-from.y,l=dx*dx+dy*dy,t=l?Math.max(0,Math.min(1,((o.x-from.x)*dx+(o.y-from.y)*dy)/l)):0;return Math.hypot(o.x-from.x-t*dx,o.y-from.y-t*dy)>=o.r+padding;});
+        const reviving=!!(down&&distance(p,down)<73&&!unsafe&&clear(p,down,2));let mx=0,my=0;
+        if(!reviving){
+          let best=-Infinity;const speed={knight:116,archer:140,rogue:158}[p.classId],goal=down&&!unsafe?down:b,range=goal===down?34:desired;
           for(let i=0;i<25;i++){
-            const a=i/24*Math.PI*2,x=i===24?0:Math.cos(a),y=i===24?0:Math.sin(a),next={x:p.x+x*speed*.85,y:p.y+y*speed*.85};let score=-Math.abs(distance(next,b)-desired)*.12;
+            const a=i/24*Math.PI*2,x=i===24?0:Math.cos(a),y=i===24?0:Math.sin(a),next={x:p.x+x*speed*.85,y:p.y+y*speed*.85};let score=-Math.abs(distance(next,goal)-range)*.12;
             if(next.x<65||next.x>1135||next.y<65||next.y>695)score-=2000;
             for(const h of threats)if(danger(next,h))score-=unsafe?1500:800;
             for(const o of covers)if(distance(next,o)<o.r+30)score-=1300;
+            if(!clear(p,next,17))score-=900;
             for(const q of r.projectiles.filter(q=>q.enemy))if(distance(next,{x:q.x+q.vx*.55,y:q.y+q.vy*.55})<45)score-=900;
-            if(!unsafe&&i===24&&Math.abs(dist-desired)<20)score+=8;
+            if(!unsafe&&i===24&&Math.abs(distance(p,goal)-range)<20)score+=8;
             if(score>best){best=score;mx=x;my=y;}
           }
         }

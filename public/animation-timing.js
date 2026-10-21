@@ -15,9 +15,10 @@ export function bossPose(b,time,now,walkPhase=0){
 export function actorMotion(p,time,now,boss=false){
  const hurt=Math.max(0,now-(p.lastHurt??p.hurtAt??-10)),recoil=hurt<.23?Math.sin(hurt/.23*Math.PI)*(1-hurt/.23):0;
  const a=p.facing||0,speed=Math.hypot(p.vx||0,p.vy||0),moving=boss?p.state==='chase':speed>12;
+ const rage=boss?Math.max(0,(p.phase||1)-1):0;
  const cycle=(p.walkPhase??time*(boss?1.2:1.9))*Math.PI*2;
  let lift=moving?-Math.abs(Math.sin(cycle))* (boss?2.6:1.3):Math.sin(time*(boss?2.3:2.8))*(boss?1:.45),lean=moving?Math.sin(cycle)*(boss?.012:.018):0;
- let sx=1,sy=1;
+ let sx=1+Math.sin(time*(3+rage))*rage*.004,sy=1-Math.sin(time*(3+rage))*rage*.004;
  if(boss){const q=bossPose(p,time,now);if(q.mode==='direction'&&p.state==='windup'){sy=1-q.anticipation*.025;sx=1+q.anticipation*.012;lean+=Math.cos(a)*q.anticipation*.025;}if(q.mode==='direction'&&p.state==='execute')lean+=Math.cos(a)*Math.sin(q.progress*Math.PI)*.055;if(q.mode==='recover'){lift+=Math.sin(q.progress*Math.PI)*2;lean-=Math.cos(a)*Math.sin(q.progress*Math.PI)*.025;}}
  else{const dt=now-(p.attackAt??-10),total=p.attackFor||.52;if(dt>=0&&dt<total){const t=dt/total;lean+=Math.cos(a)*Math.sin(t*Math.PI)*(p.classId==='knight'?.055:p.classId==='archer'?-.025:.04);lift-=Math.sin(t*Math.PI)*(p.classId==='rogue'?1.8:.6);}if(p.block){sx=1.02;sy=.98;}}
  if(!boss&&p.emoteUntil>now){const beat=(now-p.emoteAt)/1.15*Math.PI*2;lift-=Math.abs(Math.sin(beat*2))*2.2;lean+=Math.sin(beat)*.045;sx*=1+Math.sin(beat*2)*.012;sy*=1-Math.sin(beat*2)*.012;}

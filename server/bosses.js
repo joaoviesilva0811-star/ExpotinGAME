@@ -12,15 +12,26 @@ export function chooseBossAttack(round,index,dist,previous){
  let offset=index%pool.length;if(pool[offset]===previous)offset=(offset+1)%pool.length;
  return pool[offset];
 }
+export function bossTactic(round,phase,index,dist,previous){
+ const scripts=[
+  {near:[[0,1,2,7],[1,0,7,2],[7,1,2,0]],far:[[3,5,4,6],[4,3,6,5],[6,4,5,3]]},
+  {near:[[2,3,7,5],[7,2,5,3],[5,7,3,2]],far:[[0,1,4,6],[4,6,0,1],[6,4,1,0]]},
+  {near:[[0,3,5,7],[3,0,7,5],[7,5,0,3]],far:[[1,2,4,6],[2,6,1,4],[6,4,2,1]]}
+ ];
+ const reach=dist<245?'near':'far',pool=scripts[round][reach][Math.min(2,Math.max(0,phase-1))];
+ let n=index%pool.length;if(pool[n]===previous)n=(n+1)%pool.length;
+ return{kind:pool[n],label:[['O TIRANO AVANÇA','A COROA CAÇA'],['A MATA SUFOCA','AS SEMENTES CERCAM'],['A FOICE JULGA','O VAZIO PERSEGUE']][round][reach==='near'?0:1]};
+}
 export function planBossAttack(room,forcedKind){
   const b=room.boss,living=[...room.players.values()].filter(p=>room.active(p));if(!living.length)return;
   const farthest=living.reduce((a,p)=>distance(b,p)>distance(b,a)?p:a,living[0]);
   const target=b.attackIndex%3===1&&distance(b,farthest)>315?farthest:living[b.attackIndex%living.length];
-  const kind=forcedKind??chooseBossAttack(room.round,b.attackIndex,distance(b,target),b.attack);
+  const tactic=bossTactic(room.round,b.phase,b.attackIndex,distance(b,target),b.attack);
+  const kind=forcedKind??tactic.kind;b.tactic=tactic.label;b.exposedUntil=0;
   b.attackIndex++;b.target=target.id;b.facing=Math.atan2(target.y-b.y,target.x-b.x);b.state='windup';b.attack=kind;
   const heavy=[1,2,4,6,7].includes(kind),windup=(heavy?1.95:1.65)-(b.phase-1)*.12;
   b.startedAt=room.now;b.until=room.now+windup;b.attackName=ATTACK_NAMES[room.round][kind];
-  b.recoveryFor=heavy?2:1.5;b.executeFor=.45;b.guarding=b.phase>1;
+  b.recoveryFor=(heavy?2:1.5)+(b.phase===3?.25:0);b.executeFor=.45;b.guarding=b.phase>1;
   const add=(x,y,r,damage,options={})=>{
     const h={id:`hazard-${++room.eventId}`,x,y,r,damage,at:b.until,end:b.until+.38,next:b.until,started:room.now,telegraph:true,...options};
     h.next=h.at;if(options.end===undefined)h.end=h.at+.38;
@@ -70,5 +81,6 @@ export function planBossAttack(room,forcedKind){
     if(kind===7){for(let i=0;i<4;i++)cone(b.facing+i*Math.PI/2,235,24,i*.3).spread=.55;circle(b.x,b.y,350,24,1.45,{inner:245,breaks:true});b.recoveryFor=2.25;}
     if(b.phase===3&&kind!==5)circle(target.x,target.y,62,20,1.6,{visual:'void'});
   }
+  b.comboStage=room.hazards.filter(h=>h.telegraph&&!h.warningOnly&&h.started===room.now).length;
   room.emit('warning',{text:b.attackName,kind,phase:b.phase,duration:windup,heavy});
 }

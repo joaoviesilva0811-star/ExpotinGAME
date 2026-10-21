@@ -1,4 +1,4 @@
-SHADOWS OF THE IRON CROWN — EDIÇÃO PC 1.8.0
+SHADOWS OF THE IRON CROWN — EDIÇÃO PC 1.9.0
 
 WINDOWS 10/11 DE 64 BITS
 
@@ -217,3 +217,19 @@ Use Efeitos Baixo/Médio/Alto e ajuste automático nas configurações. Os aviso
 dano continuam completos. O desempenho depende do computador; não há trava de
 14 FPS em cutscenes. O pacote foi validado em Linux equivalente com Electron,
 sem teste físico de Windows ou controles USB/Bluetooth neste ambiente.
+
+ARENAS VIVAS — VERSÃO 1.9
+
+Três coberturas adicionais por arena: pilares, raízes e cristais. Bloqueiam
+projéteis e podem ser quebradas por armas e ataques dos chefes. Não rendem
+pontos de dano nem combos. Os grandes pilares pintados do cenário continuam
+permanentes. As coberturas voltam inteiras ao começar uma rodada.
+
+Selos de armadilha surgem em locais fixos, com aviso de 2,4s antes do dano.
+Use o dash, saia da área ou defenda conforme o ataque. Chefes alternam sequências
+por fase/distância e recebem 12% de dano extra durante a recuperação sinalizada.
+Dano básico preservado: 25 cavaleiro, 32 arqueiro, 18 ladino.
+
+Novos retratos e HUD compacto, iluminação por arena, resíduos e efeitos próprios
+para cada classe. As transições de postura usam poses nítidas, sem mistura de
+corpos. Controles, coop no mesmo PC, LAN, resgates e a Câmara da Coroa permanecem.

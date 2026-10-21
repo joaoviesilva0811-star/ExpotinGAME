@@ -63,10 +63,13 @@ try{
   assert.ok((await b.locator('.member-text').allTextContents()).some(text=>text.includes('Lyra PC')&&text.includes('Arqueiro')));
   await a.screenshot({path:'artifacts/pc-04-lan.png'});
   await a.getByRole('button',{name:'Estou pronto'}).click();await b.getByRole('button',{name:'Estou pronto'}).click();await a.getByRole('button',{name:'Iniciar expedição'}).click();
-  await a.waitForTimeout(18500);await b.mouse.move(960,480);await b.mouse.down();await b.keyboard.press('Digit1');await b.waitForTimeout(1000);await b.mouse.up();await b.waitForTimeout(900);
+  await a.waitForFunction(()=>window.__room?.state==='battle',null,{timeout:25000});
+  async function aimWorld(target){const pt=await b.evaluate(target=>{const rect=document.querySelector('#game').getBoundingClientRect(),s=Math.min(rect.width/1200,rect.height/760),v=window.IRON_PERF.camera;return{x:rect.left+(rect.width-1200*s)/2+(600+(target.x-v.x)*v.zoom)*s,y:rect.top+(rect.height-760*s)/2+(380+(target.y-v.y)*v.zoom)*s};},target);await b.mouse.move(pt.x,pt.y);}
+  const cover=await b.evaluate(()=>window.__room.covers[0]);await aimWorld(cover);await b.mouse.down();await b.waitForFunction(()=>window.__room.covers[0].hp<=0,null,{timeout:10000});await b.mouse.up();await a.waitForFunction(()=>window.__room.covers[0].hp<=0);assert.equal(await a.evaluate(()=>window.__room.covers[0].hp),await b.evaluate(()=>window.__room.covers[0].hp));
+  await b.mouse.down();await b.keyboard.press('Digit1');for(let i=0;i<18;i++){await aimWorld(await b.evaluate(()=>window.__room.boss));await b.waitForTimeout(120);}await b.mouse.up();await b.waitForTimeout(300);
   assert.equal(await a.locator('#boss-hp').textContent(),await b.locator('#boss-hp').textContent());
   const [hp,max]= (await b.locator('#boss-hp').textContent()).split('/').map(Number);assert.ok(hp<max);
   await b.reload();await b.locator('#hud').waitFor({state:'visible'});assert.equal(await b.locator('#my-name').textContent(),'Lyra PC');
   await a.screenshot({path:'artifacts/pc-05-lan-combate.png'});
-  assert.deepEqual(errors,[]);console.log('PASS: packaged native app, embedded Node runtime, audible menu track, dialogues, emotes, energy-limited dash, solo bots/class replacement, combat, two native instances over TCP '+lan+', same boss, and client reconnection.');
+  assert.deepEqual(errors,[]);console.log('PASS: packaged native app, embedded Node runtime, audible menu track, dialogues, emotes, energy-limited dash, solo bots/class replacement, combat, two native instances over TCP '+lan+', same boss, shared destructible cover, and client reconnection.');
 }finally{for(const app of apps.reverse())await app.close().catch(()=>{});}

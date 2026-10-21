@@ -1,3 +1,5 @@
+import {arenaObstacles} from '../public/arena-state.js';
+import {resetArena,damageCover,damageCoversInHazard,tickArena} from './arena.js';
 import {comboState,recordCombo,resetCombo,expireCombo} from './combos.js';
 import {dropBossKey,tickBossKeys} from './keys.js';
 import {updateVelocity,moveEntity} from '../public/motion.js';
@@ -105,6 +107,7 @@ export class Room {
     this.keyDrop=null;this.keySceneUntil=0;this.gateUnlocked=false;
     this.state = 'countdown'; this.transitionAt = this.now + 17.7; this.remaining = 300;
     this.projectiles = []; this.hazards = []; this.effects = []; this.minions = []; this.drops=[];this.lootKills=0;this.intro={started:this.now,gateAt:this.now+3.55,dialogueAt:this.now+4,awakeningAt:this.now+10.3};this.gateClosed=false;this.awakened=false;this.dialogue=roundDialogue(this,4); this.nextWave = this.transitionAt+8; this.waveIndex = 0;
+    resetArena(this);
     const info = BOSSES[this.round];
     const hp = Math.round(info.hp * (.25 + .1875 * this.players.size));
     this.boss = { x: 820, y: 380, hp, maxHp: hp, phase: 1, state: 'dormant', until: this.transitionAt,
@@ -136,10 +139,13 @@ export class Room {
     else if (msg.type === 'dodge') this.dodge(p);
     else if (msg.type === 'potion') usePotion(this,p);
   }
+  staticSolids(){return arenaObstacles(this);}
+  solids(){return [...this.staticSolids(),...this.hazards.filter(h=>h.solid&&h.at<=this.now)];}
   active(p) { return p && p.connected && p.hp > 0 && !p.eliminated; }
   canAct(p) { return this.state === 'battle' && this.active(p) && !p.block && !p.input.block && !p.input.revive && this.now >= p.dodgeUntil; }
   hitBoss(p, amount) {
     if (this.state !== 'battle' || !this.boss || this.boss.hp <= 0 || this.now < this.boss.immuneUntil) return 0;
+    if(this.boss.state==='recover'&&this.now<(this.boss.exposedUntil||0))amount*=1.12;
     if (this.boss.guarding && this.boss.state === 'windup') amount *= .65;
     const actual = Math.min(Math.round(amount * 10) / 10, this.boss.hp); this.boss.hp -= actual; this.boss.hurtAt = this.now;
     p.stats.damage += actual; p.roundStats.damage += actual;recordCombo(p,actual,this.now);
@@ -156,10 +162,12 @@ export class Room {
     return actual;
   }
   melee(p, amount, reach) {
-    const dir = aimDirection(p);
+    const dir = aimDirection(p),blockers=this.solids();
+    const cover=(this.covers||[]).filter(c=>c.hp>0&&distance(p,c)<=reach+c.r).sort((a,b)=>distance(p,a)-distance(p,b)).find(c=>{const n=normalize(c.x-p.x,c.y-p.y);return dir.x*n.x+dir.y*n.y>.2&&!blockers.some(o=>o!==c&&segmentDistance(p,c,o)<o.r);});
+    if(cover)damageCover(this,cover,amount,p.id);
     const canHit = (target,radius) => {
       if (distance(p,target)>reach+radius) return false;
-      if (obstacles(this.round).some(o=>segmentDistance(p,target,o)<o.r)) return false;
+      if (blockers.some(o=>segmentDistance(p,target,o)<o.r)) return false;
       const n=normalize(target.x-p.x,target.y-p.y); return dir.x*n.x+dir.y*n.y>=.05;
     };
     let hit=false;
@@ -190,7 +198,7 @@ export class Room {
       if (slot === 1) {
         this.dash(p, 175); this.melee(p, 35, 105);
         if (this.boss?.state === 'windup' && this.boss.phase === 1 && distance(p, this.boss) < 155) {
-          this.hazards = this.hazards.filter(h => !h.telegraph); this.effects = this.effects.filter(e=>e.kind!=='volley'); this.boss.charge=null; this.boss.guarding=false; this.boss.state = 'recover';this.boss.startedAt=this.now; this.boss.until = this.now + 1.6;
+          this.hazards = this.hazards.filter(h => !h.telegraph); this.effects = this.effects.filter(e=>e.kind!=='volley'); this.boss.charge=null; this.boss.guarding=false; this.boss.state = 'recover';this.boss.startedAt=this.now; this.boss.until = this.now + 1.6;this.boss.exposedUntil=this.boss.until;
           this.emit('notice', { text: 'Investida interrompeu o chefe!' });
         }
       }
@@ -206,7 +214,7 @@ export class Room {
         const dir=aimDirection(p);
         for(const target of [this.boss,...this.minions]){
           const n=normalize(target.x-p.x,target.y-p.y);
-          if(target.hp<=0||distance(p,target)>96+(target.isBoss?BOSSES[this.round].radius:18)||dir.x*n.x+dir.y*n.y<.05||obstacles(this.round).some(o=>segmentDistance(p,target,o)<o.r))continue;
+          if(target.hp<=0||distance(p,target)>96+(target.isBoss?BOSSES[this.round].radius:18)||dir.x*n.x+dir.y*n.y<.05||this.staticSolids().some(o=>segmentDistance(p,target,o)<o.r))continue;
           target.poison=(target.poison||[]).filter(x=>x.owner!==p.id);target.poison.push({owner:p.id,next:this.now+1,ticks:3});
           this.emit('venom',{x:target.x,y:target.y});
         }
@@ -230,7 +238,7 @@ export class Room {
     this.emit('dash', { x: old.x, y: old.y, tx: p.x, ty: p.y, kind: p.classId });
   }
   move(p, dx, dy) {
-    moveEntity(p,dx,dy,[...obstacles(this.round),...this.hazards.filter(h=>h.solid&&h.at<=this.now)],this.boss);
+    moveEntity(p,dx,dy,this.solids(),this.boss);
   }
 
   hurt(p, amount, breaks = false, source = null) {
@@ -268,7 +276,7 @@ export class Room {
   tick(dt) {
     this.now += dt;for(const p of this.players.values())expireCombo(p,this.now);
     for (const p of this.players.values()) if (!p.connected && p.disconnectedAt !== null && this.now - p.disconnectedAt > 60) this.remove(p.id);
-    if(['round_end','ending'].includes(this.state)){tickBossKeys(this,dt,obstacles(this.round));if(this.keyDrop&&!this.keyDrop.collectedAt&&this.now>=this.transitionAt){this.transitionAt=this.now+.5;return;}}
+    if(['round_end','ending'].includes(this.state)){tickBossKeys(this,dt,this.staticSolids());if(this.keyDrop&&!this.keyDrop.collectedAt&&this.now>=this.transitionAt){this.transitionAt=this.now+.5;return;}}
     if(this.state==='ending'&&this.now>=this.transitionAt){this.state='finished';return;}
     if(this.state==='countdown'){
       if(!this.gateClosed&&this.now>=this.intro.gateAt){this.gateClosed=true;this.emit('gate',{x:48,y:380});}
@@ -280,7 +288,8 @@ export class Room {
     this.remaining = Math.max(0, this.remaining - dt);
     if (this.remaining === 0) { this.endRound(false, 'O tempo se esgotou.'); return; }
     if (![...this.players.values()].some(p => this.active(p))) { this.endRound(false, 'Toda a equipe caiu.'); return; }
-    thinkBots(this,obstacles(this.round));
+    tickArena(this);
+    thinkBots(this,this.staticSolids());
     if(this.state!=='battle')return;
     for (const p of this.players.values()) {
       if (p.downAt !== null && this.now - p.downAt > 20) p.eliminated = true;
@@ -304,7 +313,7 @@ export class Room {
       if (input.ax || input.ay) p.facing = Math.atan2(input.ay, input.ax);
       if (input.attack) this.basic(p);
       if (input.revive && !p.block && !input.attack && !moving && Math.hypot(p.vx,p.vy)<22 && this.now>=p.dodgeUntil) {
-        const solids=[...obstacles(this.round),...this.hazards.filter(h=>h.solid&&h.at<=this.now)];
+        const solids=this.solids();
         const down = [...this.players.values()].filter(a => a.id !== p.id && a.connected && a.hp <= 0 && !a.eliminated && a.downAt !== null && this.now-a.downAt<=20 && distance(a, p) < REVIVE.range && routeClear(p,a,solids,2))
           .sort((a,b)=>(a.id===p.reviveTarget?-100:0)-(b.id===p.reviveTarget?-100:0)||a.downAt-b.downAt)[0];
         if (down && (p.lastHurt === undefined || this.now - p.lastHurt > .1)) {
@@ -344,14 +353,14 @@ export class Room {
     if (b.phase<3 && b.state!=='transition' && b.hp / b.maxHp < threshold) {
       b.phase++;b.startedAt=this.now; b.charge=null; b.guarding=false; b.state = 'transition'; b.until = this.now + 1.5; b.immuneUntil = b.until;
       this.hazards = this.hazards.filter(h => !h.telegraph || h.at <= this.now);
-      this.effects=this.effects.filter(e=>e.kind!=='volley'); this.nextWave=Math.min(this.nextWave,this.now+3);
+      this.effects=this.effects.filter(e=>e.kind!=='volley'); this.nextWave=Math.min(this.nextWave,this.now+3);this.nextTrap=Math.min(this.nextTrap,this.now+2.5);
       this.emit('phase', { text: b.phase===3?BOSSES[this.round].finalPhase:BOSSES[this.round].phase, x: b.x, y: b.y });
     }
     if (b.state === 'transition' && this.now >= b.until) { b.state = 'idle'; b.nextAt = this.now + .6; }
     if (b.state === 'windup' && this.now >= b.until) {
       b.state = 'execute'; b.startedAt=this.now; b.until = this.now + (b.executeFor||.45); b.guarding=false;
       this.emit('bossAttack', { x: b.x, y: b.y, kind: b.attack, round: this.round });
-    } else if (b.state === 'execute' && this.now >= b.until) { b.state = 'recover'; b.until = this.now + (b.recoveryFor||1.5); b.startedAt=this.now; }
+    } else if (b.state === 'execute' && this.now >= b.until) { b.state = 'recover'; b.until = this.now + (b.recoveryFor||1.5); b.startedAt=this.now;b.exposedUntil=b.until;this.emit('opening',{x:b.x,y:b.y,until:b.until,round:this.round}); }
     else if (b.state === 'recover' && this.now >= b.until) { b.state = 'idle'; b.nextAt = this.now + (b.phase===3?.6:1); b.charge=null; }
     if (['idle', 'chase'].includes(b.state)) {
       const targets = [...this.players.values()].filter(p => this.active(p));
@@ -362,7 +371,7 @@ export class Room {
           b.state = 'chase'; const n = normalize(target.x - b.x, target.y - b.y);
           const speed = BOSSES[this.round].speed * (1+(b.phase-1)*.12) * (this.now < b.slowUntil ? .45 : 1);
           let best=-Infinity,heading=b.facing;
-          for(const turn of [0,.55,-.55,1.05,-1.05,1.6,-1.6]){const a=b.facing+turn,probe={x:b.x+Math.cos(a)*90,y:b.y+Math.sin(a)*90};let score=-distance(probe,target)-Math.abs(turn)*7;if(obstacles(this.round).some(o=>distance(probe,o)<o.r+BOSSES[this.round].radius+3))score-=2000;if(probe.x<55||probe.x>1145||probe.y<55||probe.y>705)score-=2000;if(score>best){best=score;heading=a;}}
+          for(const turn of [0,.55,-.55,1.05,-1.05,1.6,-1.6]){const a=b.facing+turn,probe={x:b.x+Math.cos(a)*90,y:b.y+Math.sin(a)*90};let score=-distance(probe,target)-Math.abs(turn)*7;if(this.staticSolids().some(o=>distance(probe,o)<o.r+BOSSES[this.round].radius+3))score-=2000;if(probe.x<55||probe.x>1145||probe.y<55||probe.y>705)score-=2000;if(score>best){best=score;heading=a;}}
           this.move(b, Math.cos(heading)*speed*dt, Math.sin(heading)*speed*dt);
         } else b.state = 'idle';
         if (this.now >= b.nextAt) this.planAttack();
@@ -378,7 +387,7 @@ export class Room {
       if (this.state !== 'battle') break;
       const old = { x: q.x, y: q.y }; q.x += q.vx * dt; q.y += q.vy * dt; q.left -= Math.hypot(q.vx, q.vy) * dt;
       // Swept segment collision: no arrow tunneling through boss or pillars.
-      if ([...obstacles(this.round), ...this.hazards.filter(h => h.solid && h.at <= this.now)].some(o => segmentDistance(old, q, o) < o.r)) continue;
+      const obstacle=this.solids().find(o=>segmentDistance(old,q,o)<o.r);if(obstacle){if(obstacle.id?.startsWith('cover-'))damageCover(this,obstacle,q.damage,q.owner);continue;}
       if(q.enemy){
         const target=[...this.players.values()].find(p=>this.active(p)&&this.now>=p.dodgeUntil&&segmentDistance(old,q,p)<21);
         if(target){if(this.now>=target.hitSafeUntil){this.hurt(target,q.damage,false,{x:target.x-q.vx,y:target.y-q.vy});target.hitSafeUntil=this.now+.2;}continue;}
@@ -395,6 +404,7 @@ export class Room {
     for (const h of this.hazards) {
       if (this.now < h.at || this.now > h.end || this.now < h.next || h.solid || h.warningOnly) continue;
       h.next = h.tick ? this.now + h.tick : Infinity;
+      damageCoversInHazard(this,h);
       this.emit('impact', { x:h.x,y:h.y,r:h.r,inner:h.inner,shape:h.shape,angle:h.angle,length:h.length,width:h.width,spread:h.spread,round:this.round,visual:h.visual,cloud:!!h.cloud,breaks:!!h.breaks,mark:h.mark,minor:!!h.minion });
       for (const p of this.players.values()) {
         if (!this.active(p)||this.now<p.dodgeUntil||this.now<p.hitSafeUntil||!hazardContains(p,h,13))continue;
@@ -413,7 +423,7 @@ export class Room {
       downAt: p.downAt, eliminated: p.eliminated, revive: p.revive, reviveTarget: p.reviveTarget, stats: p.stats });
     return { code: this.code, name: this.name, owner: this.owner, public: this.public, solo: this.solo, couch:!!this.couch, botsEnabled: this.botsEnabled, state: this.state, round: this.round,
       keys:this.keys,keyDrop:this.keyDrop,keySceneUntil:this.keySceneUntil,gateUnlocked:this.gateUnlocked,secretUnlocked:this.secretUnlocked,vaultOpenedAt:this.vaultOpenedAt,endingAt:this.endingAt,intro:this.intro,outroStarted:this.outroStarted,now: this.now, transitionAt: this.transitionAt, remaining: this.remaining, boss: this.boss,
-      players: [...this.players.values()].map(playerView), minions:this.minions,drops:this.drops,dialogue:this.dialogue, projectiles: this.projectiles, hazards: this.hazards,
+      covers:this.covers,arenaBeat:this.arenaBeat,players: [...this.players.values()].map(playerView), minions:this.minions,drops:this.drops,dialogue:this.dialogue, projectiles: this.projectiles, hazards: this.hazards,
       score: this.score, bestScore: this.bestScore || 0, wins: this.wins, results: this.results, events: this.events };
   }
 }
